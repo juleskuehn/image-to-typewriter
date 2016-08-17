@@ -1,5 +1,5 @@
 (function() {
-  var MAX_HEIGHT, char, charCombo, charSet, charSetFn, charSets, loadImage, overlap, render, reverseCharCombo, target;
+  var MAX_HEIGHT, char, charCombo, charSet, charSetFn, charSets, drawGrid, loadImage, overlap, render, reverseCharCombo, skewCanvas, target;
 
   charSets = [];
 
@@ -193,9 +193,50 @@
     keystonePoints = [];
     for (i = j = 1; j <= 4; i = ++j) {
       ks = $('#keystone' + i);
-      keystonePoints.push([parseInt(ks.css('left'), 10) + 10, parseInt(ks.css('top'), 10) + 10]);
+      keystonePoints.push({
+        left: parseInt(ks.css('left'), 10) + 10,
+        top: parseInt(ks.css('top'), 10) + 10
+      });
     }
     return keystonePoints;
   };
+
+  $('#transformNow').click(function() {
+    var botPairSlope, horizontalPairs, keystonePoints, leftPairSlope, rightPairSlope, topPairSlope, verticalPairs;
+    keystonePoints = keystone();
+    horizontalPairs = _.sortBy(keystonePoints, 'top');
+    verticalPairs = _.sortBy(keystonePoints, 'left');
+    topPairSlope = (horizontalPairs[1].top - horizontalPairs[0].top) / (horizontalPairs[1].left - horizontalPairs[0].left);
+    botPairSlope = (horizontalPairs[3].top - horizontalPairs[2].top) / (horizontalPairs[3].left - horizontalPairs[2].left);
+    console.log("topPairSlope=" + topPairSlope);
+    console.log("botPairSlope=" + botPairSlope);
+    leftPairSlope = (verticalPairs[1].left - verticalPairs[0].left) / (verticalPairs[1].top - verticalPairs[0].top);
+    rightPairSlope = (verticalPairs[3].left - verticalPairs[2].left) / (verticalPairs[3].top - verticalPairs[2].top);
+    console.log("leftPairSlope=" + leftPairSlope);
+    console.log("rightPairSlope=" + rightPairSlope);
+    return skewCanvas((topPairSlope + botPairSlope) / 2, (leftPairSlope + rightPairSlope) / 2);
+  });
+
+  skewCanvas = function(top, left) {
+    var c, ctx, image, inMemCanvas, inMemCtx;
+    c = void 0;
+    ctx = void 0;
+    image = void 0;
+    c = document.getElementById('myCanvas');
+    ctx = c.getContext('2d');
+    image = ctx.getImageData(0, 0, c.width, c.height);
+    ctx.putImageData(image, 0, 0);
+    inMemCanvas = document.createElement('canvas');
+    inMemCanvas.width = 3000;
+    inMemCanvas.height = 3000;
+    inMemCtx = inMemCanvas.getContext('2d');
+    inMemCtx.putImageData(image, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.setTransform(1, -1 * top, -1 * left, 1, 0, 0);
+    return ctx.drawImage(inMemCanvas, 0, 0);
+  };
+
+  drawGrid = function(rows, cols, keystonePoints) {};
 
 }).call(this);

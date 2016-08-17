@@ -12,12 +12,11 @@ html
      input(type="text" name="cols" value="30")
      label Rows:
      input(type="text" name="rows" value="15")
-     button(type="button") Transform and Crop
-     button(type="button") Undo
+     button(type="button" id="transformNow") Transform and Crop
+     button(type="button" id="undo") Undo
 
     // drag and drop preview
     div(id="keystoneCanvasContainer")
-      canvas(id="myCanvas" width="0" height="0")
       div(id='keystones')
        div(id='keystone1')
         div(class='v')
@@ -31,6 +30,8 @@ html
        div(id='keystone4')
         div(class='v')
         div(class='h')
+      canvas(id="myCanvas" width="0" height="0")
+
 
     script(src='https://code.jquery.com/jquery-3.1.0.slim.min.js' integrity='sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=' crossorigin='anonymous')
     script(src='underscore-min.js')

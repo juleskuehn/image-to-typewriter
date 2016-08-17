@@ -13,12 +13,11 @@
       <input type="text" name="cols" value="30">
       <label>Rows:</label>
       <input type="text" name="rows" value="15">
-      <button type="button">Transform and Crop</button>
-      <button type="button">Undo</button>
+      <button type="button" id="transformNow">Transform and Crop</button>
+      <button type="button" id="undo">Undo</button>
     </div>
     <!-- drag and drop preview-->
     <div id="keystoneCanvasContainer">
-      <canvas id="myCanvas" width="0" height="0"></canvas>
       <div id="keystones">
         <div id="keystone1">
           <div class="v"></div>
@@ -37,6 +36,7 @@
           <div class="h"></div>
         </div>
       </div>
+      <canvas id="myCanvas" width="0" height="0"></canvas>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
     <script src="underscore-min.js"></script>

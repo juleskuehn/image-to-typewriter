@@ -158,6 +158,43 @@ window.keystone = ->
 	keystonePoints = []
 	for i in [1..4]
 		ks = $('#keystone'+i)
-		keystonePoints.push [parseInt(ks.css('left'),10)+10,parseInt(ks.css('top'),10)+10]
+		keystonePoints.push
+			left: parseInt(ks.css('left'),10)+10
+			top: parseInt(ks.css('top'),10)+10
 	return keystonePoints
 
+$('#transformNow').click(->
+	keystonePoints = keystone() # requires all 4 keystones to be placed sanely TODO make robust
+	horizontalPairs = _.sortBy(keystonePoints,'top')
+	verticalPairs = _.sortBy(keystonePoints,'left')
+	topPairSlope = (horizontalPairs[1].top-horizontalPairs[0].top)/(horizontalPairs[1].left-horizontalPairs[0].left)
+	botPairSlope = (horizontalPairs[3].top-horizontalPairs[2].top)/(horizontalPairs[3].left-horizontalPairs[2].left)
+	console.log "topPairSlope="+topPairSlope # positive slope means y increases as x increases
+	console.log "botPairSlope="+botPairSlope # negative slope means y decreases as x increases
+	leftPairSlope = (verticalPairs[1].left-verticalPairs[0].left)/(verticalPairs[1].top-verticalPairs[0].top)
+	rightPairSlope = (verticalPairs[3].left-verticalPairs[2].left)/(verticalPairs[3].top-verticalPairs[2].top)
+	console.log "leftPairSlope="+leftPairSlope # positive slope means y increases as x increases
+	console.log "rightPairSlope="+rightPairSlope # negative slope means y decreases as x increases
+	skewCanvas((topPairSlope+botPairSlope)/2,(leftPairSlope+rightPairSlope)/2)
+)
+
+skewCanvas = (top,left) ->
+	c = undefined
+	ctx = undefined
+	image = undefined
+	c = document.getElementById('myCanvas')
+	ctx = c.getContext('2d')
+	image = ctx.getImageData(0, 0, c.width, c.height)
+	ctx.putImageData image, 0, 0
+	inMemCanvas = document.createElement('canvas')
+	inMemCanvas.width = 3000
+	inMemCanvas.height = 3000
+	inMemCtx = inMemCanvas.getContext('2d')
+	inMemCtx.putImageData image, 0, 0
+	ctx.setTransform 1, 0, 0, 1, 0, 0
+	ctx.clearRect 0, 0, c.width, c.height
+	ctx.setTransform 1, -1*top, -1*left, 1, 0, 0
+	ctx.drawImage inMemCanvas, 0, 0
+
+drawGrid = (rows,cols,keystonePoints) ->
+	
