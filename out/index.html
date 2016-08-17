@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>kword X</title>
+    <link href="style.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1 id="drop-target">kword X : drop image here</h1>
+    <div id="options">
+      <label>Cols:</label>
+      <input type="text" name="cols" value="30">
+      <label>Rows:</label>
+      <input type="text" name="rows" value="15">
+    </div>
+    <div id="keystones">
+      <div id="keystone1">
+        <div class="v"></div>
+        <div class="h"></div>
+      </div>
+      <div id="keystone2">
+        <div class="v"></div>
+        <div class="h"></div>
+      </div>
+      <div id="keystone3">
+        <div class="v"></div>
+        <div class="h"></div>
+      </div>
+      <div id="keystone4">
+        <div class="v"></div>
+        <div class="h"></div>
+      </div>
+    </div>
+    <!-- drag and drop preview-->
+    <canvas id="myCanvas"></canvas>
+    <!-- operational canvas - actual size - hidden-->
+    <canvas id="charSetHidden" class="hidden"></canvas>
+    <!-- drag scanned character set image file here - previews crop settings on charSetCanvas-->
+    <canvas id="charSetPreview"></canvas>
+    <!-- operational canvas - render size - hidden-->
+    <canvas id="charSetCroppedHidden" class="hidden"></canvas>
+    <!-- outputs character set preview with grid lines. can (de)select chars-->
+    <canvas id="charSetChars"></canvas>
+    <!-- outputs combo, reverse set preview with grid lines. can (de)select combos-->
+    <canvas id="charSetCombos"> </canvas>
+    <!-- operation canvas - actual size - hidden-->
+    <canvas id="inputImgHidden" class="hidden"></canvas>
+    <!-- drag input image file here - previews settings-->
+    <canvas id="inputImgPreview"> </canvas>
+    <!-- generated ASCII art preview with overlaps-->
+    <canvas id="outputImgPreview"> </canvas>
+    <!-- full resolution for printing, download etc.-->
+    <canvas id="outputImgHidden" class="hidden"></canvas>
+    <!-- controls for cropping and weighing character set-->
+    <div id="charControls"></div>
+    <!-- controls for processing input image-->
+    <div id="imageControls"> </div>
+    <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
+    <script src="underscore-min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="scripts.js"></script><script >(function(){
+	/* Did we just livereload? */
+var log = !!(localStorage && console && console.log && true);
+if ( log && localStorage.getItem('/docpad-livereload/reloaded') === 'yes' ) {
+	localStorage.removeItem('/docpad-livereload/reloaded');
+	console.log('LiveReload completed at', new Date())
+}
+
+/* Listen for the regenerated event and perform a reload of the page when the event occurs */
+var listen = function(){
+	var primus = new Primus('/docpad-livereload');
+	primus.on('data', function(data){
+		if ( data && data.message ) {
+			if ( data.message === 'generateBefore' ) {
+				if ( log ) {
+					console.log('LiveReload started at', new Date());
+				}
+				if ( typeof document.getElementsByTagName !== 'undefined' ) {
+	document.getElementsByTagName('html')[0].className += ' wait';
+}
+			}
+			else if ( data.message === 'generateAfter' ) {
+				if ( log ) {
+					localStorage.setItem('/docpad-livereload/reloaded', 'yes');
+				}
+				document.location.reload();
+			}
+		}
+	});
+};
+	/* Inject socket into our page */
+var inject = function(){
+	var t = document.createElement('script');
+	t.type = 'text/javascript';
+	t.async = 'async';
+	t.src = '/docpad-livereload/primus.js';
+	t.onload = listen;
+	var s = document.getElementsByTagName('script')[0];
+	s.parentNode.insertBefore(t, s);
+};
+	if ( typeof Primus !== 'undefined' ) {
+		listen();
+	} else {
+		inject();
+	}
+})();</script>
+  </body>
+</html>

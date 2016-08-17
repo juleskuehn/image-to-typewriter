@@ -1,0 +1,68 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    title='kword X'
+    link(href='style.css', rel='stylesheet')
+  body
+    h1(id='drop-target') kword X : drop image here
+    div(id='options')
+     label Cols:
+     input(type="text" name="cols" value="30")
+     label Rows:
+     input(type="text" name="rows" value="15")
+    div(id='keystones')
+     div(id='keystone1')
+      div(class='v')
+      div(class='h')
+     div(id='keystone2')
+      div(class='v')
+      div(class='h')
+     div(id='keystone3')
+      div(class='v')
+      div(class='h')
+     div(id='keystone4')
+      div(class='v')
+      div(class='h')
+
+    // drag and drop preview
+    canvas(id="myCanvas")
+
+    // operational canvas - actual size - hidden
+    canvas(id='charSetHidden' class='hidden')
+
+    // drag scanned character set image file here - previews crop settings on charSetCanvas
+    canvas(id='charSetPreview')
+
+    // operational canvas - render size - hidden
+    canvas(id='charSetCroppedHidden' class='hidden')
+
+    // outputs character set preview with grid lines. can (de)select chars
+    canvas(id='charSetChars')
+
+    // outputs combo, reverse set preview with grid lines. can (de)select combos
+    canvas(id='charSetCombos') 
+
+    // operation canvas - actual size - hidden
+    canvas(id='inputImgHidden' class='hidden')
+
+    // drag input image file here - previews settings
+    canvas(id='inputImgPreview') 
+
+    // generated ASCII art preview with overlaps
+    canvas(id='outputImgPreview') 
+
+    // full resolution for printing, download etc.
+    canvas(id='outputImgHidden' class='hidden')
+
+    // controls for cropping and weighing character set
+    div(id='charControls')
+
+    // controls for processing input image
+    div(id='imageControls') 
+
+    script(src='https://code.jquery.com/jquery-3.1.0.slim.min.js' integrity='sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=' crossorigin='anonymous')
+    script(src='underscore-min.js')
+    script(src='jquery-ui.min.js')
+    script(src='scripts.js')
+    != getBlock('scripts').toHTML()
