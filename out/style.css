@@ -1,10 +1,23 @@
-#options,
-#keystones {
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+#options {
   position: relative;
 }
-#options div,
-#keystones div {
+#keystoneCanvasContainer {
   position: relative;
+}
+#keystones {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#keystones div {
+  position: absolute;
   display: block;
   background: rgba(255,0,0,0.15);
   width: 19px;
@@ -12,7 +25,6 @@
   border: solid 1px #f00;
   border-radius: 10px;
 }
-#options div div.v,
 #keystones div div.v {
   width: 1px;
   height: 19px;
@@ -22,7 +34,6 @@
   background: #f00;
   border: none;
 }
-#options div div.h,
 #keystones div div.h {
   width: 19px;
   height: 1px;

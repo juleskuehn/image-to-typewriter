@@ -5,56 +5,39 @@
     <title>kword X</title>
     <link href="style.css" rel="stylesheet">
   </head>
-  <body>
-    <h1 id="drop-target">kword X : drop image here</h1>
+  <body id="drop-target">
+    <h1>kword X</h1>
+    <h3>glyph selector. drop image anywhere.</h3>
     <div id="options">
       <label>Cols:</label>
       <input type="text" name="cols" value="30">
       <label>Rows:</label>
       <input type="text" name="rows" value="15">
-    </div>
-    <div id="keystones">
-      <div id="keystone1">
-        <div class="v"></div>
-        <div class="h"></div>
-      </div>
-      <div id="keystone2">
-        <div class="v"></div>
-        <div class="h"></div>
-      </div>
-      <div id="keystone3">
-        <div class="v"></div>
-        <div class="h"></div>
-      </div>
-      <div id="keystone4">
-        <div class="v"></div>
-        <div class="h"></div>
-      </div>
+      <button type="button">Transform and Crop</button>
+      <button type="button">Undo</button>
     </div>
     <!-- drag and drop preview-->
-    <canvas id="myCanvas"></canvas>
-    <!-- operational canvas - actual size - hidden-->
-    <canvas id="charSetHidden" class="hidden"></canvas>
-    <!-- drag scanned character set image file here - previews crop settings on charSetCanvas-->
-    <canvas id="charSetPreview"></canvas>
-    <!-- operational canvas - render size - hidden-->
-    <canvas id="charSetCroppedHidden" class="hidden"></canvas>
-    <!-- outputs character set preview with grid lines. can (de)select chars-->
-    <canvas id="charSetChars"></canvas>
-    <!-- outputs combo, reverse set preview with grid lines. can (de)select combos-->
-    <canvas id="charSetCombos"> </canvas>
-    <!-- operation canvas - actual size - hidden-->
-    <canvas id="inputImgHidden" class="hidden"></canvas>
-    <!-- drag input image file here - previews settings-->
-    <canvas id="inputImgPreview"> </canvas>
-    <!-- generated ASCII art preview with overlaps-->
-    <canvas id="outputImgPreview"> </canvas>
-    <!-- full resolution for printing, download etc.-->
-    <canvas id="outputImgHidden" class="hidden"></canvas>
-    <!-- controls for cropping and weighing character set-->
-    <div id="charControls"></div>
-    <!-- controls for processing input image-->
-    <div id="imageControls"> </div>
+    <div id="keystoneCanvasContainer">
+      <canvas id="myCanvas" width="0" height="0"></canvas>
+      <div id="keystones">
+        <div id="keystone1">
+          <div class="v"></div>
+          <div class="h"></div>
+        </div>
+        <div id="keystone2">
+          <div class="v"></div>
+          <div class="h"></div>
+        </div>
+        <div id="keystone3">
+          <div class="v"></div>
+          <div class="h"></div>
+        </div>
+        <div id="keystone4">
+          <div class="v"></div>
+          <div class="h"></div>
+        </div>
+      </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
     <script src="underscore-min.js"></script>
     <script src="jquery-ui.min.js"></script>

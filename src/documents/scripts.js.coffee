@@ -153,3 +153,11 @@ $("#keystone1").draggable()
 $("#keystone2").draggable()
 $("#keystone3").draggable()
 $("#keystone4").draggable()
+
+window.keystone = ->
+	keystonePoints = []
+	for i in [1..4]
+		ks = $('#keystone'+i)
+		keystonePoints.push [parseInt(ks.css('left'),10)+10,parseInt(ks.css('top'),10)+10]
+	return keystonePoints
+

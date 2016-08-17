@@ -105,27 +105,27 @@
       return chars;
     },
     generateCombos: function(chars, layers) {
-      var a, b, c, combo, combos, emptyCombo, i, j, n, numCombos, ref, ref1;
+      var a, b, c, combo, combos, emptyCombo, j, k, n, numCombos, ref, ref1;
       numCombos = Math.pow(chars.length, layers.length);
       emptyCombo = (function() {
-        var i, ref, results;
+        var j, ref, results;
         results = [];
-        for (n = i = 0, ref = layers.length; 0 <= ref ? i < ref : i > ref; n = 0 <= ref ? ++i : --i) {
+        for (n = j = 0, ref = layers.length; 0 <= ref ? j < ref : j > ref; n = 0 <= ref ? ++j : --j) {
           results.push([]);
         }
         return results;
       })();
       combos = (function() {
-        var i, ref, results;
+        var j, ref, results;
         results = [];
-        for (n = i = 0, ref = numCombos; 0 <= ref ? i < ref : i > ref; n = 0 <= ref ? ++i : --i) {
+        for (n = j = 0, ref = numCombos; 0 <= ref ? j < ref : j > ref; n = 0 <= ref ? ++j : --j) {
           results.push(emptyCombo);
         }
         return results;
       })();
-      for (a = i = 0, ref = numCombos; 0 <= ref ? i < ref : i > ref; a = 0 <= ref ? ++i : --i) {
+      for (a = j = 0, ref = numCombos; 0 <= ref ? j < ref : j > ref; a = 0 <= ref ? ++j : --j) {
         combo = combos[a];
-        for (b = j = 0, ref1 = layers.length; 0 <= ref1 ? j < ref1 : j > ref1; b = 0 <= ref1 ? ++j : --j) {
+        for (b = k = 0, ref1 = layers.length; 0 <= ref1 ? k < ref1 : k > ref1; b = 0 <= ref1 ? ++k : --k) {
           c = layers.length - b - 1;
           combo[b] = chars[Math.floor(a / Math.pow(chars.length, c)) % chars.length];
         }
@@ -187,5 +187,15 @@
   $("#keystone3").draggable();
 
   $("#keystone4").draggable();
+
+  window.keystone = function() {
+    var i, j, keystonePoints, ks;
+    keystonePoints = [];
+    for (i = j = 1; j <= 4; i = ++j) {
+      ks = $('#keystone' + i);
+      keystonePoints.push([parseInt(ks.css('left'), 10) + 10, parseInt(ks.css('top'), 10) + 10]);
+    }
+    return keystonePoints;
+  };
 
 }).call(this);
