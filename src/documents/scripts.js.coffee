@@ -74,21 +74,66 @@ charSetFn = # functions for processing
 		ctx.transform 1, 0, 0, 1, 0, 0
 		ctx.drawImage(image, 0, 0, c.width, c.height)
 		return img
-	chopImg: (img,rows,cols,start,end) ->
+	chopImg: (img,rows,cols,start,end,offsetX,offsetY) ->
+		# get canvas
+		c = document.getElementById("myCanvas")
+		ctx = c.getContext("2d")
+		canvasWidth = $('#myCanvas').width()
+		canvasHeight = $('#myCanvas').height()
 		# takes keystoned img and chopping details, returns array of character objects
 		chars = []
 		# loop through section
 		currentRow = start[1]
-		while currentRow <= end[1]
+		console.log 'initial row' + currentRow
+		console.log 'end row' + end[1]
+		# calculate start
+		colStart = (canvasWidth / cols ) * (start[0]) + (canvasWidth / cols ) * (offsetX)
+		# calculate end
+		colEnd = (canvasWidth / cols ) * (end[0]) + (canvasWidth / cols ) * (offsetX) + (canvasWidth / cols )
+		while (currentRow / 1) <= ( end[1] / 1) + 1
+			console.log 'looping' + currentRow
+			# calculate starting position
+			rowStart = (canvasHeight / rows ) * (currentRow)
+			#apply offset
+			rowStart += (canvasHeight / rows ) * (offsetY)
+			# draw horizontal lines
+			ctx.beginPath();
+			ctx.moveTo(colStart,rowStart);
+			ctx.lineTo(colEnd,rowStart);
+			ctx.strokeStyle = "rgba(255,0,0,0.75)"
+			ctx.stroke();
 			currentCol = start[0]
 			while currentCol <= end[0]
 				# perform cropping action and create character object
 				char = {}
 				char.id = [currentCol,currentRow]
 				char.img = [] # fill with cropped section of keystoned image
-				chars.append char
+				chars.push char
 				currentCol++
 			currentRow++
+		# draw vertical lines
+		currentCol = start[0]
+		# calculate starting position
+		rowStart = (canvasHeight / rows ) * (start[1]) + (canvasHeight / rows ) * (offsetY)
+		# calculate end
+		rowEnd = (canvasHeight / rows ) * (end[1]) + (canvasHeight / rows ) * (offsetY) + (canvasHeight / rows )
+
+		excludeStart = [colStart,rowStart]
+		excludeEnd = [colEnd,rowEnd]
+		# grey out everything else
+		greyOut(excludeStart,excludeEnd,c)
+		while (currentCol / 1) <= ( end[0] / 1) + 1
+			# calculate vertical position
+			colStart = (canvasWidth / cols ) * (currentCol)
+			#apply offset
+			colStart += (canvasWidth / cols ) * (offsetX)
+			# draw lines	
+			ctx.beginPath();
+			ctx.moveTo(colStart,rowStart);
+			ctx.lineTo(colStart,rowEnd);
+			ctx.strokeStyle = "rgba(255,0,0,0.75)"
+			ctx.stroke();
+			currentCol++
 		return chars
 	generateCombos: (chars,layers) ->
 		numCombos = chars.length**layers.length
@@ -102,6 +147,14 @@ charSetFn = # functions for processing
 				combo[b]=chars[Math.floor(a/chars.length**c)%chars.length]
 			combos.append combo
 		return combos
+
+greyOut = (excludeStart,excludeEnd,c) ->
+	ctx = c.getContext('2d')
+	ctx.fillStyle = "rgba(0,0,0,0.75"
+	ctx.fillRect(0, 0, c.width, excludeStart[1])
+	ctx.fillRect(0, excludeStart[1], excludeStart[0],c.height)
+	ctx.fillRect(excludeStart[0], excludeEnd[1], excludeEnd[0]-excludeStart[0], c.height)
+	ctx.fillRect(excludeEnd[0], excludeStart[1], c.width, c.height)
 
 MAX_HEIGHT = 4000
 
@@ -178,6 +231,13 @@ $('#transformNow').click(->
 	skewCanvas((topPairSlope+botPairSlope)/2,(leftPairSlope+rightPairSlope)/2)
 )
 
+$('#chopCharset').click(->
+	formValues = {}
+	for formField in ['rows','cols','rowStart','rowEnd','colStart','colEnd','offsetX','offsetY']
+		formValues[formField] = document.getElementById(formField).value
+	charSetFn.chopImg({},formValues.rows,formValues.cols,[formValues.colStart,formValues.rowStart],[formValues.colEnd,formValues.rowEnd],formValues.offsetX,formValues.offsetY)
+)
+
 skewCanvas = (top,left) ->
 	c = undefined
 	ctx = undefined
@@ -197,4 +257,5 @@ skewCanvas = (top,left) ->
 	ctx.drawImage inMemCanvas, 0, 0
 
 drawGrid = (rows,cols,keystonePoints) ->
-	
+	return false
+

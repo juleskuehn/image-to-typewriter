@@ -6,42 +6,33 @@
     <link href="style.css" rel="stylesheet">
   </head>
   <body id="drop-target">
-    <h1>kword X</h1>
     <h3>glyph selector. drop image anywhere.</h3>
     <div id="options">
       <label>Cols:</label>
-      <input type="text" name="cols" value="30">
+      <input type="text" name="cols" value="59" id="cols">
       <label>Rows:</label>
-      <input type="text" name="rows" value="15">
+      <input type="text" name="rows" value="20" id="rows">
       <button type="button" id="transformNow">Transform and Crop</button>
-      <button type="button" id="undo">Undo</button>
+      <button type="button" id="chopCharset">Chop Character Set</button>
+      <label>Grid Offset X:</label>
+      <input type="text" name="cols" value="0.5" id="offsetX">
+      <label>Grid Offset Y:</label>
+      <input type="text" name="rows" value="0.5" id="offsetY">
+      <label>Charset Start Col:</label>
+      <input type="text" name="cols" value="0" id="colStart">
+      <label>Charset End Col:</label>
+      <input type="text" name="rows" value="24" id="colEnd">
+      <label>Charset Start Row:</label>
+      <input type="text" name="cols" value="5" id="rowStart">
+      <label>Charset End Row:</label>
+      <input type="text" name="rows" value="8" id="rowEnd">
     </div>
-    <!-- drag and drop preview-->
-    <div id="keystoneCanvasContainer">
-      <div id="keystones">
-        <div id="keystone1">
-          <div class="v"></div>
-          <div class="h"></div>
-        </div>
-        <div id="keystone2">
-          <div class="v"></div>
-          <div class="h"></div>
-        </div>
-        <div id="keystone3">
-          <div class="v"></div>
-          <div class="h"></div>
-        </div>
-        <div id="keystone4">
-          <div class="v"></div>
-          <div class="h"></div>
-        </div>
-      </div>
-      <canvas id="myCanvas" width="0" height="0"></canvas>
-    </div>
+    <canvas id="charsetPreview" width="0" height="0"></canvas>
+    <canvas id="charsetOverlay" width="100" height="100"></canvas>
     <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
     <script src="underscore-min.js"></script>
     <script src="jquery-ui.min.js"></script>
-    <script src="scripts.js"></script><script >(function(){
+    <script src="scriptRewrite.js"></script><script >(function(){
 	/* Did we just livereload? */
 var log = !!(localStorage && console && console.log && true);
 if ( log && localStorage.getItem('/docpad-livereload/reloaded') === 'yes' ) {

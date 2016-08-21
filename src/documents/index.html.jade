@@ -5,36 +5,33 @@ html
     title='kword X'
     link(href='style.css', rel='stylesheet')
   body(id='drop-target')
-    h1 kword X
     h3 glyph selector. drop image anywhere.
     div(id='options')
      label Cols:
-     input(type="text" name="cols" value="30")
+     input(type="text" name="cols" value="59" id="cols")
      label Rows:
-     input(type="text" name="rows" value="15")
+     input(type="text" name="rows" value="20" id="rows")
      button(type="button" id="transformNow") Transform and Crop
-     button(type="button" id="undo") Undo
+     button(type="button" id="chopCharset") Chop Character Set
+     label Grid Offset X:
+     input(type="text" name="cols" value="0.5" id="offsetX")
+     label Grid Offset Y:
+     input(type="text" name="rows" value="0.5" id="offsetY")
+     label Charset Start Col:
+     input(type="text" name="cols" value="0" id="colStart")
+     label Charset End Col:
+     input(type="text" name="rows" value="24" id="colEnd")
+     label Charset Start Row:
+     input(type="text" name="cols" value="5" id="rowStart")
+     label Charset End Row:
+     input(type="text" name="rows" value="8" id="rowEnd")
 
-    // drag and drop preview
-    div(id="keystoneCanvasContainer")
-      div(id='keystones')
-       div(id='keystone1')
-        div(class='v')
-        div(class='h')
-       div(id='keystone2')
-        div(class='v')
-        div(class='h')
-       div(id='keystone3')
-        div(class='v')
-        div(class='h')
-       div(id='keystone4')
-        div(class='v')
-        div(class='h')
-      canvas(id="myCanvas" width="0" height="0")
+    canvas(id="charsetPreview" width="0" height="0")
+    canvas(id="charsetOverlay" width="100" height="100")
 
 
     script(src='https://code.jquery.com/jquery-3.1.0.slim.min.js' integrity='sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=' crossorigin='anonymous')
     script(src='underscore-min.js')
     script(src='jquery-ui.min.js')
-    script(src='scripts.js')
+    script(src='scriptRewrite.js')
     != getBlock('scripts').toHTML()

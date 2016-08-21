@@ -1,5 +1,5 @@
 (function() {
-  var MAX_HEIGHT, char, charCombo, charSet, charSetFn, charSets, drawGrid, loadImage, overlap, render, reverseCharCombo, skewCanvas, target;
+  var MAX_HEIGHT, char, charCombo, charSet, charSetFn, charSets, drawGrid, greyOut, loadImage, overlap, render, reverseCharCombo, skewCanvas, target;
 
   charSets = [];
 
@@ -87,20 +87,52 @@
       ctx.drawImage(image, 0, 0, c.width, c.height);
       return img;
     },
-    chopImg: function(img, rows, cols, start, end) {
-      var chars, currentCol, currentRow;
+    chopImg: function(img, rows, cols, start, end, offsetX, offsetY) {
+      var c, canvasHeight, canvasWidth, chars, colEnd, colStart, ctx, currentCol, currentRow, excludeEnd, excludeStart, rowEnd, rowStart;
+      c = document.getElementById("myCanvas");
+      ctx = c.getContext("2d");
+      canvasWidth = $('#myCanvas').width();
+      canvasHeight = $('#myCanvas').height();
       chars = [];
       currentRow = start[1];
-      while (currentRow <= end[1]) {
+      console.log('initial row' + currentRow);
+      console.log('end row' + end[1]);
+      colStart = (canvasWidth / cols) * start[0] + (canvasWidth / cols) * offsetX;
+      colEnd = (canvasWidth / cols) * end[0] + (canvasWidth / cols) * offsetX + (canvasWidth / cols);
+      while ((currentRow / 1) <= (end[1] / 1) + 1) {
+        console.log('looping' + currentRow);
+        rowStart = (canvasHeight / rows) * currentRow;
+        rowStart += (canvasHeight / rows) * offsetY;
+        ctx.beginPath();
+        ctx.moveTo(colStart, rowStart);
+        ctx.lineTo(colEnd, rowStart);
+        ctx.strokeStyle = "rgba(255,0,0,0.75)";
+        ctx.stroke();
         currentCol = start[0];
         while (currentCol <= end[0]) {
           char = {};
           char.id = [currentCol, currentRow];
           char.img = [];
-          chars.append(char);
+          chars.push(char);
           currentCol++;
         }
         currentRow++;
+      }
+      currentCol = start[0];
+      rowStart = (canvasHeight / rows) * start[1] + (canvasHeight / rows) * offsetY;
+      rowEnd = (canvasHeight / rows) * end[1] + (canvasHeight / rows) * offsetY + (canvasHeight / rows);
+      excludeStart = [colStart, rowStart];
+      excludeEnd = [colEnd, rowEnd];
+      greyOut(excludeStart, excludeEnd, c);
+      while ((currentCol / 1) <= (end[0] / 1) + 1) {
+        colStart = (canvasWidth / cols) * currentCol;
+        colStart += (canvasWidth / cols) * offsetX;
+        ctx.beginPath();
+        ctx.moveTo(colStart, rowStart);
+        ctx.lineTo(colStart, rowEnd);
+        ctx.strokeStyle = "rgba(255,0,0,0.75)";
+        ctx.stroke();
+        currentCol++;
       }
       return chars;
     },
@@ -133,6 +165,16 @@
       }
       return combos;
     }
+  };
+
+  greyOut = function(excludeStart, excludeEnd, c) {
+    var ctx;
+    ctx = c.getContext('2d');
+    ctx.fillStyle = "rgba(0,0,0,0.75";
+    ctx.fillRect(0, 0, c.width, excludeStart[1]);
+    ctx.fillRect(0, excludeStart[1], excludeStart[0], c.height);
+    ctx.fillRect(excludeStart[0], excludeEnd[1], excludeEnd[0] - excludeStart[0], c.height);
+    return ctx.fillRect(excludeEnd[0], excludeStart[1], c.width, c.height);
   };
 
   MAX_HEIGHT = 4000;
@@ -217,6 +259,17 @@
     return skewCanvas((topPairSlope + botPairSlope) / 2, (leftPairSlope + rightPairSlope) / 2);
   });
 
+  $('#chopCharset').click(function() {
+    var formField, formValues, j, len, ref;
+    formValues = {};
+    ref = ['rows', 'cols', 'rowStart', 'rowEnd', 'colStart', 'colEnd', 'offsetX', 'offsetY'];
+    for (j = 0, len = ref.length; j < len; j++) {
+      formField = ref[j];
+      formValues[formField] = document.getElementById(formField).value;
+    }
+    return charSetFn.chopImg({}, formValues.rows, formValues.cols, [formValues.colStart, formValues.rowStart], [formValues.colEnd, formValues.rowEnd], formValues.offsetX, formValues.offsetY);
+  });
+
   skewCanvas = function(top, left) {
     var c, ctx, image, inMemCanvas, inMemCtx;
     c = void 0;
@@ -237,6 +290,8 @@
     return ctx.drawImage(inMemCanvas, 0, 0);
   };
 
-  drawGrid = function(rows, cols, keystonePoints) {};
+  drawGrid = function(rows, cols, keystonePoints) {
+    return false;
+  };
 
 }).call(this);
