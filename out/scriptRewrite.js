@@ -168,7 +168,9 @@
       ref = charset.chars;
       for (k = 0, len = ref.length; k < len; k++) {
         char = ref[k];
-        charIndexes.push(char.index);
+        if (char.selected) {
+          charIndexes.push(char.index);
+        }
       }
       cmb = Combinatorics.baseN(charIndexes, charset.overlaps.length);
       cmbArray = cmb.toArray();
@@ -256,7 +258,10 @@
     charset.getSettings();
     charset.chopPreview();
     charset.chopCharset();
-    charset.drawCharSelect();
+    return charset.drawCharSelect();
+  });
+
+  $('#genCombos').click(function() {
     return charset.genCombos();
   });
 

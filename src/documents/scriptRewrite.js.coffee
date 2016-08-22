@@ -169,7 +169,8 @@ charset =
 		# iterate through characters generating array of indexes only
 		charIndexes = []
 		for char in charset.chars
-			charIndexes.push char.index
+			if char.selected
+				charIndexes.push char.index
 
 		# generate combinations of charIndexes
 		cmb = Combinatorics.baseN(charIndexes,charset.overlaps.length)
@@ -268,8 +269,9 @@ $('#chopCharset').click ->
 	charset.chopPreview()
 	charset.chopCharset()
 	charset.drawCharSelect()
-	charset.genCombos()
 
+$('#genCombos').click ->
+	charset.genCombos()
 
 target = document.getElementById('drop-target')
 target.addEventListener 'dragover', ((e) ->
