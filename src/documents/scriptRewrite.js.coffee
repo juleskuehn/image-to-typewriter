@@ -83,6 +83,7 @@ charset =
 				startChar = [start[0]+charWidth*col,start[1]+charHeight*row]
 				imgData = ctx.getImageData Math.round(startChar[0]),Math.round(startChar[1]),Math.round(charWidth),Math.round(charHeight)
 				weight = 0 # quick weighing
+				# generate weights
 				for p in [0...imgData.data.length] by 4
 					weight += imgData.data[p]
 					weight += imgData.data[p+1]
@@ -95,6 +96,7 @@ charset =
 				charset.chars.push char
 				i++
 
+		# normalize weights
 		charset.chars = _(charset.chars).sortBy('weight')
 		maxWeight = _.max(charset.chars,(w) -> w.weight).weight
 		minWeight = _.min(charset.chars,(w) -> w.weight).weight
