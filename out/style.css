@@ -13,6 +13,10 @@ body {
   left: 0;
   top: 100;
 }
+#viewSelect {
+  position: absolute;
+  left: 31%;
+}
 #keystones {
   position: relative;
   width: 0;
