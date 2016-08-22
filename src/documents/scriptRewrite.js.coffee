@@ -15,7 +15,7 @@ charset =
 
 	combos: [] # array of character combo objects
 
-	overlaps: [ [0,0],[0,0.5] ] # array of offset values for each overlap (TESTING: preset to 2 layers)
+	overlaps: [ [0,0],[0,0.5],[0.5,0] ] # array of offset values for each overlap (TESTING: preset to 2 layers)
 
 	getSettings: ->
 		formValues = {}
@@ -189,15 +189,16 @@ charset =
 		# create combo objects and weigh
 		charset.combos = []
 		for i in [0...cmbArray.length]
+
 			combo =
 				index: i
 				chars: cmbArray[i]
 				weight: 0
 
 			# generate composite image
-			newCanvasHtml = '<canvas id="combo'+i+'" width="'+charset.chars[0].imgData.width+'" height="'+charset.chars[0].imgData.height/2+'"></canvas>'
-			$('#comboPreview').append newCanvasHtml
-			cvs = document.getElementById('combo'+i)
+			cvs = document.createElement('canvas')
+			cvs.width = charset.chars[0].imgData.width/2
+			cvs.height = charset.chars[0].imgData.height/2
 			ctx = cvs.getContext("2d")
 			ctx.globalCompositeOperation = 'multiply';
 			for j in [0...charset.overlaps.length]
@@ -206,10 +207,39 @@ charset =
 				img.src = document.getElementById('char'+charIndex).toDataURL("image/png")
 				offsetX = cvs.width * charset.overlaps[j][0]
 				offsetY = cvs.height * charset.overlaps[j][1]
-				ctx.drawImage(img,offsetX,-2*offsetY,cvs.width,cvs.height*2)
+				ctx.drawImage(img,-2*offsetX,-2*offsetY,cvs.width*2,cvs.height*2)
+			combo.imgData = ctx.getImageData 0,0,cvs.width,cvs.height
 
 			charset.combos.push combo
-		console.log(charset.combos)
+
+		for combo in charset.combos
+			imgData = combo.imgData
+			weight = 0 # quick weighing
+			# generate weights
+			for p in [0...imgData.data.length] by 4
+				weight += imgData.data[p]
+				weight += imgData.data[p+1]
+				weight += imgData.data[p+2]
+			combo.weight = weight
+
+		# normalize weights
+		charset.combos = _(charset.combos).sortBy('weight')
+		maxWeight = _.max(charset.combos,(w) -> w.weight).weight
+		minWeight = _.min(charset.combos,(w) -> w.weight).weight
+		for combo in charset.combos
+			combo.brightness = 255 - (255*(combo.weight-minWeight))/(maxWeight-minWeight)
+
+		drawCombos = ->
+			$('#comboPreview').empty()
+			for combo in charset.combos
+				# create canvas
+				newCanvasHtml = '<canvas id="combo'+combo.index+'" width="'+combo.imgData.width+'" height="'+combo.imgData.height+'"></canvas>'
+				$('#comboPreview').append newCanvasHtml
+				cvs = document.getElementById('combo'+combo.index)
+				ctx = cvs.getContext("2d")
+				ctx.putImageData(combo.imgData,0,0)
+
+		drawCombos()
 
 	dropImage: (source) ->
 		MAX_HEIGHT = $(window).height() - 100	

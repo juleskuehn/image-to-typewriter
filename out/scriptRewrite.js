@@ -14,7 +14,7 @@
     },
     chars: [],
     combos: [],
-    overlaps: [[0, 0], [0, 0.5]],
+    overlaps: [[0, 0], [0, 0.5], [0.5, 0]],
     getSettings: function() {
       var formField, formValues, k, len, ref;
       formValues = {};
@@ -171,7 +171,7 @@
       return results;
     },
     genCombos: function() {
-      var char, charIndex, charIndexes, cmb, cmbArray, combo, ctx, cvs, i, img, j, k, l, len, m, newCanvasHtml, offsetX, offsetY, ref, ref1, ref2;
+      var char, charIndex, charIndexes, cmb, cmbArray, combo, ctx, cvs, drawCombos, i, img, imgData, j, k, l, len, len1, len2, m, maxWeight, minWeight, n, o, offsetX, offsetY, p, q, ref, ref1, ref2, ref3, ref4, ref5, weight;
       $('#comboPreview').empty();
       charset.chars = _(charset.chars).sortBy('index');
       charIndexes = [];
@@ -191,9 +191,9 @@
           chars: cmbArray[i],
           weight: 0
         };
-        newCanvasHtml = '<canvas id="combo' + i + '" width="' + charset.chars[0].imgData.width + '" height="' + charset.chars[0].imgData.height / 2 + '"></canvas>';
-        $('#comboPreview').append(newCanvasHtml);
-        cvs = document.getElementById('combo' + i);
+        cvs = document.createElement('canvas');
+        cvs.width = charset.chars[0].imgData.width / 2;
+        cvs.height = charset.chars[0].imgData.height / 2;
         ctx = cvs.getContext("2d");
         ctx.globalCompositeOperation = 'multiply';
         for (j = m = 0, ref2 = charset.overlaps.length; 0 <= ref2 ? m < ref2 : m > ref2; j = 0 <= ref2 ? ++m : --m) {
@@ -202,11 +202,51 @@
           img.src = document.getElementById('char' + charIndex).toDataURL("image/png");
           offsetX = cvs.width * charset.overlaps[j][0];
           offsetY = cvs.height * charset.overlaps[j][1];
-          ctx.drawImage(img, offsetX, -2 * offsetY, cvs.width, cvs.height * 2);
+          ctx.drawImage(img, -2 * offsetX, -2 * offsetY, cvs.width * 2, cvs.height * 2);
         }
+        combo.imgData = ctx.getImageData(0, 0, cvs.width, cvs.height);
         charset.combos.push(combo);
       }
-      return console.log(charset.combos);
+      ref3 = charset.combos;
+      for (n = 0, len1 = ref3.length; n < len1; n++) {
+        combo = ref3[n];
+        imgData = combo.imgData;
+        weight = 0;
+        for (p = o = 0, ref4 = imgData.data.length; o < ref4; p = o += 4) {
+          weight += imgData.data[p];
+          weight += imgData.data[p + 1];
+          weight += imgData.data[p + 2];
+        }
+        combo.weight = weight;
+      }
+      charset.combos = _(charset.combos).sortBy('weight');
+      maxWeight = _.max(charset.combos, function(w) {
+        return w.weight;
+      }).weight;
+      minWeight = _.min(charset.combos, function(w) {
+        return w.weight;
+      }).weight;
+      ref5 = charset.combos;
+      for (q = 0, len2 = ref5.length; q < len2; q++) {
+        combo = ref5[q];
+        combo.brightness = 255 - (255 * (combo.weight - minWeight)) / (maxWeight - minWeight);
+      }
+      drawCombos = function() {
+        var len3, newCanvasHtml, r, ref6, results;
+        $('#comboPreview').empty();
+        ref6 = charset.combos;
+        results = [];
+        for (r = 0, len3 = ref6.length; r < len3; r++) {
+          combo = ref6[r];
+          newCanvasHtml = '<canvas id="combo' + combo.index + '" width="' + combo.imgData.width + '" height="' + combo.imgData.height + '"></canvas>';
+          $('#comboPreview').append(newCanvasHtml);
+          cvs = document.getElementById('combo' + combo.index);
+          ctx = cvs.getContext("2d");
+          results.push(ctx.putImageData(combo.imgData, 0, 0));
+        }
+        return results;
+      };
+      return drawCombos();
     },
     dropImage: function(source) {
       var MAX_HEIGHT, loadImage, render, renderWorking;

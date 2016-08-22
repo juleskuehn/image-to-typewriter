@@ -13,20 +13,27 @@ body {
   left: 0;
   top: 100;
 }
-#viewSelect,
 #comboPreview {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#comboPreview canvas {
+  margin: 0;
+  padding: 0;
+  float: left;
+}
+#viewSelect {
   position: absolute;
   left: 25%;
 }
-#viewSelect canvas,
-#comboPreview canvas {
+#viewSelect canvas {
   float: left;
   padding: 0;
   margin: 0 1px 1px 0;
   border: solid 1px #f00;
 }
-#viewSelect canvas.space,
-#comboPreview canvas.space {
+#viewSelect canvas.space {
   border-color: #00f;
 }
 #keystones {
