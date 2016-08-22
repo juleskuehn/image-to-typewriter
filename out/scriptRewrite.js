@@ -69,6 +69,7 @@
     },
     chopCharset: function() {
       var char, charHeight, charWidth, col, ctx, i, imgData, j, k, l, len, m, maxWeight, minWeight, numCols, numRows, offsetX, offsetY, p, ref, ref1, ref2, ref3, results, row, start, startChar, weight;
+      charset.chars = [];
       ctx = charset.workingCanvas.getContext('2d');
       charWidth = charset.workingCanvas.width / charset.settings.gridSize[0];
       charHeight = charset.workingCanvas.height / charset.settings.gridSize[1];

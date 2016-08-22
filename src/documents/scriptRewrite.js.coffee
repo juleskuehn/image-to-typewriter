@@ -67,6 +67,7 @@ charset =
 		drawGrid()
 
 	chopCharset: ->
+		charset.chars = []
 		ctx = charset.workingCanvas.getContext('2d')
 		charWidth = charset.workingCanvas.width / charset.settings.gridSize[0]
 		charHeight = charset.workingCanvas.height / charset.settings.gridSize[1]
