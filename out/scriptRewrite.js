@@ -13,12 +13,14 @@
       end: []
     },
     chars: [],
+    combos: [],
+    overlaps: [[0, 0], [0, 0.5], [0.5, 0]],
     getSettings: function() {
-      var formField, formValues, j, len, ref;
+      var formField, formValues, k, len, ref;
       formValues = {};
       ref = ['rows', 'cols', 'rowStart', 'rowEnd', 'colStart', 'colEnd', 'offsetX', 'offsetY'];
-      for (j = 0, len = ref.length; j < len; j++) {
-        formField = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        formField = ref[k];
         formValues[formField] = document.getElementById(formField).value;
       }
       charset.settings.gridSize = [(formValues.cols / 1) + 1, (formValues.rows / 1) + 1];
@@ -45,10 +47,10 @@
       };
       lightboxSelection();
       drawGrid = function() {
-        var col, j, k, numCols, numRows, ref, ref1, results, row;
+        var col, k, l, numCols, numRows, ref, ref1, results, row;
         numRows = charset.settings.end[1] - charset.settings.start[1];
         numCols = charset.settings.end[0] - charset.settings.start[0];
-        for (row = j = 0, ref = numRows + 1; 0 <= ref ? j <= ref : j >= ref; row = 0 <= ref ? ++j : --j) {
+        for (row = k = 0, ref = numRows + 1; 0 <= ref ? k <= ref : k >= ref; row = 0 <= ref ? ++k : --k) {
           ctx.beginPath();
           ctx.moveTo(start[0], start[1] + row * charHeight);
           ctx.lineTo(end[0] + offsetX, start[1] + row * charHeight);
@@ -56,7 +58,7 @@
           ctx.stroke();
         }
         results = [];
-        for (col = k = 0, ref1 = numCols + 1; 0 <= ref1 ? k <= ref1 : k >= ref1; col = 0 <= ref1 ? ++k : --k) {
+        for (col = l = 0, ref1 = numCols + 1; 0 <= ref1 ? l <= ref1 : l >= ref1; col = 0 <= ref1 ? ++l : --l) {
           ctx.beginPath();
           ctx.moveTo(start[0] + col * charWidth, start[1]);
           ctx.lineTo(start[0] + col * charWidth, end[1] + offsetY);
@@ -68,7 +70,7 @@
       return drawGrid();
     },
     chopCharset: function() {
-      var char, charHeight, charWidth, col, ctx, i, imgData, j, k, l, len, m, maxWeight, minWeight, numCols, numRows, offsetX, offsetY, p, ref, ref1, ref2, ref3, resizeCanvasToMultiplesOfCharSize, results, row, start, startChar, weight;
+      var char, charHeight, charWidth, col, ctx, i, imgData, k, l, len, m, maxWeight, minWeight, n, numCols, numRows, offsetX, offsetY, p, ref, ref1, ref2, ref3, resizeCanvasToMultiplesOfCharSize, results, row, start, startChar, weight;
       resizeCanvasToMultiplesOfCharSize = function() {
         var newHeight, newWidth, tempCanvas, wCanvas;
         wCanvas = charset.workingCanvas;
@@ -93,12 +95,12 @@
       numRows = charset.settings.end[1] - charset.settings.start[1];
       numCols = charset.settings.end[0] - charset.settings.start[0];
       i = 0;
-      for (row = j = 0, ref = numRows; 0 <= ref ? j <= ref : j >= ref; row = 0 <= ref ? ++j : --j) {
-        for (col = k = 0, ref1 = numCols; 0 <= ref1 ? k <= ref1 : k >= ref1; col = 0 <= ref1 ? ++k : --k) {
+      for (row = k = 0, ref = numRows; 0 <= ref ? k <= ref : k >= ref; row = 0 <= ref ? ++k : --k) {
+        for (col = l = 0, ref1 = numCols; 0 <= ref1 ? l <= ref1 : l >= ref1; col = 0 <= ref1 ? ++l : --l) {
           startChar = [start[0] + charWidth * col, start[1] + charHeight * row];
           imgData = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1]), Math.floor(charWidth), Math.floor(charHeight));
           weight = 0;
-          for (p = l = 0, ref2 = imgData.data.length; l < ref2; p = l += 4) {
+          for (p = m = 0, ref2 = imgData.data.length; m < ref2; p = m += 4) {
             weight += imgData.data[p];
             weight += imgData.data[p + 1];
             weight += imgData.data[p + 2];
@@ -122,19 +124,19 @@
       }).weight;
       ref3 = charset.chars;
       results = [];
-      for (m = 0, len = ref3.length; m < len; m++) {
-        char = ref3[m];
+      for (n = 0, len = ref3.length; n < len; n++) {
+        char = ref3[n];
         results.push(char.brightness = 255 - (255 * (char.weight - minWeight)) / (maxWeight - minWeight));
       }
       return results;
     },
     drawCharSelect: function() {
-      var char, ctx, cvs, j, len, makeClickHandler, newCanvasHtml, ref, results;
+      var char, ctx, cvs, k, len, makeClickHandler, newCanvasHtml, ref, results;
       $('#viewSelect').empty();
       ref = charset.chars;
       results = [];
-      for (j = 0, len = ref.length; j < len; j++) {
-        char = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        char = ref[k];
         newCanvasHtml = '<canvas id="char' + char.index + '" width="' + char.imgData.width + '" height="' + char.imgData.height + '"></canvas>';
         $('#viewSelect').append(newCanvasHtml);
         cvs = document.getElementById('char' + char.index);
@@ -158,6 +160,41 @@
         results.push(makeClickHandler(char));
       }
       return results;
+    },
+    genCombos: function() {
+      var char, charIndex, charIndexes, cmb, cmbArray, combo, ctx, cvs, i, img, j, k, l, len, m, newCanvasHtml, offsetX, offsetY, ref, ref1, ref2;
+      charset.chars = _(charset.chars).sortBy('index');
+      charIndexes = [];
+      ref = charset.chars;
+      for (k = 0, len = ref.length; k < len; k++) {
+        char = ref[k];
+        charIndexes.push(char.index);
+      }
+      cmb = Combinatorics.baseN(charIndexes, charset.overlaps.length);
+      cmbArray = cmb.toArray();
+      charset.combos = [];
+      for (i = l = 0, ref1 = cmbArray.length; 0 <= ref1 ? l < ref1 : l > ref1; i = 0 <= ref1 ? ++l : --l) {
+        combo = {
+          index: i,
+          chars: cmbArray[i],
+          weight: 0
+        };
+        newCanvasHtml = '<canvas id="combo' + i + '" width="' + charset.chars[0].imgData.width + '" height="' + charset.chars[0].imgData.height + '"></canvas>';
+        $('#viewSelect').append(newCanvasHtml);
+        cvs = document.getElementById('combo' + i);
+        ctx = cvs.getContext("2d");
+        ctx.globalCompositeOperation = 'multiply';
+        for (j = m = 0, ref2 = charset.overlaps.length; 0 <= ref2 ? m < ref2 : m > ref2; j = 0 <= ref2 ? ++m : --m) {
+          charIndex = combo.chars[j];
+          img = document.createElement("img");
+          img.src = document.getElementById('char' + charIndex).toDataURL("image/png");
+          offsetX = cvs.width * charset.overlaps[j][0];
+          offsetY = cvs.height * charset.overlaps[j][1];
+          ctx.drawImage(img, offsetX, offsetY, cvs.width, cvs.height);
+        }
+        charset.combos.push(combo);
+      }
+      return console.log(charset.combos);
     },
     dropImage: function(source) {
       var MAX_HEIGHT, loadImage, render, renderWorking;
@@ -219,7 +256,8 @@
     charset.getSettings();
     charset.chopPreview();
     charset.chopCharset();
-    return charset.drawCharSelect();
+    charset.drawCharSelect();
+    return charset.genCombos();
   });
 
   target = document.getElementById('drop-target');

@@ -6,24 +6,52 @@ html
     link(href='style.css', rel='stylesheet')
   body(id='drop-target')
     div(id='options')
-     label Cols:
-     input(type="text" name="cols" value="59" id="cols")
-     label Rows:
-     input(type="text" name="rows" value="20" id="rows")
-     button(type="button" id="transformNow") Transform and Crop
-     button(type="button" id="chopCharset") Chop Character Set
-     label Grid Offset X:
-     input(type="text" name="cols" value="0.5" id="offsetX")
-     label Grid Offset Y:
-     input(type="text" name="rows" value="0.5" id="offsetY")
-     label Charset Start Col:
-     input(type="text" name="cols" value="0" id="colStart")
-     label Charset End Col:
-     input(type="text" name="rows" value="24" id="colEnd")
-     label Charset Start Row:
-     input(type="text" name="cols" value="5" id="rowStart")
-     label Charset End Row:
-     input(type="text" name="rows" value="8" id="rowEnd")
+     div
+      label Cols:
+      input(type="text" value="59" id="cols")
+     div
+      label Rows:
+      input(type="text" value="20" id="rows")
+     div
+      label Grid Offset X:
+      input(type="text" value="0.5" id="offsetX")
+     div
+        label Grid Offset Y:
+        input(type="text" value="0.5" id="offsetY")
+     div
+      label Charset Start Col:
+      input(type="text" value="18" id="colStart")
+     div
+      label Charset End Col:
+      input(type="text" value="20" id="colEnd")
+     div
+      label Charset Start Row:
+      input(type="text" value="5" id="rowStart")
+     div
+      label Charset End Row:
+      input(type="text" value="8" id="rowEnd")
+     div
+      label Overlap 1 On
+      input(type="checkbox" id="overlap1")
+     div
+      label Overlap 1 +X:
+      input(type="text" value="0" id="o1offsetX")
+     div
+      label Overlap 1 +Y:
+      input(type="text" value="0.5" id="o1offsetY")
+     div
+      label Overlap 2 On
+      input(type="checkbox" id="overlap2")
+     div
+      label Overlap 2 +X:
+      input(type="text" value="0.5" id="o2offsetX")
+     div
+      label Overlap 2 +Y:
+      input(type="text" value="0" id="o2offsetY")
+     div
+      button(type="button" id="transformNow") Transform and Crop
+      button(type="button" id="chopCharset") Chop Character Set
+
 
     div(id='viewChop')
      canvas(id="charsetPreview" width="0" height="0")
@@ -37,6 +65,7 @@ html
 
     script(src='https://code.jquery.com/jquery-3.1.0.slim.min.js' integrity='sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=' crossorigin='anonymous')
     script(src='underscore-min.js')
+    script(src='combinatorics.js')
     script(src='jquery-ui.min.js')
     script(src='scriptRewrite.js')
     != getBlock('scripts').toHTML()

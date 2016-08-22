@@ -13,6 +13,10 @@ charset =
 
 	chars: [] # array of individual objects
 
+	combos: [] # array of character combo objects
+
+	overlaps: [ [0,0],[0,0.5],[0.5,0]] # array of offset values for each overlap (TESTING: preset to 2 layers)
+
 	getSettings: ->
 		formValues = {}
 
@@ -23,6 +27,11 @@ charset =
 		charset.settings.offset = [formValues.offsetX,formValues.offsetY]
 		charset.settings.start = [formValues.colStart,formValues.rowStart]
 		charset.settings.end = [formValues.colEnd,formValues.rowEnd]
+
+		#for i in [1..charset.overlaps.length]
+		#	offsetX = document.getElementById('o'+i+'offsetX').value
+		#	offsetY = document.getElementById('o'+i+'offsetY').value
+		#	charset.overlaps[i] = [offsetX,offsetY]
 
 	# TODO: skipping keystoning for now
 	chopPreview: -> # previews chop grid settings on an overlay canvas
@@ -152,6 +161,45 @@ charset =
 
 			makeClickHandler(char)
 
+	genCombos: ->
+
+		# sort charset.chars by indexes again
+		charset.chars = _(charset.chars).sortBy('index')
+
+		# iterate through characters generating array of indexes only
+		charIndexes = []
+		for char in charset.chars
+			charIndexes.push char.index
+
+		# generate combinations of charIndexes
+		cmb = Combinatorics.baseN(charIndexes,charset.overlaps.length)
+		cmbArray = cmb.toArray()
+
+		# create combo objects and weigh
+		charset.combos = []
+		for i in [0...cmbArray.length]
+			combo =
+				index: i
+				chars: cmbArray[i]
+				weight: 0
+
+			# generate composite image 
+			newCanvasHtml = '<canvas id="combo'+i+'" width="'+charset.chars[0].imgData.width+'" height="'+charset.chars[0].imgData.height+'"></canvas>'
+			$('#viewSelect').append newCanvasHtml
+			cvs = document.getElementById('combo'+i)
+			ctx = cvs.getContext("2d")
+			ctx.globalCompositeOperation = 'multiply';
+			for j in [0...charset.overlaps.length]
+				charIndex = combo.chars[j]
+				img = document.createElement("img");
+				img.src = document.getElementById('char'+charIndex).toDataURL("image/png")
+				offsetX = cvs.width * charset.overlaps[j][0]
+				offsetY = cvs.height * charset.overlaps[j][1]
+				ctx.drawImage(img,offsetX,offsetY,cvs.width,cvs.height)
+
+			charset.combos.push combo
+		console.log(charset.combos)
+
 	dropImage: (source) ->
 		MAX_HEIGHT = $(window).height() - 100	
 
@@ -220,6 +268,8 @@ $('#chopCharset').click ->
 	charset.chopPreview()
 	charset.chopCharset()
 	charset.drawCharSelect()
+	charset.genCombos()
+
 
 target = document.getElementById('drop-target')
 target.addEventListener 'dragover', ((e) ->

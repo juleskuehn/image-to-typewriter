@@ -7,24 +7,66 @@
   </head>
   <body id="drop-target">
     <div id="options">
-      <label>Cols:</label>
-      <input type="text" name="cols" value="59" id="cols">
-      <label>Rows:</label>
-      <input type="text" name="rows" value="20" id="rows">
-      <button type="button" id="transformNow">Transform and Crop</button>
-      <button type="button" id="chopCharset">Chop Character Set</button>
-      <label>Grid Offset X:</label>
-      <input type="text" name="cols" value="0.5" id="offsetX">
-      <label>Grid Offset Y:</label>
-      <input type="text" name="rows" value="0.5" id="offsetY">
-      <label>Charset Start Col:</label>
-      <input type="text" name="cols" value="0" id="colStart">
-      <label>Charset End Col:</label>
-      <input type="text" name="rows" value="24" id="colEnd">
-      <label>Charset Start Row:</label>
-      <input type="text" name="cols" value="5" id="rowStart">
-      <label>Charset End Row:</label>
-      <input type="text" name="rows" value="8" id="rowEnd">
+      <div>
+        <label>Cols:</label>
+        <input type="text" value="59" id="cols">
+      </div>
+      <div>
+        <label>Rows:</label>
+        <input type="text" value="20" id="rows">
+      </div>
+      <div>
+        <label>Grid Offset X:</label>
+        <input type="text" value="0.5" id="offsetX">
+      </div>
+      <div>
+        <label>Grid Offset Y:</label>
+        <input type="text" value="0.5" id="offsetY">
+      </div>
+      <div>
+        <label>Charset Start Col:</label>
+        <input type="text" value="18" id="colStart">
+      </div>
+      <div>
+        <label>Charset End Col:</label>
+        <input type="text" value="20" id="colEnd">
+      </div>
+      <div>
+        <label>Charset Start Row:</label>
+        <input type="text" value="5" id="rowStart">
+      </div>
+      <div>
+        <label>Charset End Row:</label>
+        <input type="text" value="8" id="rowEnd">
+      </div>
+      <div>
+        <label>Overlap 1 On</label>
+        <input type="checkbox" id="overlap1">
+      </div>
+      <div>
+        <label>Overlap 1 +X:</label>
+        <input type="text" value="0" id="o1offsetX">
+      </div>
+      <div>
+        <label>Overlap 1 +Y:</label>
+        <input type="text" value="0.5" id="o1offsetY">
+      </div>
+      <div>
+        <label>Overlap 2 On</label>
+        <input type="checkbox" id="overlap2">
+      </div>
+      <div>
+        <label>Overlap 2 +X:</label>
+        <input type="text" value="0.5" id="o2offsetX">
+      </div>
+      <div>
+        <label>Overlap 2 +Y:</label>
+        <input type="text" value="0" id="o2offsetY">
+      </div>
+      <div>
+        <button type="button" id="transformNow">Transform and Crop</button>
+        <button type="button" id="chopCharset">Chop Character Set</button>
+      </div>
     </div>
     <div id="viewChop">
       <canvas id="charsetPreview" width="0" height="0"></canvas>
@@ -37,6 +79,7 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
     <script src="underscore-min.js"></script>
+    <script src="combinatorics.js"></script>
     <script src="jquery-ui.min.js"></script>
     <script src="scriptRewrite.js"></script><script >(function(){
 	/* Did we just livereload? */
