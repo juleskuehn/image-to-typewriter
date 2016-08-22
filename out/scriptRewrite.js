@@ -14,7 +14,7 @@
     },
     chars: [],
     combos: [],
-    overlaps: [[0, 0], [0, 0.5], [0.5, 0]],
+    overlaps: [[0, 0], [0, 0.5]],
     getSettings: function() {
       var formField, formValues, k, len, ref;
       formValues = {};
@@ -109,6 +109,7 @@
             imgData: imgData,
             weight: weight,
             selected: true,
+            space: false,
             index: i
           };
           charset.chars.push(char);
@@ -143,19 +144,27 @@
         ctx = cvs.getContext("2d");
         ctx.putImageData(char.imgData, 0, 0);
         makeClickHandler = function(char) {
-          return $('#char' + char.index).click(function() {
+          return $('#char' + char.index).click((function(e) {
             cvs = document.getElementById('char' + char.index);
             ctx = cvs.getContext("2d");
-            char.selected = !char.selected;
-            ctx.clearRect(0, 0, char.imgData.width, char.imgData.height);
-            if (!char.selected) {
-              ctx.putImageData(char.imgData, 0, 0);
-              ctx.fillStyle = "rgba(0,0,0,0.5)";
-              return ctx.fillRect(0, 0, char.imgData.width, char.imgData.height);
+            if (e.ctrlKey) {
+              char.space = !char.space;
             } else {
-              return ctx.putImageData(char.imgData, 0, 0);
+              char.selected = !char.selected;
             }
-          });
+            ctx.clearRect(0, 0, char.imgData.width, char.imgData.height);
+            ctx.putImageData(char.imgData, 0, 0);
+            if (!char.selected) {
+              ctx.fillStyle = "rgba(0,0,0,0.5)";
+              ctx.fillRect(0, 0, char.imgData.width, char.imgData.height);
+            }
+            if (char.space) {
+              $('#char' + char.index).addClass('space');
+              return charset.spaceIndex = char.index;
+            } else {
+              return $('#char' + char.index).removeClass('space');
+            }
+          }));
         };
         results.push(makeClickHandler(char));
       }
@@ -163,6 +172,7 @@
     },
     genCombos: function() {
       var char, charIndex, charIndexes, cmb, cmbArray, combo, ctx, cvs, i, img, j, k, l, len, m, newCanvasHtml, offsetX, offsetY, ref, ref1, ref2;
+      $('#comboPreview').empty();
       charset.chars = _(charset.chars).sortBy('index');
       charIndexes = [];
       ref = charset.chars;
@@ -181,8 +191,8 @@
           chars: cmbArray[i],
           weight: 0
         };
-        newCanvasHtml = '<canvas id="combo' + i + '" width="' + charset.chars[0].imgData.width + '" height="' + charset.chars[0].imgData.height + '"></canvas>';
-        $('#viewSelect').append(newCanvasHtml);
+        newCanvasHtml = '<canvas id="combo' + i + '" width="' + charset.chars[0].imgData.width + '" height="' + charset.chars[0].imgData.height / 2 + '"></canvas>';
+        $('#comboPreview').append(newCanvasHtml);
         cvs = document.getElementById('combo' + i);
         ctx = cvs.getContext("2d");
         ctx.globalCompositeOperation = 'multiply';
@@ -192,7 +202,7 @@
           img.src = document.getElementById('char' + charIndex).toDataURL("image/png");
           offsetX = cvs.width * charset.overlaps[j][0];
           offsetY = cvs.height * charset.overlaps[j][1];
-          ctx.drawImage(img, offsetX, offsetY, cvs.width, cvs.height);
+          ctx.drawImage(img, offsetX, -2 * offsetY, cvs.width, cvs.height * 2);
         }
         charset.combos.push(combo);
       }

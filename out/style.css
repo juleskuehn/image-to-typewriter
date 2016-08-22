@@ -13,15 +13,21 @@ body {
   left: 0;
   top: 100;
 }
-#viewSelect {
+#viewSelect,
+#comboPreview {
   position: absolute;
   left: 25%;
 }
-#viewSelect canvas {
+#viewSelect canvas,
+#comboPreview canvas {
   float: left;
   padding: 0;
   margin: 0 1px 1px 0;
   border: solid 1px #f00;
+}
+#viewSelect canvas.space,
+#comboPreview canvas.space {
+  border-color: #00f;
 }
 #keystones {
   position: relative;

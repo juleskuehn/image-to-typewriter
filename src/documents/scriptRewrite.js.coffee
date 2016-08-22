@@ -15,7 +15,7 @@ charset =
 
 	combos: [] # array of character combo objects
 
-	overlaps: [ [0,0],[0,0.5],[0.5,0]] # array of offset values for each overlap (TESTING: preset to 2 layers)
+	overlaps: [ [0,0],[0,0.5] ] # array of offset values for each overlap (TESTING: preset to 2 layers)
 
 	getSettings: ->
 		formValues = {}
@@ -124,6 +124,7 @@ charset =
 					imgData: imgData
 					weight: weight
 					selected: true
+					space: false
 					index: i
 				charset.chars.push char
 				i++
@@ -146,23 +147,32 @@ charset =
 			ctx.putImageData(char.imgData,0,0)
 			
 			makeClickHandler = (char) ->
-				$('#char'+char.index).click ->
+				$('#char'+char.index).click ( (e) ->
 					cvs = document.getElementById('char'+char.index)
 					ctx = cvs.getContext("2d")
-					char.selected = !char.selected
+					if e.ctrlKey
+						char.space = !char.space
+					else
+						char.selected = !char.selected
 					# redraw greyed out if unselected
 					ctx.clearRect(0, 0, char.imgData.width, char.imgData.height)
+					ctx.putImageData(char.imgData,0,0)
 					if ! char.selected
-						ctx.putImageData(char.imgData,0,0)
 						ctx.fillStyle = "rgba(0,0,0,0.5)"
 						ctx.fillRect(0, 0, char.imgData.width, char.imgData.height)
+					if char.space
+						$('#char'+char.index).addClass('space')
+						charset.spaceIndex = char.index # BUG only the last selected space will work. only select 1 space
 					else
-						ctx.putImageData(char.imgData,0,0)
+						$('#char'+char.index).removeClass('space')
+				)
 
 			makeClickHandler(char)
 
 	genCombos: ->
 
+		# clear combo preview
+		$('#comboPreview').empty()
 		# sort charset.chars by indexes again
 		charset.chars = _(charset.chars).sortBy('index')
 
@@ -184,9 +194,9 @@ charset =
 				chars: cmbArray[i]
 				weight: 0
 
-			# generate composite image 
-			newCanvasHtml = '<canvas id="combo'+i+'" width="'+charset.chars[0].imgData.width+'" height="'+charset.chars[0].imgData.height+'"></canvas>'
-			$('#viewSelect').append newCanvasHtml
+			# generate composite image
+			newCanvasHtml = '<canvas id="combo'+i+'" width="'+charset.chars[0].imgData.width+'" height="'+charset.chars[0].imgData.height/2+'"></canvas>'
+			$('#comboPreview').append newCanvasHtml
 			cvs = document.getElementById('combo'+i)
 			ctx = cvs.getContext("2d")
 			ctx.globalCompositeOperation = 'multiply';
@@ -196,7 +206,7 @@ charset =
 				img.src = document.getElementById('char'+charIndex).toDataURL("image/png")
 				offsetX = cvs.width * charset.overlaps[j][0]
 				offsetY = cvs.height * charset.overlaps[j][1]
-				ctx.drawImage(img,offsetX,offsetY,cvs.width,cvs.height)
+				ctx.drawImage(img,offsetX,-2*offsetY,cvs.width,cvs.height*2)
 
 			charset.combos.push combo
 		console.log(charset.combos)
