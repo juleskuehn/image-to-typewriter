@@ -102,7 +102,8 @@ charset =
 		for char in charset.chars
 			# create canvas
 			newCanvasHtml = '<canvas id="char'+char.index+'" width="'+char.imgData.width+'" height="'+char.imgData.height+'"></canvas>'
-			$('#viewSelect').append newCanvasHtml
+			if ! $('#char'+char.index).hasClass('')
+				$('#viewSelect').append newCanvasHtml
 			cvs = document.getElementById('char'+char.index)
 			ctx = cvs.getContext("2d")
 			ctx.putImageData(char.imgData,0,0)
