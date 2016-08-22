@@ -6,7 +6,6 @@
     <link href="style.css" rel="stylesheet">
   </head>
   <body id="drop-target">
-    <h3>glyph selector. drop image anywhere.</h3>
     <div id="options">
       <label>Cols:</label>
       <input type="text" name="cols" value="59" id="cols">
@@ -27,8 +26,15 @@
       <label>Charset End Row:</label>
       <input type="text" name="rows" value="8" id="rowEnd">
     </div>
-    <canvas id="charsetPreview" width="0" height="0"></canvas>
-    <canvas id="charsetOverlay" width="100" height="100"></canvas>
+    <div id="viewChop">
+      <canvas id="charsetPreview" width="0" height="0"></canvas>
+      <canvas id="charsetOverlay" width="100" height="100"></canvas>
+    </div>
+    <div id="viewSelect"></div>
+    <div id="tabs">
+      <button type="button" id="tabChop">Crop and Chop</button>
+      <button type="button" id="tabSelect">Select Chars</button>
+    </div>
     <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
     <script src="underscore-min.js"></script>
     <script src="jquery-ui.min.js"></script>
