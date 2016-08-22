@@ -68,7 +68,21 @@
       return drawGrid();
     },
     chopCharset: function() {
-      var char, charHeight, charWidth, col, ctx, i, imgData, j, k, l, len, m, maxWeight, minWeight, numCols, numRows, offsetX, offsetY, p, ref, ref1, ref2, ref3, results, row, start, startChar, weight;
+      var char, charHeight, charWidth, col, ctx, i, imgData, j, k, l, len, m, maxWeight, minWeight, numCols, numRows, offsetX, offsetY, p, ref, ref1, ref2, ref3, resizeCanvasToMultiplesOfCharSize, results, row, start, startChar, weight;
+      resizeCanvasToMultiplesOfCharSize = function() {
+        var newHeight, newWidth, tempCanvas, wCanvas;
+        wCanvas = charset.workingCanvas;
+        tempCanvas = document.createElement('canvas');
+        tempCanvas.width = wCanvas.width;
+        tempCanvas.height = wCanvas.height;
+        tempCanvas.getContext('2d').drawImage(wCanvas, 0, 0);
+        newWidth = Math.ceil(charset.workingCanvas.width / charset.settings.gridSize[0]) * charset.settings.gridSize[0];
+        newHeight = Math.ceil(charset.workingCanvas.height / charset.settings.gridSize[1]) * charset.settings.gridSize[1];
+        wCanvas.width = newWidth;
+        wCanvas.height = newHeight;
+        return wCanvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, wCanvas.width, wCanvas.height);
+      };
+      resizeCanvasToMultiplesOfCharSize();
       charset.chars = [];
       ctx = charset.workingCanvas.getContext('2d');
       charWidth = charset.workingCanvas.width / charset.settings.gridSize[0];
@@ -82,7 +96,7 @@
       for (row = j = 0, ref = numRows; 0 <= ref ? j <= ref : j >= ref; row = 0 <= ref ? ++j : --j) {
         for (col = k = 0, ref1 = numCols; 0 <= ref1 ? k <= ref1 : k >= ref1; col = 0 <= ref1 ? ++k : --k) {
           startChar = [start[0] + charWidth * col, start[1] + charHeight * row];
-          imgData = ctx.getImageData(Math.round(startChar[0]), Math.round(startChar[1]), Math.round(charWidth), Math.round(charHeight));
+          imgData = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1]), Math.floor(charWidth), Math.floor(charHeight));
           weight = 0;
           for (p = l = 0, ref2 = imgData.data.length; l < ref2; p = l += 4) {
             weight += imgData.data[p];

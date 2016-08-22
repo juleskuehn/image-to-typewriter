@@ -20,7 +20,8 @@ body {
 #viewSelect canvas {
   float: left;
   padding: 0;
-  margin: 0;
+  margin: 0 1px 1px 0;
+  border: solid 1px #f00;
 }
 #keystones {
   position: relative;

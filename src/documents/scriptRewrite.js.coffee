@@ -67,6 +67,29 @@ charset =
 		drawGrid()
 
 	chopCharset: ->
+		# resize workingCanvas to nearest multiple of rows, cols and redraw
+		resizeCanvasToMultiplesOfCharSize = ->
+			wCanvas = charset.workingCanvas
+			tempCanvas = document.createElement('canvas')
+			tempCanvas.width = wCanvas.width
+			tempCanvas.height = wCanvas.height
+
+			# save workingCanvas into tempCanvas
+			tempCanvas.getContext('2d').drawImage(wCanvas, 0, 0);
+
+			# get closest multiple
+			newWidth = Math.ceil(charset.workingCanvas.width / charset.settings.gridSize[0]) * charset.settings.gridSize[0]
+			newHeight = Math.ceil(charset.workingCanvas.height / charset.settings.gridSize[1]) * charset.settings.gridSize[1]
+
+			# resize workingCanvas
+			wCanvas.width = newWidth
+			wCanvas.height = newHeight
+
+			# draw tempCanvas back into workingCanvas, scaled as needed
+			wCanvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, wCanvas.width, wCanvas.height)
+
+		resizeCanvasToMultiplesOfCharSize()
+
 		charset.chars = []
 		ctx = charset.workingCanvas.getContext('2d')
 		charWidth = charset.workingCanvas.width / charset.settings.gridSize[0]
@@ -81,7 +104,7 @@ charset =
 		for row in [0..numRows]
 			for col in [0..numCols]
 				startChar = [start[0]+charWidth*col,start[1]+charHeight*row]
-				imgData = ctx.getImageData Math.round(startChar[0]),Math.round(startChar[1]),Math.round(charWidth),Math.round(charHeight)
+				imgData = ctx.getImageData Math.floor(startChar[0]),Math.floor(startChar[1]),Math.floor(charWidth),Math.floor(charHeight)
 				weight = 0 # quick weighing
 				# generate weights
 				for p in [0...imgData.data.length] by 4
