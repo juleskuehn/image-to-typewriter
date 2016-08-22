@@ -15,7 +15,12 @@ body {
 }
 #viewSelect {
   position: absolute;
-  left: 31%;
+  left: 25%;
+}
+#viewSelect canvas {
+  float: left;
+  padding: 0;
+  margin: 0;
 }
 #keystones {
   position: relative;

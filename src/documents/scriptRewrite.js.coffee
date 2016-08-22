@@ -83,8 +83,10 @@ charset =
 				startChar = [start[0]+charWidth*col,start[1]+charHeight*row]
 				imgData = ctx.getImageData Math.round(startChar[0]),Math.round(startChar[1]),Math.round(charWidth),Math.round(charHeight)
 				weight = 0 # quick weighing
-				for p in [1...imgData.data.length] by 4
+				for p in [0...imgData.data.length] by 4
 					weight += imgData.data[p]
+					weight += imgData.data[p+1]
+					weight += imgData.data[p+2]
 				char =
 					imgData: imgData
 					weight: weight
@@ -100,11 +102,11 @@ charset =
 			char.brightness = 255 - (255*(char.weight-minWeight))/(maxWeight-minWeight)
 
 	drawCharSelect: ->
+		$('#viewSelect').empty()
 		for char in charset.chars
 			# create canvas
 			newCanvasHtml = '<canvas id="char'+char.index+'" width="'+char.imgData.width+'" height="'+char.imgData.height+'"></canvas>'
-			if ! $('#char'+char.index).hasClass('')
-				$('#viewSelect').append newCanvasHtml
+			$('#viewSelect').append newCanvasHtml
 			cvs = document.getElementById('char'+char.index)
 			ctx = cvs.getContext("2d")
 			ctx.putImageData(char.imgData,0,0)

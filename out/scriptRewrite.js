@@ -84,8 +84,10 @@
           startChar = [start[0] + charWidth * col, start[1] + charHeight * row];
           imgData = ctx.getImageData(Math.round(startChar[0]), Math.round(startChar[1]), Math.round(charWidth), Math.round(charHeight));
           weight = 0;
-          for (p = l = 1, ref2 = imgData.data.length; l < ref2; p = l += 4) {
+          for (p = l = 0, ref2 = imgData.data.length; l < ref2; p = l += 4) {
             weight += imgData.data[p];
+            weight += imgData.data[p + 1];
+            weight += imgData.data[p + 2];
           }
           char = {
             imgData: imgData,
@@ -114,14 +116,13 @@
     },
     drawCharSelect: function() {
       var char, ctx, cvs, j, len, makeClickHandler, newCanvasHtml, ref, results;
+      $('#viewSelect').empty();
       ref = charset.chars;
       results = [];
       for (j = 0, len = ref.length; j < len; j++) {
         char = ref[j];
         newCanvasHtml = '<canvas id="char' + char.index + '" width="' + char.imgData.width + '" height="' + char.imgData.height + '"></canvas>';
-        if (!$('#char' + char.index).hasClass('')) {
-          $('#viewSelect').append(newCanvasHtml);
-        }
+        $('#viewSelect').append(newCanvasHtml);
         cvs = document.getElementById('char' + char.index);
         ctx = cvs.getContext("2d");
         ctx.putImageData(char.imgData, 0, 0);
