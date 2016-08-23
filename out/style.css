@@ -75,3 +75,17 @@ div#tabs {
   background: rgba(0,0,0,0.3);
   padding: 3px;
 }
+#charset-target,
+#image-target {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  width: 20px;
+  height: 20px;
+  background: #f00;
+}
+#image-target {
+  background: #808080;
+  right: 22px;
+}

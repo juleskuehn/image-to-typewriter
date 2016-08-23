@@ -4,7 +4,9 @@ html
     meta(charset='UTF-8')
     title='kword X'
     link(href='style.css', rel='stylesheet')
-  body(id='drop-target')
+  body
+    div(id="charset-target")
+    div(id="image-target")
     div(id='options')
      div
       label Cols:
@@ -58,6 +60,8 @@ html
 
     div(id='viewSelect')
     div(id='comboPreview')
+
+    canvas(id="inputImage")
 
     div(id='tabs' style="display:none")
      button(type='button' id='tabChop') Crop and Chop

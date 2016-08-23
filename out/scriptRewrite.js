@@ -1,5 +1,5 @@
 (function() {
-  var charset, target;
+  var charset, greyscale, imgToText, inputImage, target;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -47,7 +47,7 @@
       };
       lightboxSelection();
       drawGrid = function() {
-        var col, k, l, numCols, numRows, ref, ref1, results, row;
+        var col, k, m, numCols, numRows, ref, ref1, results, row;
         numRows = charset.settings.end[1] - charset.settings.start[1];
         numCols = charset.settings.end[0] - charset.settings.start[0];
         for (row = k = 0, ref = numRows + 1; 0 <= ref ? k <= ref : k >= ref; row = 0 <= ref ? ++k : --k) {
@@ -58,7 +58,7 @@
           ctx.stroke();
         }
         results = [];
-        for (col = l = 0, ref1 = numCols + 1; 0 <= ref1 ? l <= ref1 : l >= ref1; col = 0 <= ref1 ? ++l : --l) {
+        for (col = m = 0, ref1 = numCols + 1; 0 <= ref1 ? m <= ref1 : m >= ref1; col = 0 <= ref1 ? ++m : --m) {
           ctx.beginPath();
           ctx.moveTo(start[0] + col * charWidth, start[1]);
           ctx.lineTo(start[0] + col * charWidth, end[1] + offsetY);
@@ -70,7 +70,7 @@
       return drawGrid();
     },
     chopCharset: function() {
-      var char, charHeight, charWidth, col, ctx, i, imgData, k, l, len, m, maxWeight, minWeight, n, numCols, numRows, offsetX, offsetY, p, ref, ref1, ref2, ref3, resizeCanvasToMultiplesOfCharSize, results, row, start, startChar, weight;
+      var char, charHeight, charWidth, col, ctx, i, imgData, k, len, m, maxWeight, minWeight, n, numCols, numRows, o, offsetX, offsetY, p, ref, ref1, ref2, ref3, resizeCanvasToMultiplesOfCharSize, results, row, start, startChar, weight;
       resizeCanvasToMultiplesOfCharSize = function() {
         var newHeight, newWidth, tempCanvas, wCanvas;
         wCanvas = charset.workingCanvas;
@@ -96,11 +96,11 @@
       numCols = charset.settings.end[0] - charset.settings.start[0];
       i = 0;
       for (row = k = 0, ref = numRows; 0 <= ref ? k <= ref : k >= ref; row = 0 <= ref ? ++k : --k) {
-        for (col = l = 0, ref1 = numCols; 0 <= ref1 ? l <= ref1 : l >= ref1; col = 0 <= ref1 ? ++l : --l) {
+        for (col = m = 0, ref1 = numCols; 0 <= ref1 ? m <= ref1 : m >= ref1; col = 0 <= ref1 ? ++m : --m) {
           startChar = [start[0] + charWidth * col, start[1] + charHeight * row];
           imgData = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1]), Math.floor(charWidth), Math.floor(charHeight));
           weight = 0;
-          for (p = m = 0, ref2 = imgData.data.length; m < ref2; p = m += 4) {
+          for (p = n = 0, ref2 = imgData.data.length; n < ref2; p = n += 4) {
             weight += imgData.data[p];
             weight += imgData.data[p + 1];
             weight += imgData.data[p + 2];
@@ -125,8 +125,8 @@
       }).weight;
       ref3 = charset.chars;
       results = [];
-      for (n = 0, len = ref3.length; n < len; n++) {
-        char = ref3[n];
+      for (o = 0, len = ref3.length; o < len; o++) {
+        char = ref3[o];
         results.push(char.brightness = 255 - (255 * (char.weight - minWeight)) / (maxWeight - minWeight));
       }
       return results;
@@ -171,7 +171,7 @@
       return results;
     },
     genCombos: function() {
-      var char, charIndex, charIndexes, cmb, cmbArray, combo, ctx, cvs, drawCombos, i, img, imgData, j, k, l, len, len1, len2, m, maxWeight, minWeight, n, o, offsetX, offsetY, p, q, ref, ref1, ref2, ref3, ref4, ref5, weight;
+      var char, charIndex, charIndexes, cmb, cmbArray, combo, ctx, cvs, drawCombos, i, img, imgData, j, k, len, len1, len2, m, maxWeight, minWeight, n, o, offsetX, offsetY, p, q, ref, ref1, ref2, ref3, ref4, ref5, s, weight;
       $('#comboPreview').empty();
       charset.chars = _(charset.chars).sortBy('index');
       charIndexes = [];
@@ -185,7 +185,7 @@
       cmb = Combinatorics.baseN(charIndexes, charset.overlaps.length);
       cmbArray = cmb.toArray();
       charset.combos = [];
-      for (i = l = 0, ref1 = cmbArray.length; 0 <= ref1 ? l < ref1 : l > ref1; i = 0 <= ref1 ? ++l : --l) {
+      for (i = m = 0, ref1 = cmbArray.length; 0 <= ref1 ? m < ref1 : m > ref1; i = 0 <= ref1 ? ++m : --m) {
         combo = {
           index: i,
           chars: cmbArray[i],
@@ -196,7 +196,7 @@
         cvs.height = charset.chars[0].imgData.height / 2;
         ctx = cvs.getContext("2d");
         ctx.globalCompositeOperation = 'multiply';
-        for (j = m = 0, ref2 = charset.overlaps.length; 0 <= ref2 ? m < ref2 : m > ref2; j = 0 <= ref2 ? ++m : --m) {
+        for (j = n = 0, ref2 = charset.overlaps.length; 0 <= ref2 ? n < ref2 : n > ref2; j = 0 <= ref2 ? ++n : --n) {
           charIndex = combo.chars[j];
           img = document.createElement("img");
           img.src = document.getElementById('char' + charIndex).toDataURL("image/png");
@@ -208,11 +208,11 @@
         charset.combos.push(combo);
       }
       ref3 = charset.combos;
-      for (n = 0, len1 = ref3.length; n < len1; n++) {
-        combo = ref3[n];
+      for (o = 0, len1 = ref3.length; o < len1; o++) {
+        combo = ref3[o];
         imgData = combo.imgData;
         weight = 0;
-        for (p = o = 0, ref4 = imgData.data.length; o < ref4; p = o += 4) {
+        for (p = q = 0, ref4 = imgData.data.length; q < ref4; p = q += 4) {
           weight += imgData.data[p];
           weight += imgData.data[p + 1];
           weight += imgData.data[p + 2];
@@ -227,17 +227,17 @@
         return w.weight;
       }).weight;
       ref5 = charset.combos;
-      for (q = 0, len2 = ref5.length; q < len2; q++) {
-        combo = ref5[q];
+      for (s = 0, len2 = ref5.length; s < len2; s++) {
+        combo = ref5[s];
         combo.brightness = 255 - (255 * (combo.weight - minWeight)) / (maxWeight - minWeight);
       }
-      drawCombos = function() {
-        var len3, newCanvasHtml, r, ref6, results;
+      return drawCombos = function() {
+        var len3, newCanvasHtml, ref6, results, t;
         $('#comboPreview').empty();
         ref6 = charset.combos;
         results = [];
-        for (r = 0, len3 = ref6.length; r < len3; r++) {
-          combo = ref6[r];
+        for (t = 0, len3 = ref6.length; t < len3; t++) {
+          combo = ref6[t];
           newCanvasHtml = '<canvas id="combo' + combo.index + '" width="' + combo.imgData.width + '" height="' + combo.imgData.height + '"></canvas>';
           $('#comboPreview').append(newCanvasHtml);
           cvs = document.getElementById('combo' + combo.index);
@@ -246,7 +246,6 @@
         }
         return results;
       };
-      return drawCombos();
     },
     dropImage: function(source) {
       var MAX_HEIGHT, loadImage, render, renderWorking;
@@ -303,6 +302,117 @@
     }
   };
 
+  imgToText = function() {
+    var b, c, closest, combosArray, cvs, dither, err, gr, h, i, j, k, len, m, n, ref, ref1, ref2, ref3, row, source, w;
+    source = document.getElementById("inputImage");
+    cvs = source.getContext('2d');
+    dither = true;
+    gr = greyscale(source);
+    combosArray = [];
+    ref = [source.height, source.width], h = ref[0], w = ref[1];
+    for (i = k = 0, ref1 = h; 0 <= ref1 ? k < ref1 : k > ref1; i = 0 <= ref1 ? ++k : --k) {
+      row = '';
+      for (j = m = 0, ref2 = w; 0 <= ref2 ? m < ref2 : m > ref2; j = 0 <= ref2 ? ++m : --m) {
+        b = gr[i * w + j];
+        closest = null;
+        ref3 = window.weights;
+        for (n = 0, len = ref3.length; n < len; n++) {
+          c = ref3[n];
+          if (closest === null || Math.abs(c.brightness - b) < Math.abs(err)) {
+            closest = c;
+            err = b - c.brightness;
+          }
+        }
+        if (dither) {
+          gr[i * w + j] = c.brightness;
+          if (j + 1 < w) {
+            gr[i * w + j + 1] += err * 7 / 16;
+          }
+          if (i + 1 < h && j - 1 > 0) {
+            gr[(i + 1) * w + j - 1] += err * 3 / 16;
+          }
+          if (i + 1 < h) {
+            gr[(i + 1) * w + j] += err * 5 / 16;
+          }
+          if (i + 1 < h && j + 1 < w) {
+            gr[(i + 1) * w + j + 1] += err * 1 / 16;
+          }
+        }
+        row += closest.character;
+      }
+      text += escapeHtml(row) + '<br />';
+    }
+    return $('#output_ascii').html(text);
+  };
+
+  greyscale = function(canvas) {
+    var b, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, k, l, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
+    greyscaleMethod = $('#bw').val();
+    customR = $('#customR').val();
+    customG = $('#customG').val();
+    customB = $('#customB').val();
+    greyArray = [];
+    cvs = canvas.getContext('2d');
+    imgData = cvs.getImageData(0, 0, canvas.width, canvas.height);
+    imgData = imgData.data;
+    for (p = k = 0, ref = imgData.length; k < ref; p = k += 4) {
+      l = 0;
+      if (greyscaleMethod === 'ccir') {
+        ref1 = [0.2989, 0.5870, 0.1140], r = ref1[0], g = ref1[1], b = ref1[2];
+      } else if (greyscaleMethod === 'cie') {
+        ref2 = [0.2126, 0.7152, 0.0722], r = ref2[0], g = ref2[1], b = ref2[2];
+      } else if (greyscaleMethod === 'flat') {
+        ref3 = [0.3333, 0.3333, 0.3333], r = ref3[0], g = ref3[1], b = ref3[2];
+      } else if (greyscaleMethod === 'red') {
+        ref4 = [1, 0, 0], r = ref4[0], g = ref4[1], b = ref4[2];
+      } else if (greyscaleMethod === 'green') {
+        ref5 = [0, 1, 0], r = ref5[0], g = ref5[1], b = ref5[2];
+      } else if (greyscaleMethod === 'blue') {
+        ref6 = [0, 0, 1], r = ref6[0], g = ref6[1], b = ref6[2];
+      }
+      l += imgData[p] * r * customR * imgData[p + 3] / 255;
+      l += imgData[p + 1] * g * customG * imgData[p + 3] / 255;
+      l += imgData[p + 2] * b * customB * imgData[p + 3] / 255;
+      greyArray.push(l);
+    }
+    return greyArray;
+  };
+
+  inputImage = {
+    dropImage: function(source) {
+      var loadImage, render;
+      render = function(src) {
+        var image;
+        image = new Image();
+        image.onload = function() {
+          var aspectRatio, canvas, charAspect, ctx, rowLength;
+          rowLength = 80;
+          canvas = document.getElementById('inputImage');
+          ctx = canvas.getContext("2d");
+          aspectRatio = image.height / image.width;
+          charAspect = charset.chars[0].imgData.height / charset.chars[0].imgData.width;
+          canvas.width = rowLength * 2;
+          canvas.height = rowLength * aspectRatio * 2 * charAspect;
+          return ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        };
+        return image.src = src;
+      };
+      loadImage = function(src) {
+        var reader;
+        if (!src.type.match(/image.*/)) {
+          console.log("The dropped file is not an image: ", src.type);
+          return;
+        }
+        reader = new FileReader();
+        reader.onload = function(e) {
+          return render(e.target.result);
+        };
+        return reader.readAsDataURL(src);
+      };
+      return loadImage(source);
+    }
+  };
+
   $('#chopCharset').click(function() {
     console.log('chop character set');
     charset.getSettings();
@@ -315,7 +425,7 @@
     return charset.genCombos();
   });
 
-  target = document.getElementById('drop-target');
+  target = document.getElementById('charset-target');
 
   target.addEventListener('dragover', (function(e) {
     e.preventDefault();
@@ -324,6 +434,17 @@
   target.addEventListener('drop', (function(e) {
     e.preventDefault();
     charset.dropImage(e.dataTransfer.files[0]);
+  }), true);
+
+  target = document.getElementById('image-target');
+
+  target.addEventListener('dragover', (function(e) {
+    e.preventDefault();
+  }), true);
+
+  target.addEventListener('drop', (function(e) {
+    e.preventDefault();
+    inputImage.dropImage(e.dataTransfer.files[0]);
   }), true);
 
 }).call(this);

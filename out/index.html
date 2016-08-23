@@ -5,7 +5,9 @@
     <title>kword X</title>
     <link href="style.css" rel="stylesheet">
   </head>
-  <body id="drop-target">
+  <body>
+    <div id="charset-target"></div>
+    <div id="image-target"></div>
     <div id="options">
       <div>
         <label>Cols:</label>
@@ -74,6 +76,7 @@
     </div>
     <div id="viewSelect"></div>
     <div id="comboPreview"></div>
+    <canvas id="inputImage"></canvas>
     <div id="tabs" style="display:none">
       <button type="button" id="tabChop">Crop and Chop</button>
       <button type="button" id="tabSelect">Select Chars</button>

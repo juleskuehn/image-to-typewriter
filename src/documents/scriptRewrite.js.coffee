@@ -239,7 +239,7 @@ charset =
 				ctx = cvs.getContext("2d")
 				ctx.putImageData(combo.imgData,0,0)
 
-		drawCombos()
+		# drawCombos()
 
 	dropImage: (source) ->
 		MAX_HEIGHT = $(window).height() - 100	
@@ -301,6 +301,97 @@ charset =
 
 		loadImage(source)
 
+imgToText = ->
+	source = document.getElementById("inputImage")
+	cvs = source.getContext('2d')
+	dither = true
+	gr = greyscale(source)
+	combosArray = [] # store combos here to be rendered on a canvas block by block
+	[h,w] = [source.height,source.width]
+	for i in [0...h]
+		row = ''
+		for j in [0...w]
+			b = gr[i*w + j]
+			# find closest ascii brightness value
+			closest = null
+			for c in window.weights
+				if closest is null or Math.abs(c.brightness-b) < Math.abs(err)
+					closest = c
+					err = b-c.brightness
+			# floyd-steinberg dithering
+			if dither
+				gr[i*w + j] = c.brightness
+				if j+1 < w
+					gr[i*w + j+1] += (err * 7/16)
+				if i+1 < h and j-1 > 0
+					gr[(i+1)*w + j-1] += (err * 3/16)
+				if i+1 < h
+					gr[(i+1)*w + j] += (err * 5/16)
+				if i+1 < h and j+1 < w
+					gr[(i+1)*w + j+1] += (err * 1/16)
+			row += closest.character
+		text += escapeHtml(row) + '<br />'
+	$('#output_ascii').html(text)
+
+greyscale = (canvas) ->
+	greyscaleMethod = $('#bw').val()
+	customR = $('#customR').val()
+	customG = $('#customG').val()
+	customB = $('#customB').val()
+	greyArray = []
+	cvs = canvas.getContext('2d')
+	imgData = cvs.getImageData(0,0,canvas.width,canvas.height)
+	imgData = imgData.data
+	for p in [0...imgData.length] by 4
+		l = 0
+		if greyscaleMethod is 'ccir'
+			[r,g,b] = [0.2989, 0.5870, 0.1140]
+		else if greyscaleMethod is 'cie'
+			[r,g,b] = [0.2126, 0.7152, 0.0722]
+		else if greyscaleMethod is 'flat'
+			[r,g,b] = [0.3333, 0.3333, 0.3333]
+		else if greyscaleMethod is 'red'
+			[r,g,b] = [1, 0, 0]
+		else if greyscaleMethod is 'green'
+			[r,g,b] = [0, 1, 0]
+		else if greyscaleMethod is 'blue'
+			[r,g,b] = [0, 0, 1]
+		l += imgData[p] * r * customR * imgData[p+3] / 255 #Red
+		l += imgData[p+1] * g * customG * imgData[p+3] / 255 #Green
+		l += imgData[p+2] * b * customB * imgData[p+3] / 255 #Blue
+		greyArray.push(l)
+	return greyArray
+
+inputImage =
+	dropImage: (source) ->
+		render = (src) ->
+			image = new Image();
+			image.onload = ->
+				rowLength = 80 # TODO add setting for row length
+				canvas = document.getElementById('inputImage')
+				ctx = canvas.getContext("2d")
+				aspectRatio = image.height/image.width
+				charAspect = charset.chars[0].imgData.height/charset.chars[0].imgData.width
+				canvas.width = rowLength*2
+				canvas.height = rowLength*aspectRatio*2*charAspect
+				ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+			image.src = src
+
+		loadImage = (src) ->
+			# Prevent any non-image file type from being read.
+			if !src.type.match(/image.*/)
+				console.log("The dropped file is not an image: ", src.type)
+				return
+
+			# Create our FileReader and run the results through the render function.
+			reader = new FileReader()
+			reader.onload = (e) ->
+				render e.target.result
+			reader.readAsDataURL(src)
+
+		loadImage(source)
+
+
 # handle UI events
 
 $('#chopCharset').click ->
@@ -313,7 +404,7 @@ $('#chopCharset').click ->
 $('#genCombos').click ->
 	charset.genCombos()
 
-target = document.getElementById('drop-target')
+target = document.getElementById('charset-target')
 target.addEventListener 'dragover', ((e) ->
   e.preventDefault()
   return
@@ -321,5 +412,16 @@ target.addEventListener 'dragover', ((e) ->
 target.addEventListener 'drop', ((e) ->
   e.preventDefault()
   charset.dropImage e.dataTransfer.files[0]
+  return
+), true
+
+target = document.getElementById('image-target')
+target.addEventListener 'dragover', ((e) ->
+  e.preventDefault()
+  return
+), true
+target.addEventListener 'drop', ((e) ->
+  e.preventDefault()
+  inputImage.dropImage e.dataTransfer.files[0]
   return
 ), true
