@@ -1,3 +1,5 @@
+combosArray = [] # store combo indexes here to be rendered on a canvas block by block
+
 charset =
 
 	previewCanvas: document.getElementById('charsetPreview') # onscreen display of charset (keystoned and cropped)
@@ -306,15 +308,15 @@ imgToText = ->
 	cvs = source.getContext('2d')
 	dither = true
 	gr = greyscale(source)
-	combosArray = [] # store combos here to be rendered on a canvas block by block
+	combosArray = [] # store combo indexes here to be rendered on a canvas block by block
 	[h,w] = [source.height,source.width]
 	for i in [0...h]
-		row = ''
+		row = []
 		for j in [0...w]
 			b = gr[i*w + j]
 			# find closest ascii brightness value
 			closest = null
-			for c in window.weights
+			for c in charset.combos
 				if closest is null or Math.abs(c.brightness-b) < Math.abs(err)
 					closest = c
 					err = b-c.brightness
@@ -329,9 +331,10 @@ imgToText = ->
 					gr[(i+1)*w + j] += (err * 5/16)
 				if i+1 < h and j+1 < w
 					gr[(i+1)*w + j+1] += (err * 1/16)
-			row += closest.character
-		text += escapeHtml(row) + '<br />'
-	$('#output_ascii').html(text)
+			row.push closest.index
+		combosArray.push row
+	console.log combosArray
+	drawCharImage()
 
 greyscale = (canvas) ->
 	greyscaleMethod = $('#bw').val()
@@ -359,22 +362,41 @@ greyscale = (canvas) ->
 		l += imgData[p] * r * customR * imgData[p+3] / 255 #Red
 		l += imgData[p+1] * g * customG * imgData[p+3] / 255 #Green
 		l += imgData[p+2] * b * customB * imgData[p+3] / 255 #Blue
+
+		# invert pixel values
+		l = 255-l
+		
 		greyArray.push(l)
 	return greyArray
+
+drawCharImage = ->
+	charset.combos = _(charset.combos).sortBy('index')
+	inCanvas = document.getElementById('inputImage')
+	outCanvas = document.getElementById('outputImage')
+	outCanvas.width = charset.combos[0].imgData.width * inCanvas.width
+	outCanvas.height = charset.combos[0].imgData.height * inCanvas.height
+	ctx = outCanvas.getContext("2d")
+	for i in [0...combosArray.length]
+		for j in [0...combosArray[0].length]
+			console.log combosArray[i][j]
+			combo = charset.combos[ combosArray[i][j] ]
+			ctx.putImageData(combo.imgData,j*combo.imgData.width,i*combo.imgData.height)
 
 inputImage =
 	dropImage: (source) ->
 		render = (src) ->
 			image = new Image();
 			image.onload = ->
-				rowLength = 80 # TODO add setting for row length
+				rowLength = $('#row_length').val()
 				canvas = document.getElementById('inputImage')
 				ctx = canvas.getContext("2d")
 				aspectRatio = image.height/image.width
-				charAspect = charset.chars[0].imgData.height/charset.chars[0].imgData.width
+				charAspect = charset.chars[0].imgData.width/charset.chars[0].imgData.height
 				canvas.width = rowLength*2
 				canvas.height = rowLength*aspectRatio*2*charAspect
 				ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+				# run the comparison
+				imgToText()
 			image.src = src
 
 		loadImage = (src) ->

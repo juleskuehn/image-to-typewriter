@@ -89,3 +89,7 @@ div#tabs {
   background: #808080;
   right: 22px;
 }
+#inputImage,
+#outputImage {
+  float: right;
+}
