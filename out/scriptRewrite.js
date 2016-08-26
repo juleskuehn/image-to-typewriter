@@ -16,7 +16,7 @@
     },
     chars: [],
     combos: [],
-    overlaps: [[0, 0], [0, 0.5], [0.5, 0]],
+    overlaps: [[0, 0], [0, 0.5], [0.5, 0], [0.5, 0.5]],
     getSettings: function() {
       var formField, formValues, k, len, ref;
       formValues = {};
@@ -43,8 +43,6 @@
         ctx.clearRect(0, 0, charset.overlayCanvas.width, charset.overlayCanvas.height);
         ctx.fillStyle = "rgba(0,0,0,0.75)";
         ctx.fillRect(0, 0, charset.overlayCanvas.width, charset.overlayCanvas.height);
-        console.log(' start = ' + start);
-        console.log(' end = ' + end);
         return ctx.clearRect(start[0], start[1], end[0] - start[0] + offsetX, end[1] - start[1] + offsetY);
       };
       lightboxSelection();
@@ -233,7 +231,7 @@
         combo = ref5[s];
         combo.brightness = 255 - (255 * (combo.weight - minWeight)) / (maxWeight - minWeight);
       }
-      return drawCombos = function() {
+      drawCombos = function() {
         var len3, newCanvasHtml, ref6, results, t;
         $('#comboPreview').empty();
         ref6 = charset.combos;
@@ -248,6 +246,7 @@
         }
         return results;
       };
+      return drawCombos();
     },
     dropImage: function(source) {
       var MAX_HEIGHT, loadImage, render, renderWorking;
@@ -308,7 +307,7 @@
     var b, c, closest, cvs, dither, err, gr, h, i, j, k, len, m, n, ref, ref1, ref2, ref3, row, source, w;
     source = document.getElementById("inputImage");
     cvs = source.getContext('2d');
-    dither = true;
+    dither = document.getElementById('dithering').checked;
     gr = greyscale(source);
     combosArray = [];
     ref = [source.height, source.width], h = ref[0], w = ref[1];
@@ -344,7 +343,6 @@
       }
       combosArray.push(row);
     }
-    console.log(combosArray);
     return drawCharImage();
   };
 
@@ -396,7 +394,6 @@
         var m, ref1, results1;
         results1 = [];
         for (j = m = 0, ref1 = combosArray[0].length; 0 <= ref1 ? m < ref1 : m > ref1; j = 0 <= ref1 ? ++m : --m) {
-          console.log(combosArray[i][j]);
           combo = charset.combos[combosArray[i][j]];
           results1.push(ctx.putImageData(combo.imgData, j * combo.imgData.width, i * combo.imgData.height));
         }
@@ -443,7 +440,6 @@
   };
 
   $('#chopCharset').click(function() {
-    console.log('chop character set');
     charset.getSettings();
     charset.chopPreview();
     charset.chopCharset();

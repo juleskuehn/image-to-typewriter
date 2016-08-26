@@ -17,7 +17,7 @@ charset =
 
 	combos: [] # array of character combo objects
 
-	overlaps: [ [0,0],[0,0.5],[0.5,0] ] # array of offset values for each overlap (TESTING: preset to 2 layers)
+	overlaps: [ [0,0],[0,0.5],[0.5,0],[0.5,0.5] ] # array of offset values for each overlap (TESTING: preset to 2 layers)
 
 	getSettings: ->
 		formValues = {}
@@ -51,8 +51,6 @@ charset =
 			ctx.clearRect(0, 0, charset.overlayCanvas.width, charset.overlayCanvas.height)
 			ctx.fillStyle = "rgba(0,0,0,0.75)"
 			ctx.fillRect(0, 0, charset.overlayCanvas.width, charset.overlayCanvas.height)
-			console.log ' start = ' + start
-			console.log ' end = ' + end
 			ctx.clearRect(start[0],start[1],end[0]-start[0]+offsetX,end[1]-start[1]+offsetY)
 
 		lightboxSelection()
@@ -225,6 +223,7 @@ charset =
 			combo.weight = weight
 
 		# normalize weights
+
 		charset.combos = _(charset.combos).sortBy('weight')
 		maxWeight = _.max(charset.combos,(w) -> w.weight).weight
 		minWeight = _.min(charset.combos,(w) -> w.weight).weight
@@ -241,7 +240,7 @@ charset =
 				ctx = cvs.getContext("2d")
 				ctx.putImageData(combo.imgData,0,0)
 
-		# drawCombos()
+		drawCombos()
 
 	dropImage: (source) ->
 		MAX_HEIGHT = $(window).height() - 100	
@@ -306,7 +305,7 @@ charset =
 imgToText = ->
 	source = document.getElementById("inputImage")
 	cvs = source.getContext('2d')
-	dither = true
+	dither = document.getElementById('dithering').checked
 	gr = greyscale(source)
 	combosArray = [] # store combo indexes here to be rendered on a canvas block by block
 	[h,w] = [source.height,source.width]
@@ -333,7 +332,6 @@ imgToText = ->
 					gr[(i+1)*w + j+1] += (err * 1/16)
 			row.push closest.index
 		combosArray.push row
-	console.log combosArray
 	drawCharImage()
 
 greyscale = (canvas) ->
@@ -365,7 +363,7 @@ greyscale = (canvas) ->
 
 		# invert pixel values
 		l = 255-l
-		
+
 		greyArray.push(l)
 	return greyArray
 
@@ -378,7 +376,6 @@ drawCharImage = ->
 	ctx = outCanvas.getContext("2d")
 	for i in [0...combosArray.length]
 		for j in [0...combosArray[0].length]
-			console.log combosArray[i][j]
 			combo = charset.combos[ combosArray[i][j] ]
 			ctx.putImageData(combo.imgData,j*combo.imgData.width,i*combo.imgData.height)
 
@@ -417,7 +414,6 @@ inputImage =
 # handle UI events
 
 $('#chopCharset').click ->
-	console.log 'chop character set'
 	charset.getSettings()
 	charset.chopPreview()
 	charset.chopCharset()
