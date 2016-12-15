@@ -1,116 +1,5 @@
 (function() {
-  var Char, Combo, charset, drawCharImage, genCombos, greyscale, imgToText, inputImage, target;
-
-  Char = (function() {
-    var brightness, selected;
-
-    brightness = 0;
-
-    selected = true;
-
-    function Char(TL1, TR1, BL1, BR1) {
-      var k, len, m, p, q, ref, ref1;
-      this.TL = TL1;
-      this.TR = TR1;
-      this.BL = BL1;
-      this.BR = BR1;
-      for (p = k = 0, ref = this.TL.data.length; k < ref; p = k += 4) {
-        ref1 = [this.TL, this.TR, this.BL, this.BR];
-        for (m = 0, len = ref1.length; m < len; m++) {
-          q = ref1[m];
-          this.brightness += q.data[p];
-          this.brightness += q.data[p + 1];
-          this.brightness += q.data[p + 2];
-        }
-      }
-    }
-
-    return Char;
-
-  })();
-
-  Combo = (function() {
-    var brightness, image;
-
-    image = [];
-
-    brightness = 0;
-
-    function Combo(TL1, TR1, BL1, BR1, charset) {
-      var chars, ctx, cvs, img, k, p, ref;
-      this.TL = TL1;
-      this.TR = TR1;
-      this.BL = BL1;
-      this.BR = BR1;
-      chars = charset.chars;
-      cvs = document.createElement('canvas');
-      cvs.width = charset.qWidth;
-      cvs.height = charset.qHeight;
-      ctx = cvs.getContext("2d");
-      ctx.globalCompositeOperation = 'multiply';
-      img = document.createElement("img");
-      img.src = chars[this.TL].BR;
-      ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-      img.src = chars[this.TR].BL;
-      ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-      img.src = chars[this.BL].TR;
-      ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-      img.src = chars[this.BR].TL;
-      ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-      this.image = ctx.getImageData(0, 0, cvs.width, cvs.height);
-      for (p = k = 0, ref = this.image.data.length; k < ref; p = k += 4) {
-        this.brightness += this.image.data[p];
-        this.brightness += this.image.data[p + 1];
-        this.brightness += this.image.data[p + 2];
-      }
-    }
-
-    return Combo;
-
-  })();
-
-  genCombos = function(charset) {
-    var a, b, c, combos, d, k, m, n, o, ref, ref1, ref2, ref3;
-    combos = [];
-    for (a = k = 0, ref = charset.chars.length; 0 <= ref ? k < ref : k > ref; a = 0 <= ref ? ++k : --k) {
-      combos.push([]);
-      for (b = m = 0, ref1 = charset.chars.length; 0 <= ref1 ? m < ref1 : m > ref1; b = 0 <= ref1 ? ++m : --m) {
-        combos[a].push([]);
-        for (c = n = 0, ref2 = charset.chars.length; 0 <= ref2 ? n < ref2 : n > ref2; c = 0 <= ref2 ? ++n : --n) {
-          combos[a][b].push([]);
-          for (d = o = 0, ref3 = charset.chars.length; 0 <= ref3 ? o < ref3 : o > ref3; d = 0 <= ref3 ? ++o : --o) {
-            combos[a][b][c].push(new Combo(a, b, c, d, charset));
-          }
-        }
-      }
-    }
-    return combos;
-  };
-
-  imgToText = function(image, allCombos) {
-    out;
-    var BL, TL, TR, bestError, bestIndex, c, combos, error, i, k, m, n, p, r, ref, ref1, ref2;
-    for (r = k = 0, ref = image.rows; 0 <= ref ? k < ref : k > ref; r = 0 <= ref ? ++k : --k) {
-      for (c = m = 0, ref1 = image.cols; 0 <= ref1 ? m < ref1 : m > ref1; c = 0 <= ref1 ? ++m : --m) {
-        TL = r > 0 && c > 0 ? out[r - 1][c - 1] : 0;
-        TR = r > 0 ? out[r - 1][c] : 0;
-        BL = c > 0 ? out[r][c - 1] : 0;
-        combos = allCombos[TL][TR][BL];
-        p = image.data[r][c];
-        bestIndex = 0;
-        bestError = 255;
-        for (i = n = 0, ref2 = combos.length; 0 <= ref2 ? n < ref2 : n > ref2; i = 0 <= ref2 ? ++n : --n) {
-          error = Math.abs(p - combos[i].brightness);
-          if (error < bestError) {
-            bestError = error;
-            bestIndex = i;
-          }
-        }
-        out[r][c] = bestIndex;
-      }
-    }
-    return out;
-  };
+  var charset, drawCharImage, greyscale, imgToText, inputImage, target;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -262,15 +151,28 @@
       return results;
     },
     genCombos: function() {
-      var a, b, bright, c, combo, d, drawCombos, k, m, maxBright, minBright, n, o, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, s, t, u, v;
+      var a, b, bright, c, combo, combos, d, drawCombos, k, m, maxBright, minBright, n, o, q, ref, ref1, ref10, ref11, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, s, t, u, v, x, y, z;
       $('#comboPreview').empty();
-      charset.combos = genCombos(charset);
+      combos = [];
+      for (a = k = 0, ref = charset.chars.length; 0 <= ref ? k < ref : k > ref; a = 0 <= ref ? ++k : --k) {
+        combos.push([]);
+        for (b = m = 0, ref1 = charset.chars.length; 0 <= ref1 ? m < ref1 : m > ref1; b = 0 <= ref1 ? ++m : --m) {
+          combos[a].push([]);
+          for (c = n = 0, ref2 = charset.chars.length; 0 <= ref2 ? n < ref2 : n > ref2; c = 0 <= ref2 ? ++n : --n) {
+            combos[a][b].push([]);
+            for (d = o = 0, ref3 = charset.chars.length; 0 <= ref3 ? o < ref3 : o > ref3; d = 0 <= ref3 ? ++o : --o) {
+              combos[a][b][c].push(new Combo(a, b, c, d, charset));
+            }
+          }
+        }
+      }
+      charset.combos = combos;
       minBright = 255;
       maxBright = 0;
-      for (a = k = 0, ref = charset.chars.length; 0 <= ref ? k < ref : k > ref; a = 0 <= ref ? ++k : --k) {
-        for (b = m = 0, ref1 = charset.chars.length; 0 <= ref1 ? m < ref1 : m > ref1; b = 0 <= ref1 ? ++m : --m) {
-          for (c = n = 0, ref2 = charset.chars.length; 0 <= ref2 ? n < ref2 : n > ref2; c = 0 <= ref2 ? ++n : --n) {
-            for (d = o = 0, ref3 = charset.chars.length; 0 <= ref3 ? o < ref3 : o > ref3; d = 0 <= ref3 ? ++o : --o) {
+      for (a = q = 0, ref4 = charset.chars.length; 0 <= ref4 ? q < ref4 : q > ref4; a = 0 <= ref4 ? ++q : --q) {
+        for (b = s = 0, ref5 = charset.chars.length; 0 <= ref5 ? s < ref5 : s > ref5; b = 0 <= ref5 ? ++s : --s) {
+          for (c = t = 0, ref6 = charset.chars.length; 0 <= ref6 ? t < ref6 : t > ref6; c = 0 <= ref6 ? ++t : --t) {
+            for (d = u = 0, ref7 = charset.chars.length; 0 <= ref7 ? u < ref7 : u > ref7; d = 0 <= ref7 ? ++u : --u) {
               bright = charset.combos[a][b][c][d].brightness;
               if (bright > maxBright) {
                 maxBright = bright;
@@ -282,10 +184,10 @@
           }
         }
       }
-      for (a = s = 0, ref4 = charset.chars.length; 0 <= ref4 ? s < ref4 : s > ref4; a = 0 <= ref4 ? ++s : --s) {
-        for (b = t = 0, ref5 = charset.chars.length; 0 <= ref5 ? t < ref5 : t > ref5; b = 0 <= ref5 ? ++t : --t) {
-          for (c = u = 0, ref6 = charset.chars.length; 0 <= ref6 ? u < ref6 : u > ref6; c = 0 <= ref6 ? ++u : --u) {
-            for (d = v = 0, ref7 = charset.chars.length; 0 <= ref7 ? v < ref7 : v > ref7; d = 0 <= ref7 ? ++v : --v) {
+      for (a = v = 0, ref8 = charset.chars.length; 0 <= ref8 ? v < ref8 : v > ref8; a = 0 <= ref8 ? ++v : --v) {
+        for (b = x = 0, ref9 = charset.chars.length; 0 <= ref9 ? x < ref9 : x > ref9; b = 0 <= ref9 ? ++x : --x) {
+          for (c = y = 0, ref10 = charset.chars.length; 0 <= ref10 ? y < ref10 : y > ref10; c = 0 <= ref10 ? ++y : --y) {
+            for (d = z = 0, ref11 = charset.chars.length; 0 <= ref11 ? z < ref11 : z > ref11; d = 0 <= ref11 ? ++z : --z) {
               combo = charset.combos[a][b][c][d];
               combo.brightness = 255 - (255 * (combo.brightness - minBright)) / (maxBright - minBright);
             }
@@ -293,28 +195,28 @@
         }
       }
       drawCombos = function() {
-        var ctx, cvs, id, newCanvasHtml, ref8, results, x;
+        var aa, ctx, cvs, id, newCanvasHtml, ref12, results;
         $('#comboPreview').empty();
         id = 0;
         results = [];
-        for (a = x = 0, ref8 = charset.chars.length; 0 <= ref8 ? x < ref8 : x > ref8; a = 0 <= ref8 ? ++x : --x) {
+        for (a = aa = 0, ref12 = charset.chars.length; 0 <= ref12 ? aa < ref12 : aa > ref12; a = 0 <= ref12 ? ++aa : --aa) {
           results.push((function() {
-            var ref9, results1, y;
+            var ab, ref13, results1;
             results1 = [];
-            for (b = y = 0, ref9 = charset.chars.length; 0 <= ref9 ? y < ref9 : y > ref9; b = 0 <= ref9 ? ++y : --y) {
+            for (b = ab = 0, ref13 = charset.chars.length; 0 <= ref13 ? ab < ref13 : ab > ref13; b = 0 <= ref13 ? ++ab : --ab) {
               results1.push((function() {
-                var ref10, results2, z;
+                var ac, ref14, results2;
                 results2 = [];
-                for (c = z = 0, ref10 = charset.chars.length; 0 <= ref10 ? z < ref10 : z > ref10; c = 0 <= ref10 ? ++z : --z) {
+                for (c = ac = 0, ref14 = charset.chars.length; 0 <= ref14 ? ac < ref14 : ac > ref14; c = 0 <= ref14 ? ++ac : --ac) {
                   results2.push((function() {
-                    var aa, ref11, results3;
+                    var ad, ref15, results3;
                     results3 = [];
-                    for (d = aa = 0, ref11 = charset.chars.length; 0 <= ref11 ? aa < ref11 : aa > ref11; d = 0 <= ref11 ? ++aa : --aa) {
+                    for (d = ad = 0, ref15 = charset.chars.length; 0 <= ref15 ? ad < ref15 : ad > ref15; d = 0 <= ref15 ? ++ad : --ad) {
                       newCanvasHtml = '<canvas id="combo' + id + '" width="' + charset.qWidth + '" height="' + charset.qWidth + '"></canvas>';
                       $('#comboPreview').append(newCanvasHtml);
                       cvs = document.getElementById('combo' + id);
                       ctx = cvs.getContext("2d");
-                      ctx.putImageData(combo.image, 0, 0);
+                      ctx.putImageData(charset.combos[a][b][c][d].image, 0, 0);
                       results3.push(id++);
                     }
                     return results3;

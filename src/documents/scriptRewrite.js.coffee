@@ -1,182 +1,4 @@
 
-# Class representing a character
-#
-# Constructor takes 4 image quadrants TL,TR,BL,BR
-# and weighs them
-
-class Char
-
-  # brightness of this entire character
-  # used for finding the lightest (blank) character
-  brightness = 0
-
-  # is this character being used to generate combos?
-  selected = true
-
-  constructor: (@TL,@TR,@BL,@BR) ->
-    # sum brightness of all pixels in all quadrants
-    for p in [0...this.TL.data.length] by 4
-      for q in [this.TL,this.TR,this.BL,this.BR]
-        this.brightness += q.data[p]
-        this.brightness += q.data[p+1]
-        this.brightness += q.data[p+2]
-
-
-
-
-
-
-
-
-
-
-
-# Class representing a combination of 4 characters
-#
-# Constructor takes 4 character indices
-# and array of char objects
-#
-# 6 attrs: the composite image, its brightness and;
-# top left, top right, bottom left, and bottom right
-# character indices (to verify against 4d array index)
-
-class Combo
-
-  # composite image of this combo quadrant
-  image = []
-  # brightness of this combo quadrant
-  brightness = 0
-
-  constructor: (@TL,@TR,@BL,@BR,charset) ->
-
-    chars = charset.chars
-
-    # set up composite image canvas
-    cvs = document.createElement('canvas')
-    cvs.width = charset.qWidth
-    cvs.height = charset.qHeight
-    ctx = cvs.getContext("2d")
-    ctx.globalCompositeOperation = 'multiply'
-
-    # generate composite image from 4 characters
-    img = document.createElement("img");
-    # document.getElementById('char'+TL).toDataURL("image/png")
-    # draw bottom right quadrant of top left character
-    img.src = chars[this.TL].BR
-    ctx.drawImage(img,0,0,cvs.width,cvs.height)
-    # draw bottom left quadrant of top right character
-    img.src = chars[this.TR].BL
-    ctx.drawImage(img,0,0,cvs.width,cvs.height)
-    # draw top right quadrant of bottom left character
-    img.src = chars[this.BL].TR
-    ctx.drawImage(img,0,0,cvs.width,cvs.height)
-    # draw top left quadrant of bottom right character
-    img.src = chars[this.BR].TL
-    ctx.drawImage(img,0,0,cvs.width,cvs.height)
-    
-    # combo image has been generated store it in object
-    this.image = ctx.getImageData 0,0,cvs.width,cvs.height
-
-    # sum brightness of all pixels in combo image
-    for p in [0...this.image.data.length] by 4
-      this.brightness += this.image.data[p]
-      this.brightness += this.image.data[p+1]
-      this.brightness += this.image.data[p+2]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Takes a sorted array of character objects
-# First is the brightest (blank) character.
-#
-# Returns a 4d array of combo objects
-
-genCombos = (charset) ->
-  # Array of char objects
-  # Indices correspond to the indices of the 
-  # chars composing the combo [TL][TR][BL][BR]
-  combos = []
-  # Generate all possible combos
-  for a in [0...charset.chars.length]
-    combos.push []
-    for b in [0...charset.chars.length]
-      combos[a].push []
-      for c in [0...charset.chars.length]
-        combos[a][b].push []
-        for d in [0...charset.chars.length]
-          combos[a][b][c].push new Combo(a,b,c,d,charset);
-
-  return combos
-
-
-
-
-
-
-
-
-
-
-# Takes an image object and charset object.
-#
-# Returns a 2d array of character indexes
-# representing the text image
-
-imgToText = (image,allCombos) ->
-  # Array of indices for chosen characters.
-  out
-  # Loop through each pixel in input image.
-  for r in [0...image.rows]
-    for c in [0...image.cols]
-      # Constraints based on already chosen chars
-      # The lightest character (space) becomes the
-      # constraint when at the top or left edge.
-      #
-      # TODO:
-      # This should be altered to allow spill on the
-      # top and left edges (as on the bottom, right)
-      TL = if r>0&&c>0 then out[r-1][c-1] else 0
-      TR = if r>0      then out[r-1][c]   else 0
-      BL = if c>0      then out[r][c-1]   else 0
-      # Constrained subset of the combos
-      combos = allCombos[TL][TR][BL]
-      # Pixel brightness to match
-      p = image.data[r][c]
-      # Index of the closest character
-      bestIndex = 0
-      # Worst case scenario error
-      bestError = 255
-      # Find the closest character to the input pixel
-      for i in [0...combos.length]
-        error = Math.abs(p-combos[i].brightness)
-        if error<bestError
-          bestError = error
-          bestIndex = i
-      # Place the character index in the output array
-      out[r][c] = bestIndex
-
-  return out
-
-
-
-
-
-
-
-
-
-
 charset =
 
 	previewCanvas: document.getElementById('charsetPreview') # onscreen display of charset (keystoned and cropped)
@@ -377,7 +199,21 @@ charset =
 		# clear combo preview
 		$('#comboPreview').empty()
 
-		charset.combos = genCombos(charset)
+		# Generate array of combo objects
+		# Indices correspond to the indices of the 
+		# chars composing the combo [TL][TR][BL][BR]
+		combos = []
+		# Generate all possible combos
+		for a in [0...charset.chars.length]
+			combos.push []
+			for b in [0...charset.chars.length]
+				combos[a].push []
+				for c in [0...charset.chars.length]
+					combos[a][b].push []
+					for d in [0...charset.chars.length]
+						combos[a][b][c].push new Combo(a,b,c,d,charset);
+
+		charset.combos = combos
 
 		minBright = 255 # implausibly bright for a minimum
 		maxBright = 0   # implausibly dark for a maximum
@@ -413,7 +249,7 @@ charset =
 							$('#comboPreview').append newCanvasHtml
 							cvs = document.getElementById('combo'+id)
 							ctx = cvs.getContext("2d")
-							ctx.putImageData(combo.image,0,0)
+							ctx.putImageData(charset.combos[a][b][c][d].image,0,0)
 							id++
 
 		drawCombos()
