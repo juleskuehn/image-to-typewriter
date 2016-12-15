@@ -1,4 +1,181 @@
-combosArray = [] # store combo indexes here to be rendered on a canvas block by block
+
+# Class representing a character
+#
+# Constructor takes 4 image quadrants TL,TR,BL,BR
+# and weighs them
+
+class Char
+
+  # brightness of this entire character
+  # used for finding the lightest (blank) character
+  brightness = 0
+
+  # is this character being used to generate combos?
+  selected = true
+
+  constructor: (@TL,@TR,@BL,@BR) ->
+    # sum brightness of all pixels in all quadrants
+    for p in [0...this.TL.data.length] by 4
+      for q in [this.TL,this.TR,this.BL,this.BR]
+        this.brightness += q.data[p]
+        this.brightness += q.data[p+1]
+        this.brightness += q.data[p+2]
+
+
+
+
+
+
+
+
+
+
+
+# Class representing a combination of 4 characters
+#
+# Constructor takes 4 character indices
+# and array of char objects
+#
+# 6 attrs: the composite image, its brightness and;
+# top left, top right, bottom left, and bottom right
+# character indices (to verify against 4d array index)
+
+class Combo
+
+  # composite image of this combo quadrant
+  image = []
+  # brightness of this combo quadrant
+  brightness = 0
+
+  constructor: (@TL,@TR,@BL,@BR,charset) ->
+
+    chars = charset.chars
+
+    # set up composite image canvas
+    cvs = document.createElement('canvas')
+    cvs.width = charset.qWidth
+    cvs.height = charset.qHeight
+    ctx = cvs.getContext("2d")
+    ctx.globalCompositeOperation = 'multiply'
+
+    # generate composite image from 4 characters
+    img = document.createElement("img");
+    # document.getElementById('char'+TL).toDataURL("image/png")
+    # draw bottom right quadrant of top left character
+    img.src = chars[this.TL].BR
+    ctx.drawImage(img,0,0,cvs.width,cvs.height)
+    # draw bottom left quadrant of top right character
+    img.src = chars[this.TR].BL
+    ctx.drawImage(img,0,0,cvs.width,cvs.height)
+    # draw top right quadrant of bottom left character
+    img.src = chars[this.BL].TR
+    ctx.drawImage(img,0,0,cvs.width,cvs.height)
+    # draw top left quadrant of bottom right character
+    img.src = chars[this.BR].TL
+    ctx.drawImage(img,0,0,cvs.width,cvs.height)
+    
+    # combo image has been generated store it in object
+    this.image = ctx.getImageData 0,0,cvs.width,cvs.height
+
+    # sum brightness of all pixels in combo image
+    for p in [0...this.image.data.length] by 4
+      this.brightness += this.image.data[p]
+      this.brightness += this.image.data[p+1]
+      this.brightness += this.image.data[p+2]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Takes a sorted array of character objects
+# First is the brightest (blank) character.
+#
+# Returns a 4d array of combo objects
+
+genCombos = (charset) ->
+  # Array of char objects
+  # Indices correspond to the indices of the 
+  # chars composing the combo [TL][TR][BL][BR]
+  combos = []
+  # Generate all possible combos
+  for a in [0...charset.chars.length]
+    combos.push []
+    for b in [0...charset.chars.length]
+      combos[a].push []
+      for c in [0...charset.chars.length]
+        combos[a][b].push []
+        for d in [0...charset.chars.length]
+          combos[a][b][c].push new Combo(a,b,c,d,charset);
+
+  return combos
+
+
+
+
+
+
+
+
+
+
+# Takes an image object and charset object.
+#
+# Returns a 2d array of character indexes
+# representing the text image
+
+imgToText = (image,allCombos) ->
+  # Array of indices for chosen characters.
+  out
+  # Loop through each pixel in input image.
+  for r in [0...image.rows]
+    for c in [0...image.cols]
+      # Constraints based on already chosen chars
+      # The lightest character (space) becomes the
+      # constraint when at the top or left edge.
+      #
+      # TODO:
+      # This should be altered to allow spill on the
+      # top and left edges (as on the bottom, right)
+      TL = if r>0&&c>0 then out[r-1][c-1] else 0
+      TR = if r>0      then out[r-1][c]   else 0
+      BL = if c>0      then out[r][c-1]   else 0
+      # Constrained subset of the combos
+      combos = allCombos[TL][TR][BL]
+      # Pixel brightness to match
+      p = image.data[r][c]
+      # Index of the closest character
+      bestIndex = 0
+      # Worst case scenario error
+      bestError = 255
+      # Find the closest character to the input pixel
+      for i in [0...combos.length]
+        error = Math.abs(p-combos[i].brightness)
+        if error<bestError
+          bestError = error
+          bestIndex = i
+      # Place the character index in the output array
+      out[r][c] = bestIndex
+
+  return out
+
+
+
+
+
+
+
+
+
 
 charset =
 
@@ -7,7 +184,6 @@ charset =
 	workingCanvas: document.createElement('canvas') # in memory canvas for hi-res operations
 
 	settings: # defined by user input from onscreen
-		keystones: [ [],[],[],[] ] # four [x,y] positions indicating centers of 4 keystone points on charset preview
 		gridSize: [20,20] # [x,y] number of columns,rows in between (not including) keystones
 		offset: [] # [x,y] multiples of character size to offset right and down, compensates for keystone centers
 		start: [] # [x,y] position on grid of the top left character in the desired charset, in [column,row] (start from 0)
@@ -17,7 +193,12 @@ charset =
 
 	combos: [] # array of character combo objects
 
-	overlaps: [ [0,0],[0,0.5],[0.5,0],[0.5,0.5] ] # array of offset values for each overlap (TESTING: preset to 2 layers)
+	# quadrant width and height in px
+	qWidth: 0
+	qHeight: 0
+
+
+
 
 	getSettings: ->
 		formValues = {}
@@ -30,13 +211,14 @@ charset =
 		charset.settings.start = [formValues.colStart,formValues.rowStart]
 		charset.settings.end = [formValues.colEnd,formValues.rowEnd]
 
-		#for i in [1..charset.overlaps.length]
-		#	offsetX = document.getElementById('o'+i+'offsetX').value
-		#	offsetY = document.getElementById('o'+i+'offsetY').value
-		#	charset.overlaps[i] = [offsetX,offsetY]
 
-	# TODO: skipping keystoning for now
-	chopPreview: -> # previews chop grid settings on an overlay canvas
+
+
+
+
+
+	# previews chop grid settings on an overlay canvas
+	chopPreview: -> 
 		ctx = charset.overlayCanvas.getContext('2d')
 
 		charWidth = charset.overlayCanvas.width / charset.settings.gridSize[0]
@@ -75,6 +257,11 @@ charset =
 
 		drawGrid()
 
+
+
+
+
+
 	chopCharset: ->
 		# resize workingCanvas to nearest multiple of rows, cols and redraw
 		resizeCanvasToMultiplesOfCharSize = ->
@@ -87,8 +274,8 @@ charset =
 			tempCanvas.getContext('2d').drawImage(wCanvas, 0, 0);
 
 			# get closest multiple
-			newWidth = Math.ceil(charset.workingCanvas.width / charset.settings.gridSize[0]) * charset.settings.gridSize[0]
-			newHeight = Math.ceil(charset.workingCanvas.height / charset.settings.gridSize[1]) * charset.settings.gridSize[1]
+			newWidth = Math.ceil((charset.workingCanvas.width/charset.settings.gridSize[0])/4) * charset.settings.gridSize[0] * 4
+			newHeight = Math.ceil((charset.workingCanvas.height/charset.settings.gridSize[1])/4) * charset.settings.gridSize[1] * 4
 
 			# resize workingCanvas
 			wCanvas.width = newWidth
@@ -96,6 +283,7 @@ charset =
 
 			# draw tempCanvas back into workingCanvas, scaled as needed
 			wCanvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, wCanvas.width, wCanvas.height)
+			charset.workingCanvas = wCanvas
 
 		resizeCanvasToMultiplesOfCharSize()
 
@@ -109,198 +297,199 @@ charset =
 		numRows = (charset.settings.end[1] - charset.settings.start[1])
 		numCols = (charset.settings.end[0] - charset.settings.start[0])
 
-		i = 0
+		charset.qWidth = charWidth/4
+		charset.qHeight = charHeight/4
+
+
+		# loop through characters push new char objects to the chars array
 		for row in [0..numRows]
 			for col in [0..numCols]
+				# top left corner location of character glyph in the charset working image
 				startChar = [start[0]+charWidth*col,start[1]+charHeight*row]
-				imgData = ctx.getImageData Math.floor(startChar[0]),Math.floor(startChar[1]),Math.floor(charWidth),Math.floor(charHeight)
-				weight = 0 # quick weighing
-				# generate weights
-				for p in [0...imgData.data.length] by 4
-					weight += imgData.data[p]
-					weight += imgData.data[p+1]
-					weight += imgData.data[p+2]
-				char =
-					imgData: imgData
-					weight: weight
-					selected: true
-					space: false
-					index: i
-				charset.chars.push char
-				i++
+				# image data for quadrants
+				TL = ctx.getImageData Math.floor(startChar[0]),Math.floor(startChar[1]),Math.floor(charWidth/2),Math.floor(charHeight/2)
+				TR = ctx.getImageData Math.floor(startChar[0]+charWidth/2),Math.floor(startChar[1]),Math.floor(charWidth),Math.floor(charHeight/2)
+				BL = ctx.getImageData Math.floor(startChar[0]),Math.floor(startChar[1]+charWidth/2),Math.floor(charWidth/2),Math.floor(charHeight)
+				BR = ctx.getImageData Math.floor(startChar[0]+charWidth/2),Math.floor(startChar[1]+charWidth/2),Math.floor(charWidth),Math.floor(charHeight)
+				charset.chars.push new Char(TL,TR,BL,BR)
 
-		# normalize weights
-		charset.chars = _(charset.chars).sortBy('weight')
-		maxWeight = _.max(charset.chars,(w) -> w.weight).weight
-		minWeight = _.min(charset.chars,(w) -> w.weight).weight
+		# sort chars array by char.brightness
+		charset.chars = _(charset.chars).sortBy('brightness')
+
+		# invert and nomalize brightness
+		maxBright = _.max(charset.chars,(w) -> w.brightness).brightness
+		minBright = _.min(charset.chars,(w) -> w.brightness).brightness
 		for char in charset.chars
-			char.brightness = 255 - (255*(char.weight-minWeight))/(maxWeight-minWeight)
+			char.brightness = 255 - (255*(char.brightness-minBright))/(maxBright-minBright)
+
+
+
+
+
+
+
 
 	drawCharSelect: ->
 		$('#viewSelect').empty()
-		for char in charset.chars
+		for i in [0...charset.chars.length]
+			char = charset.chars[i]
 			# create canvas
-			newCanvasHtml = '<canvas id="char'+char.index+'" width="'+char.imgData.width+'" height="'+char.imgData.height+'"></canvas>'
+			newCanvasHtml = '<canvas id="char'+i+'" width="'+charset.qWidth*2+'" height="'+charset.qHeight*2+'"></canvas>'
 			$('#viewSelect').append newCanvasHtml
-			cvs = document.getElementById('char'+char.index)
+			cvs = document.getElementById('char'+i)
 			ctx = cvs.getContext("2d")
-			ctx.putImageData(char.imgData,0,0)
-			
-			makeClickHandler = (char) ->
-				$('#char'+char.index).click ( (e) ->
-					cvs = document.getElementById('char'+char.index)
-					ctx = cvs.getContext("2d")
-					if e.ctrlKey
-						char.space = !char.space
-					else
-						char.selected = !char.selected
-					# redraw greyed out if unselected
-					ctx.clearRect(0, 0, char.imgData.width, char.imgData.height)
-					ctx.putImageData(char.imgData,0,0)
-					if ! char.selected
-						ctx.fillStyle = "rgba(0,0,0,0.5)"
-						ctx.fillRect(0, 0, char.imgData.width, char.imgData.height)
-					if char.space
-						$('#char'+char.index).addClass('space')
-						charset.spaceIndex = char.index # BUG only the last selected space will work. only select 1 space
-					else
-						$('#char'+char.index).removeClass('space')
-				)
 
-			makeClickHandler(char)
+			# draw 4 quadrants of char
+
+			#TEST CODE
+			window.charTL = char.TL
+
+			ctx.putImageData(char.TL,0,0)
+			ctx.putImageData(char.TR,charset.qWidth,0)
+			ctx.putImageData(char.BL,0,charset.qHeight)
+			ctx.putImageData(char.BR,charset.qWidth,charset.qHeight)
+
+			$('#char'+i).click ( (e) ->
+				char.selected = !char.selected
+				# redraw greyed out if unselected
+				ctx.clearRect(0, 0, charset.qWidth*2, charset.qHeight*2)
+				# redraw 4 quadrants
+				ctx.putImageData(char.TL,0,0)
+				ctx.putImageData(char.TR,charset.qWidth,0)
+				ctx.putImageData(char.BL,0,charset.qHeight)
+				ctx.putImageData(char.BR,charset.qWidth,charset.qHeight)
+				if ! char.selected
+					ctx.fillStyle = "rgba(0,0,0,0.5)"
+					ctx.fillRect(0, 0, charset.qWidth*2, charset.qHeight*2)
+			)
+
+
+
+
+
+
+
+
+
 
 	genCombos: ->
 
 		# clear combo preview
 		$('#comboPreview').empty()
-		# sort charset.chars by indexes again
-		charset.chars = _(charset.chars).sortBy('index')
 
-		# iterate through characters generating array of indexes only
-		charIndexes = []
-		for char in charset.chars
-			if char.selected
-				charIndexes.push char.index
+		charset.combos = genCombos(charset)
 
-		# generate combinations of charIndexes
-		cmb = Combinatorics.baseN(charIndexes,charset.overlaps.length)
-		cmbArray = cmb.toArray()
+		minBright = 255 # implausibly bright for a minimum
+		maxBright = 0   # implausibly dark for a maximum
 
-		# create combo objects and weigh
-		charset.combos = []
-		for i in [0...cmbArray.length]
+		# find min and max brightness
+		for a in [0...charset.chars.length]
+			for b in [0...charset.chars.length]
+				for c in [0...charset.chars.length]
+					for d in [0...charset.chars.length]
+						bright = charset.combos[a][b][c][d].brightness
+						if bright>maxBright
+							maxBright = bright
+						if bright<minBright
+							minBright = bright
 
-			combo =
-				index: i
-				chars: cmbArray[i]
-				weight: 0
-
-			# generate composite image
-			cvs = document.createElement('canvas')
-			cvs.width = charset.chars[0].imgData.width/2
-			cvs.height = charset.chars[0].imgData.height/2
-			ctx = cvs.getContext("2d")
-			ctx.globalCompositeOperation = 'multiply';
-			for j in [0...charset.overlaps.length]
-				charIndex = combo.chars[j]
-				img = document.createElement("img");
-				img.src = document.getElementById('char'+charIndex).toDataURL("image/png")
-				offsetX = cvs.width * charset.overlaps[j][0]
-				offsetY = cvs.height * charset.overlaps[j][1]
-				ctx.drawImage(img,-2*offsetX,-2*offsetY,cvs.width*2,cvs.height*2)
-			combo.imgData = ctx.getImageData 0,0,cvs.width,cvs.height
-
-			charset.combos.push combo
-
-		for combo in charset.combos
-			imgData = combo.imgData
-			weight = 0 # quick weighing
-			# generate weights
-			for p in [0...imgData.data.length] by 4
-				weight += imgData.data[p]
-				weight += imgData.data[p+1]
-				weight += imgData.data[p+2]
-			combo.weight = weight
-
-		# normalize weights
-
-		charset.combos = _(charset.combos).sortBy('weight')
-		maxWeight = _.max(charset.combos,(w) -> w.weight).weight
-		minWeight = _.min(charset.combos,(w) -> w.weight).weight
-		for combo in charset.combos
-			combo.brightness = 255 - (255*(combo.weight-minWeight))/(maxWeight-minWeight)
+		# normalize and invert brightness
+		for a in [0...charset.chars.length]
+			for b in [0...charset.chars.length]
+				for c in [0...charset.chars.length]
+					for d in [0...charset.chars.length]
+						combo = charset.combos[a][b][c][d]
+						combo.brightness = 255 - (255*(combo.brightness-minBright))/(maxBright-minBright)
 
 		drawCombos = ->
 			$('#comboPreview').empty()
-			for combo in charset.combos
-				# create canvas
-				newCanvasHtml = '<canvas id="combo'+combo.index+'" width="'+combo.imgData.width+'" height="'+combo.imgData.height+'"></canvas>'
-				$('#comboPreview').append newCanvasHtml
-				cvs = document.getElementById('combo'+combo.index)
-				ctx = cvs.getContext("2d")
-				ctx.putImageData(combo.imgData,0,0)
+			id = 0
+			for a in [0...charset.chars.length]
+				for b in [0...charset.chars.length]
+					for c in [0...charset.chars.length]
+						for d in [0...charset.chars.length]
+							# create canvas
+							newCanvasHtml = '<canvas id="combo'+id+'" width="'+charset.qWidth+'" height="'+charset.qWidth+'"></canvas>'
+							$('#comboPreview').append newCanvasHtml
+							cvs = document.getElementById('combo'+id)
+							ctx = cvs.getContext("2d")
+							ctx.putImageData(combo.image,0,0)
+							id++
 
 		drawCombos()
+
+
+
+
+
+
+
 
 	dropImage: (source) ->
 		MAX_HEIGHT = $(window).height() - 100	
 
 		render = (src) ->
 
-		  image = new Image
+			image = new Image
 
-		  image.onload = ->
-		    canvas = charset.previewCanvas
-		    if image.height > MAX_HEIGHT
-		      image.width *= MAX_HEIGHT / image.height
-		      image.height = MAX_HEIGHT
-		    ctx = canvas.getContext('2d')
-		    ctx.clearRect 0, 0, canvas.width, canvas.height
-		    canvas.width = image.width
-		    canvas.height = image.height
-		    ctx.drawImage image, 0, 0, image.width, image.height
-		    #resize overlay to match
-		    canvas = charset.overlayCanvas
-		    canvas.width = image.width
-		    canvas.height = image.height
-		    return
+			image.onload = ->
+				canvas = charset.previewCanvas
+				if image.height > MAX_HEIGHT
+					image.width *= MAX_HEIGHT / image.height
+					image.height = MAX_HEIGHT
+				ctx = canvas.getContext('2d')
+				ctx.clearRect 0, 0, canvas.width, canvas.height
+				canvas.width = image.width
+				canvas.height = image.height
+				ctx.drawImage image, 0, 0, image.width, image.height
+				#resize overlay to match
+				canvas = charset.overlayCanvas
+				canvas.width = image.width
+				canvas.height = image.height
+				return
 
-		  image.src = src
-		  return
+			image.src = src
+			return
 
 		renderWorking = (src) ->
 
-		  image = new Image
+			image = new Image
 
-		  image.onload = ->
-		    canvas = charset.workingCanvas
-		    ctx = canvas.getContext('2d')
-		    ctx.clearRect 0, 0, canvas.width, canvas.height
-		    canvas.width = image.width
-		    canvas.height = image.height
-		    ctx.drawImage image, 0, 0, image.width, image.height
-		    return
+			image.onload = ->
+				canvas = charset.workingCanvas
+				ctx = canvas.getContext('2d')
+				ctx.clearRect 0, 0, canvas.width, canvas.height
+				canvas.width = image.width
+				canvas.height = image.height
+				ctx.drawImage image, 0, 0, image.width, image.height
+				return
 
-		  image.src = src
-		  return
+			image.src = src
+			return
 
 		loadImage = (src) ->
-		  #	Prevent any non-image file type from being read.
-		  if !src.type.match(/image.*/)
-		    console.log 'The dropped file is not an image: ', src.type
-		    return
-		  #	Create our FileReader and run the results through the render function.
-		  reader = new FileReader
+			#	Prevent any non-image file type from being read.
+			if !src.type.match(/image.*/)
+				console.log 'The dropped file is not an image: ', src.type
+				return
+			#	Create our FileReader and run the results through the render function.
+			reader = new FileReader
 
-		  reader.onload = (e) ->
-		    render e.target.result
-		    renderWorking e.target.result
-		    return
+			reader.onload = (e) ->
+				render e.target.result
+				renderWorking e.target.result
+				return
 
-		  reader.readAsDataURL src
-		  return
+			reader.readAsDataURL src
+			return
 
 		loadImage(source)
+
+
+
+
+
+
 
 imgToText = ->
 	source = document.getElementById("inputImage")
@@ -312,10 +501,27 @@ imgToText = ->
 	for i in [0...h]
 		row = []
 		for j in [0...w]
-			b = gr[i*w + j]
+			b = gr[i*w + j] # brightness value of input image pixel
 			# find closest ascii brightness value
 			closest = null
 			for c in charset.combos
+				# characters above first row must be blank
+				# 0 is the index of the lightest character (blank)
+				if i is 0 and (c.chars[0] != 0 or c.chars[1] != 0) 
+					continue
+				# characters to the left of first col must be blank
+				if j is 0 and (c.chars[2] != 0 or c.chars[3] != 0)
+					continue
+				# characters below last row must be blank
+				if i is h-1 and (c.chars[2] != 0 or c.chars[3] != 0) 
+					continue
+				# characters to the right of last col must be blank
+				if j is w-1 and (c.chars[2] != 0 or c.chars[3] != 0)
+					continue
+				# otherwise, characters to the top left, right, bottom left must match
+				# ...
+				# ...
+				# ...
 				if closest is null or Math.abs(c.brightness-b) < Math.abs(err)
 					closest = c
 					err = b-c.brightness
@@ -424,22 +630,22 @@ $('#genCombos').click ->
 
 target = document.getElementById('charset-target')
 target.addEventListener 'dragover', ((e) ->
-  e.preventDefault()
-  return
+	e.preventDefault()
+	return
 ), true
 target.addEventListener 'drop', ((e) ->
-  e.preventDefault()
-  charset.dropImage e.dataTransfer.files[0]
-  return
+	e.preventDefault()
+	charset.dropImage e.dataTransfer.files[0]
+	return
 ), true
 
 target = document.getElementById('image-target')
 target.addEventListener 'dragover', ((e) ->
-  e.preventDefault()
-  return
+	e.preventDefault()
+	return
 ), true
 target.addEventListener 'drop', ((e) ->
-  e.preventDefault()
-  inputImage.dropImage e.dataTransfer.files[0]
-  return
+	e.preventDefault()
+	inputImage.dropImage e.dataTransfer.files[0]
+	return
 ), true
