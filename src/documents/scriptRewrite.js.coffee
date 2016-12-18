@@ -430,7 +430,7 @@ inputImage =
 				canvas = document.getElementById('inputImage')
 				ctx = canvas.getContext("2d")
 				aspectRatio = image.height/image.width
-				charAspect = charset.chars[0].imgData.width/charset.chars[0].imgData.height
+				charAspect = charset.chars[0].TL.width/charset.chars[0].TL.height
 				canvas.width = rowLength*2
 				canvas.height = rowLength*aspectRatio*2*charAspect
 				ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
