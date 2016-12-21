@@ -120,7 +120,7 @@
       return results;
     },
     drawCharSelect: function() {
-      var char, ctx, cvs, i, k, newCanvasHtml, ref, results;
+      var char, ctx, cvs, drawChar, i, k, makeClickHandler, newCanvasHtml, ref, results;
       $('#viewSelect').empty();
       results = [];
       for (i = k = 0, ref = charset.chars.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
@@ -129,14 +129,7 @@
         $('#viewSelect').append(newCanvasHtml);
         cvs = document.getElementById('char' + i);
         ctx = cvs.getContext("2d");
-        window.charTL = char.TL;
-        ctx.putImageData(char.TL, 0, 0);
-        ctx.putImageData(char.TR, charset.qWidth, 0);
-        ctx.putImageData(char.BL, 0, charset.qHeight);
-        ctx.putImageData(char.BR, charset.qWidth, charset.qHeight);
-        results.push($('#char' + i).click((function(e) {
-          char.selected = !char.selected;
-          ctx.clearRect(0, 0, charset.qWidth * 2, charset.qHeight * 2);
+        drawChar = function(char, ctx) {
           ctx.putImageData(char.TL, 0, 0);
           ctx.putImageData(char.TR, charset.qWidth, 0);
           ctx.putImageData(char.BL, 0, charset.qHeight);
@@ -145,7 +138,16 @@
             ctx.fillStyle = "rgba(0,0,0,0.5)";
             return ctx.fillRect(0, 0, charset.qWidth * 2, charset.qHeight * 2);
           }
-        })));
+        };
+        drawChar(char, ctx);
+        makeClickHandler = function(char, ctx) {
+          return $('#char' + i).click((function(e) {
+            char.selected = !char.selected;
+            ctx.clearRect(0, 0, charset.qWidth * 2, charset.qHeight * 2);
+            return drawChar(char, ctx);
+          }));
+        };
+        results.push(makeClickHandler(char, ctx));
       }
       return results;
     },

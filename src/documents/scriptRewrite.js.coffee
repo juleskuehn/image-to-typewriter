@@ -167,27 +167,34 @@ charset =
 
 			# draw 4 quadrants of char
 
-			#TEST CODE
-			window.charTL = char.TL
-
-			ctx.putImageData(char.TL,0,0)
-			ctx.putImageData(char.TR,charset.qWidth,0)
-			ctx.putImageData(char.BL,0,charset.qHeight)
-			ctx.putImageData(char.BR,charset.qWidth,charset.qHeight)
-
-			$('#char'+i).click ( (e) ->
-				char.selected = !char.selected
-				# redraw greyed out if unselected
-				ctx.clearRect(0, 0, charset.qWidth*2, charset.qHeight*2)
+			drawChar = (char,ctx) ->
 				# redraw 4 quadrants
 				ctx.putImageData(char.TL,0,0)
 				ctx.putImageData(char.TR,charset.qWidth,0)
 				ctx.putImageData(char.BL,0,charset.qHeight)
 				ctx.putImageData(char.BR,charset.qWidth,charset.qHeight)
+				
 				if ! char.selected
 					ctx.fillStyle = "rgba(0,0,0,0.5)"
 					ctx.fillRect(0, 0, charset.qWidth*2, charset.qHeight*2)
-			)
+
+			drawChar(char,ctx)
+
+
+
+			makeClickHandler = (char,ctx) ->
+				$('#char'+i).click ( (e) ->
+					char.selected = !char.selected
+					# redraw greyed out if unselected
+					ctx.clearRect(0, 0, charset.qWidth*2, charset.qHeight*2)
+
+					drawChar(char,ctx)
+
+				)
+
+			makeClickHandler(char,ctx)
+
+			
 
 
 

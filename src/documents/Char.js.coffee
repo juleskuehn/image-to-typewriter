@@ -11,7 +11,7 @@ class window.Char
   brightness = 0
 
   # is this character being used to generate combos?
-  selected = true
+
 
   constructor: (@TL,@TR,@BL,@BR) ->
     # sum brightness of all pixels in all quadrants
@@ -20,3 +20,4 @@ class window.Char
         this.brightness += q.data[p]
         this.brightness += q.data[p+1]
         this.brightness += q.data[p+2]
+    selected = true

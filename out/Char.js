@@ -1,13 +1,11 @@
 (function() {
   window.Char = (function() {
-    var brightness, selected;
+    var brightness;
 
     brightness = 0;
 
-    selected = true;
-
     function Char(TL, TR, BL, BR) {
-      var i, j, len, p, q, ref, ref1;
+      var i, j, len, p, q, ref, ref1, selected;
       this.TL = TL;
       this.TR = TR;
       this.BL = BL;
@@ -21,6 +19,7 @@
           this.brightness += q.data[p + 2];
         }
       }
+      selected = true;
     }
 
     return Char;
