@@ -76,12 +76,11 @@
         tempCanvas.width = wCanvas.width;
         tempCanvas.height = wCanvas.height;
         tempCanvas.getContext('2d').drawImage(wCanvas, 0, 0);
-        newWidth = Math.ceil((charset.workingCanvas.width / charset.settings.gridSize[0]) / 4) * charset.settings.gridSize[0] * 4;
-        newHeight = Math.ceil((charset.workingCanvas.height / charset.settings.gridSize[1]) / 4) * charset.settings.gridSize[1] * 4;
+        newWidth = Math.ceil(charset.workingCanvas.width / charset.settings.gridSize[0] / 4) * charset.settings.gridSize[0] * 4;
+        newHeight = Math.ceil(charset.workingCanvas.height / charset.settings.gridSize[1] / 4) * charset.settings.gridSize[1] * 4;
         wCanvas.width = newWidth;
         wCanvas.height = newHeight;
-        wCanvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, wCanvas.width, wCanvas.height);
-        return charset.workingCanvas = wCanvas;
+        return wCanvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, wCanvas.width, wCanvas.height);
       };
       resizeCanvasToMultiplesOfCharSize();
       charset.chars = [];
@@ -93,15 +92,15 @@
       start = [charset.settings.start[0] * charWidth + offsetX, charset.settings.start[1] * charHeight + offsetY];
       numRows = charset.settings.end[1] - charset.settings.start[1];
       numCols = charset.settings.end[0] - charset.settings.start[0];
-      charset.qWidth = charWidth / 4;
-      charset.qHeight = charHeight / 4;
+      charset.qWidth = charWidth / 2;
+      charset.qHeight = charHeight / 2;
       for (row = k = 0, ref = numRows; 0 <= ref ? k <= ref : k >= ref; row = 0 <= ref ? ++k : --k) {
         for (col = m = 0, ref1 = numCols; 0 <= ref1 ? m <= ref1 : m >= ref1; col = 0 <= ref1 ? ++m : --m) {
           startChar = [start[0] + charWidth * col, start[1] + charHeight * row];
-          TL = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1]), Math.floor(charWidth / 2), Math.floor(charHeight / 2));
+          TL = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1]), Math.floor(charset.qWidth), Math.floor(charset.qHeight));
           TR = ctx.getImageData(Math.floor(startChar[0] + charWidth / 2), Math.floor(startChar[1]), Math.floor(charWidth), Math.floor(charHeight / 2));
-          BL = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1] + charWidth / 2), Math.floor(charWidth / 2), Math.floor(charHeight));
-          BR = ctx.getImageData(Math.floor(startChar[0] + charWidth / 2), Math.floor(startChar[1] + charWidth / 2), Math.floor(charWidth), Math.floor(charHeight));
+          BL = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1] + charset.qHeight), Math.floor(charset.qWidth), Math.floor(charset.qHeight * 2));
+          BR = ctx.getImageData(Math.floor(startChar[0] + charset.qWidth), Math.floor(startChar[1] + charset.qHeight), Math.floor(charset.qWidth * 2), Math.floor(charset.qHeight * 2));
           charset.chars.push(new Char(TL, TR, BL, BR));
         }
       }

@@ -93,3 +93,6 @@ div#tabs {
 #outputImage {
   float: right;
 }
+div.hidden {
+  display: none;
+}

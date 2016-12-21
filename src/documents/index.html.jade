@@ -2,24 +2,25 @@ doctype html
 html
   head
     meta(charset='UTF-8')
-    title='kword X'
+    title='kword X2'
     link(href='style.css', rel='stylesheet')
   body
     div(id="charset-target")
     div(id="image-target")
     div(id='options')
-     div
-      label Cols:
-      input(type="text" value="59" id="cols")
-     div
-      label Rows:
-      input(type="text" value="20" id="rows")
-     div
-      label Grid Offset X:
-      input(type="text" value="0.5" id="offsetX")
-     div
-        label Grid Offset Y:
-        input(type="text" value="0.73" id="offsetY")
+     div(class="hidden") 
+      div
+       label Cols:
+       input(type="text" value="59" id="cols")
+      div
+       label Rows:
+       input(type="text" value="20" id="rows")
+      div
+       label Grid Offset X:
+       input(type="text" value="0.5" id="offsetX")
+      div
+       label Grid Offset Y:
+       input(type="text" value="0.73" id="offsetY")
      div
       label Charset Start Col:
       input(type="text" value="18" id="colStart")
@@ -32,24 +33,25 @@ html
      div
       label Charset End Row:
       input(type="text" value="8" id="rowEnd")
-     div
-      label Overlap 1 On
-      input(type="checkbox" id="overlap1")
-     div
-      label Overlap 1 +X:
-      input(type="text" value="0" id="o1offsetX")
-     div
-      label Overlap 1 +Y:
-      input(type="text" value="0.5" id="o1offsetY")
-     div
-      label Overlap 2 On
-      input(type="checkbox" id="overlap2")
-     div
-      label Overlap 2 +X:
-      input(type="text" value="0.5" id="o2offsetX")
-     div
-      label Overlap 2 +Y:
-      input(type="text" value="0" id="o2offsetY")
+     div(class="hidden") 
+      div
+       label Overlap 1 On
+       input(type="checkbox" id="overlap1")
+      div
+       label Overlap 1 +X:
+       input(type="text" value="0" id="o1offsetX")
+      div
+       label Overlap 1 +Y:
+       input(type="text" value="0.5" id="o1offsetY")
+      div
+       label Overlap 2 On
+       input(type="checkbox" id="overlap2")
+      div
+       label Overlap 2 +X:
+       input(type="text" value="0.5" id="o2offsetX")
+      div
+       label Overlap 2 +Y:
+       input(type="text" value="0" id="o2offsetY")
      div
       button(type="button" id="chopCharset") Chop Character Set
       button(type="button" id="genCombos") Generate Combos

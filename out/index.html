@@ -2,28 +2,30 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>kword X</title>
+    <title>kword X2</title>
     <link href="style.css" rel="stylesheet">
   </head>
   <body>
     <div id="charset-target"></div>
     <div id="image-target"></div>
     <div id="options">
-      <div>
-        <label>Cols:</label>
-        <input type="text" value="59" id="cols">
-      </div>
-      <div>
-        <label>Rows:</label>
-        <input type="text" value="20" id="rows">
-      </div>
-      <div>
-        <label>Grid Offset X:</label>
-        <input type="text" value="0.5" id="offsetX">
-      </div>
-      <div>
-        <label>Grid Offset Y:</label>
-        <input type="text" value="0.73" id="offsetY">
+      <div class="hidden"> 
+        <div>
+          <label>Cols:</label>
+          <input type="text" value="59" id="cols">
+        </div>
+        <div>
+          <label>Rows:</label>
+          <input type="text" value="20" id="rows">
+        </div>
+        <div>
+          <label>Grid Offset X:</label>
+          <input type="text" value="0.5" id="offsetX">
+        </div>
+        <div>
+          <label>Grid Offset Y:</label>
+          <input type="text" value="0.73" id="offsetY">
+        </div>
       </div>
       <div>
         <label>Charset Start Col:</label>
@@ -41,29 +43,31 @@
         <label>Charset End Row:</label>
         <input type="text" value="8" id="rowEnd">
       </div>
-      <div>
-        <label>Overlap 1 On</label>
-        <input type="checkbox" id="overlap1">
-      </div>
-      <div>
-        <label>Overlap 1 +X:</label>
-        <input type="text" value="0" id="o1offsetX">
-      </div>
-      <div>
-        <label>Overlap 1 +Y:</label>
-        <input type="text" value="0.5" id="o1offsetY">
-      </div>
-      <div>
-        <label>Overlap 2 On</label>
-        <input type="checkbox" id="overlap2">
-      </div>
-      <div>
-        <label>Overlap 2 +X:</label>
-        <input type="text" value="0.5" id="o2offsetX">
-      </div>
-      <div>
-        <label>Overlap 2 +Y:</label>
-        <input type="text" value="0" id="o2offsetY">
+      <div class="hidden"> 
+        <div>
+          <label>Overlap 1 On</label>
+          <input type="checkbox" id="overlap1">
+        </div>
+        <div>
+          <label>Overlap 1 +X:</label>
+          <input type="text" value="0" id="o1offsetX">
+        </div>
+        <div>
+          <label>Overlap 1 +Y:</label>
+          <input type="text" value="0.5" id="o1offsetY">
+        </div>
+        <div>
+          <label>Overlap 2 On</label>
+          <input type="checkbox" id="overlap2">
+        </div>
+        <div>
+          <label>Overlap 2 +X:</label>
+          <input type="text" value="0.5" id="o2offsetX">
+        </div>
+        <div>
+          <label>Overlap 2 +Y:</label>
+          <input type="text" value="0" id="o2offsetY">
+        </div>
       </div>
       <div>
         <button type="button" id="chopCharset">Chop Character Set</button>
