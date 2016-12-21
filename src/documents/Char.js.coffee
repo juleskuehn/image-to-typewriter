@@ -10,10 +10,11 @@ class window.Char
   # used for finding the lightest (blank) character
   brightness = 0
 
-  # is this character being used to generate combos?
-
+  # used for correlating combo indexes
+  index = 0
 
   constructor: (@TL,@TR,@BL,@BR) ->
+    console.log this.TL
     # sum brightness of all pixels in all quadrants
     for p in [0...this.TL.data.length] by 4
       for q in [this.TL,this.TR,this.BL,this.BR]

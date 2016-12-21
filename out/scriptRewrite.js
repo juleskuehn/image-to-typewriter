@@ -170,7 +170,7 @@
           for (c = o = 0, ref3 = selected.length; 0 <= ref3 ? o < ref3 : o > ref3; c = 0 <= ref3 ? ++o : --o) {
             combos[a][b].push([]);
             for (d = q = 0, ref4 = selected.length; 0 <= ref4 ? q < ref4 : q > ref4; d = 0 <= ref4 ? ++q : --q) {
-              combos[a][b][c].push(new Combo(a, b, c, d, charset));
+              combos[a][b][c].push(new Combo(a, b, c, d, charset, selected));
             }
           }
         }

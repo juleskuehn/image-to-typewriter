@@ -229,7 +229,7 @@ charset =
 				for c in [0...selected.length]
 					combos[a][b].push []
 					for d in [0...selected.length]
-						combos[a][b][c].push new Combo(a,b,c,d,charset);
+						combos[a][b][c].push new Combo(a,b,c,d,charset,selected);
 
 		charset.combos = combos
 
