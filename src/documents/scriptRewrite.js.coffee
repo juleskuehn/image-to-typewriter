@@ -214,14 +214,21 @@ charset =
 		# Indices correspond to the indices of the 
 		# chars composing the combo [TL][TR][BL][BR]
 		combos = []
+
+		# restrict to selected characters
+		selected = [] 
+		for c in charset.chars
+			if c.selected
+				selected.push(c)
+
 		# Generate all possible combos
-		for a in [0...charset.chars.length]
+		for a in [0...selected.length]
 			combos.push []
-			for b in [0...charset.chars.length]
+			for b in [0...selected.length]
 				combos[a].push []
-				for c in [0...charset.chars.length]
+				for c in [0...selected.length]
 					combos[a][b].push []
-					for d in [0...charset.chars.length]
+					for d in [0...selected.length]
 						combos[a][b][c].push new Combo(a,b,c,d,charset);
 
 		charset.combos = combos
@@ -230,10 +237,10 @@ charset =
 		maxBright = 0   # implausibly dark for a maximum
 
 		# find min and max brightness
-		for a in [0...charset.chars.length]
-			for b in [0...charset.chars.length]
-				for c in [0...charset.chars.length]
-					for d in [0...charset.chars.length]
+		for a in [0...selected.length]
+			for b in [0...selected.length]
+				for c in [0...selected.length]
+					for d in [0...selected.length]
 						bright = charset.combos[a][b][c][d].brightness
 						if bright>maxBright
 							maxBright = bright
@@ -241,20 +248,23 @@ charset =
 							minBright = bright
 
 		# normalize and invert brightness
-		for a in [0...charset.chars.length]
-			for b in [0...charset.chars.length]
-				for c in [0...charset.chars.length]
-					for d in [0...charset.chars.length]
+		for a in [0...selected.length]
+			for b in [0...selected.length]
+				for c in [0...selected.length]
+					for d in [0...selected.length]
 						combo = charset.combos[a][b][c][d]
 						combo.brightness = 255 - (255*(combo.brightness-minBright))/(maxBright-minBright)
+
+		# debugging
+		window.combos = combos
 
 		drawCombos = ->
 			$('#comboPreview').empty()
 			id = 0
-			for a in [0...charset.chars.length]
-				for b in [0...charset.chars.length]
-					for c in [0...charset.chars.length]
-						for d in [0...charset.chars.length]
+			for a in [0...selected.length]
+				for b in [0...selected.length]
+					for c in [0...selected.length]
+						for d in [0...selected.length]
 							# create canvas
 							newCanvasHtml = '<canvas id="combo'+id+'" width="'+charset.qWidth+'" height="'+charset.qWidth+'"></canvas>'
 							$('#comboPreview').append newCanvasHtml
