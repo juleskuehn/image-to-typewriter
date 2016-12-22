@@ -29,7 +29,7 @@ class window.Combo
     ctx.globalCompositeOperation = 'multiply'
 
     # generate composite image from 4 characters
-    img = document.createElement("img");
+    img = document.createElement("img")
     # draw bottom right quadrant of top left character
     img.src = document.getElementById('charBR'+selected[this.TL].index).toDataURL("image/png")
     ctx.drawImage(img,0,0,cvs.width,cvs.height)

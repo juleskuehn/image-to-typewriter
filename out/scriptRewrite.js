@@ -226,6 +226,7 @@
           }
         }
       }
+      console.log(combos);
       drawCombos = function() {
         var ab, ac, ad, ae, af, ctx, cvs, id, len1, newCanvasHtml, ref13, ref14, ref15, ref16, results, sortedCombos;
         $('#comboPreview').empty();
@@ -234,7 +235,7 @@
           for (b = ac = 0, ref14 = selected.length; 0 <= ref14 ? ac < ref14 : ac > ref14; b = 0 <= ref14 ? ++ac : --ac) {
             for (c = ad = 0, ref15 = selected.length; 0 <= ref15 ? ad < ref15 : ad > ref15; c = 0 <= ref15 ? ++ad : --ad) {
               for (d = ae = 0, ref16 = selected.length; 0 <= ref16 ? ae < ref16 : ae > ref16; d = 0 <= ref16 ? ++ae : --ae) {
-                sortedCombos.push(charset.combos[a][b][c][b]);
+                sortedCombos.push(charset.combos[a][b][c][d]);
               }
             }
           }

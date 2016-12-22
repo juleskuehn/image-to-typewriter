@@ -283,6 +283,8 @@ charset =
 						combo = charset.combos[a][b][c][d]
 						combo.brightness = 255 - (255*(combo.brightness-minBright))/(maxBright-minBright)
 
+		console.log combos
+
 
 
 		drawCombos = ->
@@ -297,7 +299,8 @@ charset =
 					for c in [0...selected.length]
 						for d in [0...selected.length]
 							# add to new output array 
-							sortedCombos.push charset.combos[a][b][c][b]
+							sortedCombos.push charset.combos[a][b][c][d]
+
 
 			# sort the combos
 			sortedCombos = _(sortedCombos).sortBy('brightness')

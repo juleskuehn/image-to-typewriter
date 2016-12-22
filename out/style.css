@@ -22,6 +22,7 @@ body {
   margin: 0;
   padding: 0;
   float: left;
+  border: solid 2px #000;
 }
 #viewSelect {
   position: absolute;
@@ -94,6 +95,9 @@ div#tabs {
   float: right;
 }
 #charQuadrants {
-  position: fixed;
-  bottom: 0;
+  position: relative;
+  top: 400px;
+}
+#charQuadrants canvas {
+  border: solid 2px #000;
 }
