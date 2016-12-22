@@ -68,7 +68,7 @@
       return drawGrid();
     },
     chopCharset: function() {
-      var BL, BR, TL, TR, char, charHeight, charWidth, col, ctx, k, len, m, maxBright, minBright, n, numCols, numRows, offsetX, offsetY, ref, ref1, ref2, resizeCanvasToMultiplesOfCharSize, results, row, start, startChar;
+      var BL, BR, TL, TR, char, charHeight, charWidth, col, ctx, k, len, m, maxBright, minBright, n, numCols, numRows, offsetX, offsetY, ref, ref1, ref2, resizeCanvasToMultiplesOfCharSize, row, start, startChar;
       resizeCanvasToMultiplesOfCharSize = function() {
         var newHeight, newWidth, tempCanvas, wCanvas;
         wCanvas = charset.workingCanvas;
@@ -104,7 +104,6 @@
           charset.chars.push(new Char(TL, TR, BL, BR));
         }
       }
-      charset.chars = _(charset.chars).sortBy('brightness');
       maxBright = _.max(charset.chars, function(w) {
         return w.brightness;
       }).brightness;
@@ -112,12 +111,12 @@
         return w.brightness;
       }).brightness;
       ref2 = charset.chars;
-      results = [];
       for (n = 0, len = ref2.length; n < len; n++) {
         char = ref2[n];
-        results.push(char.brightness = 255 - (255 * (char.brightness - minBright)) / (maxBright - minBright));
+        char.brightness = 255 - (255 * (char.brightness - minBright)) / (maxBright - minBright);
+        console.log(char);
       }
-      return results;
+      return charset.chars = _(charset.chars).sortBy('brightness');
     },
     drawCharSelect: function() {
       var char, ctx, cvs, drawChar, i, k, makeClickHandler, newCanvasHtml, ref, results;

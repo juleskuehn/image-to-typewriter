@@ -1,28 +1,31 @@
 (function() {
   window.Char = (function() {
-    var brightness, index;
-
-    brightness = 0;
+    var index;
 
     index = 0;
 
     function Char(TL, TR, BL, BR) {
-      var i, j, len, p, q, ref, ref1, selected;
+      var i, p, ref;
       this.TL = TL;
       this.TR = TR;
       this.BL = BL;
       this.BR = BR;
-      console.log(this.TL);
+      this.brightness = 0;
       for (p = i = 0, ref = this.TL.data.length; i < ref; p = i += 4) {
-        ref1 = [this.TL, this.TR, this.BL, this.BR];
-        for (j = 0, len = ref1.length; j < len; j++) {
-          q = ref1[j];
-          this.brightness += q.data[p];
-          this.brightness += q.data[p + 1];
-          this.brightness += q.data[p + 2];
-        }
+        this.brightness += this.TL.data[p];
+        this.brightness += this.TL.data[p + 1];
+        this.brightness += this.TL.data[p + 2];
+        this.brightness += this.TR.data[p];
+        this.brightness += this.TR.data[p + 1];
+        this.brightness += this.TR.data[p + 2];
+        this.brightness += this.BL.data[p];
+        this.brightness += this.BL.data[p + 1];
+        this.brightness += this.BL.data[p + 2];
+        this.brightness += this.BR.data[p];
+        this.brightness += this.BR.data[p + 1];
+        this.brightness += this.BR.data[p + 2];
       }
-      selected = true;
+      this.selected = false;
     }
 
     return Char;

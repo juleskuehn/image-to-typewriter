@@ -139,19 +139,18 @@ charset =
 					Math.floor(charset.qWidth*2), Math.floor(charset.qHeight*2) )
 				charset.chars.push new Char(TL,TR,BL,BR)
 
-		# sort chars array by char.brightness
-		charset.chars = _(charset.chars).sortBy('brightness')
-
 		# invert and nomalize brightness
+		
 		maxBright = _.max(charset.chars,(w) -> w.brightness).brightness
 		minBright = _.min(charset.chars,(w) -> w.brightness).brightness
 		for char in charset.chars
 			char.brightness = 255 - (255*(char.brightness-minBright))/(maxBright-minBright)
+			console.log char
 
-
-
-
-
+		# sort chars array by char.brightness
+		charset.chars = _(charset.chars).sortBy('brightness')
+		
+		# do not change character indexes after this!
 
 
 
