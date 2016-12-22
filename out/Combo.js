@@ -19,7 +19,7 @@
       ctx = cvs.getContext("2d");
       ctx.globalCompositeOperation = 'multiply';
       img = document.createElement("img");
-      img.src = document.getElementById('char' + this.TL).toDataURL("image/png");
+      img.src = document.getElementById('charQ_BL_' + this.TL).toDataURL("image/png");
       ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
       this.image = ctx.getImageData(0, 0, cvs.width, cvs.height);
       console.log(this.image);

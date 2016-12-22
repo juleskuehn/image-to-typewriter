@@ -149,9 +149,29 @@ charset =
 
 		# sort chars array by char.brightness
 		charset.chars = _(charset.chars).sortBy('brightness')
-		
+			
 		# do not change character indexes after this!
 
+
+
+	drawCharQuadrants: ->
+		$('#charQuadrants').empty()
+		for i in [0...charset.chars.length]
+			char = charset.chars[i]
+
+			drawQuadrant = (quadrant,quadrantString) ->
+				# create canvas
+				newCanvasHtml = '<canvas id="char'+quadrantString+i+'" width="'+charset.qWidth*2+'" height="'+charset.qHeight*2+'"></canvas>'
+				$('#charQuadrants').append newCanvasHtml
+				cvs = document.getElementById('char'+quadrantString+i)
+				ctx = cvs.getContext("2d")
+
+				ctx.putImageData(quadrant,0,0)
+
+			drawQuadrant(char.TL,"TL")
+			drawQuadrant(char.TR,"TR")
+			drawQuadrant(char.BL,"BL")
+			drawQuadrant(char.BR,"BR")
 
 
 	drawCharSelect: ->
@@ -480,6 +500,8 @@ $('#chopCharset').click ->
 	charset.chopPreview()
 	charset.chopCharset()
 	charset.drawCharSelect()
+	charset.drawCharQuadrants()
+
 
 $('#genCombos').click ->
 	charset.genCombos()

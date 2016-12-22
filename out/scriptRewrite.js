@@ -118,6 +118,27 @@
       }
       return charset.chars = _(charset.chars).sortBy('brightness');
     },
+    drawCharQuadrants: function() {
+      var char, drawQuadrant, i, k, ref, results;
+      $('#charQuadrants').empty();
+      results = [];
+      for (i = k = 0, ref = charset.chars.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
+        char = charset.chars[i];
+        drawQuadrant = function(quadrant, quadrantString) {
+          var ctx, cvs, newCanvasHtml;
+          newCanvasHtml = '<canvas id="char' + quadrantString + i + '" width="' + charset.qWidth * 2 + '" height="' + charset.qHeight * 2 + '"></canvas>';
+          $('#charQuadrants').append(newCanvasHtml);
+          cvs = document.getElementById('char' + quadrantString + i);
+          ctx = cvs.getContext("2d");
+          return ctx.putImageData(quadrant, 0, 0);
+        };
+        drawQuadrant(char.TL, "TL");
+        drawQuadrant(char.TR, "TR");
+        drawQuadrant(char.BL, "BL");
+        results.push(drawQuadrant(char.BR, "BR"));
+      }
+      return results;
+    },
     drawCharSelect: function() {
       var char, ctx, cvs, drawChar, i, k, makeClickHandler, newCanvasHtml, ref, results;
       $('#viewSelect').empty();
@@ -448,7 +469,8 @@
     charset.getSettings();
     charset.chopPreview();
     charset.chopCharset();
-    return charset.drawCharSelect();
+    charset.drawCharSelect();
+    return charset.drawCharQuadrants();
   });
 
   $('#genCombos').click(function() {

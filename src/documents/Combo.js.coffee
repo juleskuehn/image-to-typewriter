@@ -31,7 +31,7 @@ class window.Combo
     # document.getElementById('char'+TL).toDataURL("image/png")
     # draw bottom right quadrant of top left character
     # img.src = chars[this.TL].BR
-    img.src = document.getElementById('char'+this.TL).toDataURL("image/png")
+    img.src = document.getElementById('charQ_BL_'+this.TL).toDataURL("image/png")
     ctx.drawImage(img,0,0,cvs.width,cvs.height)
     # draw bottom left quadrant of top right character
     #  img.src = chars[this.TR].BL
