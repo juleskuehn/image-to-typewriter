@@ -222,7 +222,7 @@
                     var ae, ref16, results3;
                     results3 = [];
                     for (d = ae = 0, ref16 = selected.length; 0 <= ref16 ? ae < ref16 : ae > ref16; d = 0 <= ref16 ? ++ae : --ae) {
-                      newCanvasHtml = '<canvas id="combo' + id + '" width="' + charset.qWidth + '" height="' + charset.qWidth + '"></canvas>';
+                      newCanvasHtml = '<canvas id="combo' + id + '" width="' + charset.qWidth + '" height="' + charset.qHeight + '"></canvas>';
                       $('#comboPreview').append(newCanvasHtml);
                       cvs = document.getElementById('combo' + id);
                       ctx = cvs.getContext("2d");

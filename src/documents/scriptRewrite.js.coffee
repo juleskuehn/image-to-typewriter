@@ -266,7 +266,7 @@ charset =
 					for c in [0...selected.length]
 						for d in [0...selected.length]
 							# create canvas
-							newCanvasHtml = '<canvas id="combo'+id+'" width="'+charset.qWidth+'" height="'+charset.qWidth+'"></canvas>'
+							newCanvasHtml = '<canvas id="combo'+id+'" width="'+charset.qWidth+'" height="'+charset.qHeight+'"></canvas>'
 							$('#comboPreview').append newCanvasHtml
 							cvs = document.getElementById('combo'+id)
 							ctx = cvs.getContext("2d")
