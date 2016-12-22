@@ -34,7 +34,6 @@
         this.brightness += this.image.data[p + 1];
         this.brightness += this.image.data[p + 2];
       }
-      console.log(this);
     }
 
     return Combo;

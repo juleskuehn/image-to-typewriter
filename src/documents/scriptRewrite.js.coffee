@@ -277,8 +277,6 @@ charset =
 						combo = charset.combos[a][b][c][d]
 						combo.brightness = 255 - (255*(combo.brightness-minBright))/(maxBright-minBright)
 
-		# sort chars array by char.brightness
-		charset.combos = _(charset.combos).sortBy('brightness')
 
 
 		drawCombos = ->

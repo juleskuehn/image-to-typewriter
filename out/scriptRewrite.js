@@ -224,7 +224,6 @@
           }
         }
       }
-      charset.combos = _(charset.combos).sortBy('brightness');
       drawCombos = function() {
         var ab, ctx, cvs, id, newCanvasHtml, ref13, results;
         $('#comboPreview').empty();
