@@ -265,9 +265,6 @@ charset =
 						if bright<minBright
 							minBright = bright
 
-		console.log minBright
-		console.log maxBright
-
 
 		# normalize and invert brightness
 		for a in [0...selected.length]
@@ -280,19 +277,33 @@ charset =
 
 
 		drawCombos = ->
+			# remove existing combo images from DOM
 			$('#comboPreview').empty()
-			id = 0
+
+			# store all combos to be drawn in this 1d array (for sorting)
+			sortedCombos = []
+			
 			for a in [0...selected.length]
 				for b in [0...selected.length]
 					for c in [0...selected.length]
 						for d in [0...selected.length]
-							# create canvas
-							newCanvasHtml = '<canvas id="combo'+id+'" width="'+charset.qWidth+'" height="'+charset.qHeight+'"></canvas>'
-							$('#comboPreview').append newCanvasHtml
-							cvs = document.getElementById('combo'+id)
-							ctx = cvs.getContext("2d")
-							ctx.putImageData(charset.combos[a][b][c][d].image,0,0)
-							id++
+							# add to new output array 
+							sortedCombos.push charset.combos[a][b][c][b]
+
+			# sort the combos
+			sortedCombos = _(sortedCombos).sortBy('brightness')
+
+			# create a unique DOM element for each combo image
+			# TODO this is slow... should reduce # of dom accesses
+			id = 0
+			for combo in sortedCombos
+				# create canvas
+				newCanvasHtml = '<canvas id="combo'+id+'" width="'+charset.qWidth+'" height="'+charset.qHeight+'"></canvas>'
+				$('#comboPreview').append newCanvasHtml
+				cvs = document.getElementById('combo'+id)
+				ctx = cvs.getContext("2d")
+				ctx.putImageData(combo.image,0,0)
+				id++
 
 		drawCombos()
 

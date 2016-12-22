@@ -212,8 +212,6 @@
           }
         }
       }
-      console.log(minBright);
-      console.log(maxBright);
       for (a = x = 0, ref9 = selected.length; 0 <= ref9 ? x < ref9 : x > ref9; a = 0 <= ref9 ? ++x : --x) {
         for (b = y = 0, ref10 = selected.length; 0 <= ref10 ? y < ref10 : y > ref10; b = 0 <= ref10 ? ++y : --y) {
           for (c = z = 0, ref11 = selected.length; 0 <= ref11 ? z < ref11 : z > ref11; c = 0 <= ref11 ? ++z : --z) {
@@ -225,38 +223,29 @@
         }
       }
       drawCombos = function() {
-        var ab, ctx, cvs, id, newCanvasHtml, ref13, results;
+        var ab, ac, ad, ae, af, ctx, cvs, id, len1, newCanvasHtml, ref13, ref14, ref15, ref16, results, sortedCombos;
         $('#comboPreview').empty();
+        sortedCombos = [];
+        for (a = ab = 0, ref13 = selected.length; 0 <= ref13 ? ab < ref13 : ab > ref13; a = 0 <= ref13 ? ++ab : --ab) {
+          for (b = ac = 0, ref14 = selected.length; 0 <= ref14 ? ac < ref14 : ac > ref14; b = 0 <= ref14 ? ++ac : --ac) {
+            for (c = ad = 0, ref15 = selected.length; 0 <= ref15 ? ad < ref15 : ad > ref15; c = 0 <= ref15 ? ++ad : --ad) {
+              for (d = ae = 0, ref16 = selected.length; 0 <= ref16 ? ae < ref16 : ae > ref16; d = 0 <= ref16 ? ++ae : --ae) {
+                sortedCombos.push(charset.combos[a][b][c][b]);
+              }
+            }
+          }
+        }
+        sortedCombos = _(sortedCombos).sortBy('brightness');
         id = 0;
         results = [];
-        for (a = ab = 0, ref13 = selected.length; 0 <= ref13 ? ab < ref13 : ab > ref13; a = 0 <= ref13 ? ++ab : --ab) {
-          results.push((function() {
-            var ac, ref14, results1;
-            results1 = [];
-            for (b = ac = 0, ref14 = selected.length; 0 <= ref14 ? ac < ref14 : ac > ref14; b = 0 <= ref14 ? ++ac : --ac) {
-              results1.push((function() {
-                var ad, ref15, results2;
-                results2 = [];
-                for (c = ad = 0, ref15 = selected.length; 0 <= ref15 ? ad < ref15 : ad > ref15; c = 0 <= ref15 ? ++ad : --ad) {
-                  results2.push((function() {
-                    var ae, ref16, results3;
-                    results3 = [];
-                    for (d = ae = 0, ref16 = selected.length; 0 <= ref16 ? ae < ref16 : ae > ref16; d = 0 <= ref16 ? ++ae : --ae) {
-                      newCanvasHtml = '<canvas id="combo' + id + '" width="' + charset.qWidth + '" height="' + charset.qHeight + '"></canvas>';
-                      $('#comboPreview').append(newCanvasHtml);
-                      cvs = document.getElementById('combo' + id);
-                      ctx = cvs.getContext("2d");
-                      ctx.putImageData(charset.combos[a][b][c][d].image, 0, 0);
-                      results3.push(id++);
-                    }
-                    return results3;
-                  })());
-                }
-                return results2;
-              })());
-            }
-            return results1;
-          })());
+        for (af = 0, len1 = sortedCombos.length; af < len1; af++) {
+          combo = sortedCombos[af];
+          newCanvasHtml = '<canvas id="combo' + id + '" width="' + charset.qWidth + '" height="' + charset.qHeight + '"></canvas>';
+          $('#comboPreview').append(newCanvasHtml);
+          cvs = document.getElementById('combo' + id);
+          ctx = cvs.getContext("2d");
+          ctx.putImageData(combo.image, 0, 0);
+          results.push(id++);
         }
         return results;
       };
