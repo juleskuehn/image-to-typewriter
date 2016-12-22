@@ -59,6 +59,7 @@ charset =
 
 		lightboxSelection()
 
+		# TODO fix this
 		drawGrid = ->
 			numRows = (charset.settings.end[1] - charset.settings.start[1])
 			numCols = (charset.settings.end[0] - charset.settings.start[0])
@@ -130,13 +131,15 @@ charset =
 				TL = ctx.getImageData( \
 					Math.floor(startChar[0]), Math.floor(startChar[1]), \
 					Math.floor(charset.qWidth), Math.floor(charset.qHeight) )
-				TR = ctx.getImageData Math.floor(startChar[0]+charWidth/2),Math.floor(startChar[1]),Math.floor(charWidth),Math.floor(charHeight/2)
+				TR = ctx.getImageData( \
+					Math.floor(startChar[0]+charWidth/2),Math.floor(startChar[1]), \
+					Math.floor(charset.qWidth), Math.floor(charset.qHeight) )
 				BL = ctx.getImageData( \
 					Math.floor(startChar[0]), Math.floor(startChar[1]+charset.qHeight), \
-					Math.floor(charset.qWidth), Math.floor(charset.qHeight*2) )
+					Math.floor(charset.qWidth), Math.floor(charset.qHeight) )
 				BR = ctx.getImageData( \
 					Math.floor(startChar[0]+charset.qWidth), Math.floor(startChar[1]+charset.qHeight), \
-					Math.floor(charset.qWidth*2), Math.floor(charset.qHeight*2) )
+					Math.floor(charset.qWidth), Math.floor(charset.qHeight) )
 				charset.chars.push new Char(TL,TR,BL,BR)
 
 		# invert and nomalize brightness

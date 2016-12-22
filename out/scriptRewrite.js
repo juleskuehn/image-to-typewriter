@@ -98,9 +98,9 @@
         for (col = m = 0, ref1 = numCols; 0 <= ref1 ? m <= ref1 : m >= ref1; col = 0 <= ref1 ? ++m : --m) {
           startChar = [start[0] + charWidth * col, start[1] + charHeight * row];
           TL = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1]), Math.floor(charset.qWidth), Math.floor(charset.qHeight));
-          TR = ctx.getImageData(Math.floor(startChar[0] + charWidth / 2), Math.floor(startChar[1]), Math.floor(charWidth), Math.floor(charHeight / 2));
-          BL = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1] + charset.qHeight), Math.floor(charset.qWidth), Math.floor(charset.qHeight * 2));
-          BR = ctx.getImageData(Math.floor(startChar[0] + charset.qWidth), Math.floor(startChar[1] + charset.qHeight), Math.floor(charset.qWidth * 2), Math.floor(charset.qHeight * 2));
+          TR = ctx.getImageData(Math.floor(startChar[0] + charWidth / 2), Math.floor(startChar[1]), Math.floor(charset.qWidth), Math.floor(charset.qHeight));
+          BL = ctx.getImageData(Math.floor(startChar[0]), Math.floor(startChar[1] + charset.qHeight), Math.floor(charset.qWidth), Math.floor(charset.qHeight));
+          BR = ctx.getImageData(Math.floor(startChar[0] + charset.qWidth), Math.floor(startChar[1] + charset.qHeight), Math.floor(charset.qWidth), Math.floor(charset.qHeight));
           charset.chars.push(new Char(TL, TR, BL, BR));
         }
       }

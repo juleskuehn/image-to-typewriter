@@ -93,3 +93,7 @@ div#tabs {
 #outputImage {
   float: right;
 }
+#charQuadrants {
+  position: fixed;
+  bottom: 0;
+}
