@@ -114,7 +114,6 @@
       for (n = 0, len = ref2.length; n < len; n++) {
         char = ref2[n];
         char.brightness = 255 - (255 * (char.brightness - minBright)) / (maxBright - minBright);
-        console.log(char);
       }
       return charset.chars = _(charset.chars).sortBy('brightness');
     },
@@ -126,7 +125,7 @@
         char = charset.chars[i];
         drawQuadrant = function(quadrant, quadrantString) {
           var ctx, cvs, newCanvasHtml;
-          newCanvasHtml = '<canvas id="char' + quadrantString + i + '" width="' + charset.qWidth * 2 + '" height="' + charset.qHeight * 2 + '"></canvas>';
+          newCanvasHtml = '<canvas id="char' + quadrantString + i + '" width="' + charset.qWidth + '" height="' + charset.qHeight + '"></canvas>';
           $('#charQuadrants').append(newCanvasHtml);
           cvs = document.getElementById('char' + quadrantString + i);
           ctx = cvs.getContext("2d");
@@ -196,7 +195,7 @@
         }
       }
       charset.combos = combos;
-      minBright = 255;
+      minBright = 100000000;
       maxBright = 0;
       for (a = s = 0, ref5 = selected.length; 0 <= ref5 ? s < ref5 : s > ref5; a = 0 <= ref5 ? ++s : --s) {
         for (b = t = 0, ref6 = selected.length; 0 <= ref6 ? t < ref6 : t > ref6; b = 0 <= ref6 ? ++t : --t) {
@@ -213,6 +212,8 @@
           }
         }
       }
+      console.log(minBright);
+      console.log(maxBright);
       for (a = x = 0, ref9 = selected.length; 0 <= ref9 ? x < ref9 : x > ref9; a = 0 <= ref9 ? ++x : --x) {
         for (b = y = 0, ref10 = selected.length; 0 <= ref10 ? y < ref10 : y > ref10; b = 0 <= ref10 ? ++y : --y) {
           for (c = z = 0, ref11 = selected.length; 0 <= ref11 ? z < ref11 : z > ref11; c = 0 <= ref11 ? ++z : --z) {
@@ -223,7 +224,7 @@
           }
         }
       }
-      window.combos = combos;
+      charset.combos = _(charset.combos).sortBy('brightness');
       drawCombos = function() {
         var ab, ctx, cvs, id, newCanvasHtml, ref13, results;
         $('#comboPreview').empty();

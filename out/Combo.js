@@ -13,21 +13,28 @@
       this.BL = BL;
       this.BR = BR;
       chars = selected;
+      this.brightness = 0;
       cvs = document.createElement('canvas');
       cvs.width = charset.qWidth;
       cvs.height = charset.qHeight;
       ctx = cvs.getContext("2d");
       ctx.globalCompositeOperation = 'multiply';
       img = document.createElement("img");
-      img.src = document.getElementById('charQ_BL_' + this.TL).toDataURL("image/png");
+      img.src = document.getElementById('charBR' + this.TL).toDataURL("image/png");
+      ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+      img.src = document.getElementById('charBL' + this.TR).toDataURL("image/png");
+      ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+      img.src = document.getElementById('charTR' + this.BL).toDataURL("image/png");
+      ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+      img.src = document.getElementById('charTL' + this.BR).toDataURL("image/png");
       ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
       this.image = ctx.getImageData(0, 0, cvs.width, cvs.height);
-      console.log(this.image);
       for (p = i = 0, ref = this.image.data.length; i < ref; p = i += 4) {
         this.brightness += this.image.data[p];
         this.brightness += this.image.data[p + 1];
         this.brightness += this.image.data[p + 2];
       }
+      console.log(this);
     }
 
     return Combo;

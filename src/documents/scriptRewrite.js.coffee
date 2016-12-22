@@ -145,7 +145,6 @@ charset =
 		minBright = _.min(charset.chars,(w) -> w.brightness).brightness
 		for char in charset.chars
 			char.brightness = 255 - (255*(char.brightness-minBright))/(maxBright-minBright)
-			console.log char
 
 		# sort chars array by char.brightness
 		charset.chars = _(charset.chars).sortBy('brightness')
@@ -161,7 +160,7 @@ charset =
 
 			drawQuadrant = (quadrant,quadrantString) ->
 				# create canvas
-				newCanvasHtml = '<canvas id="char'+quadrantString+i+'" width="'+charset.qWidth*2+'" height="'+charset.qHeight*2+'"></canvas>'
+				newCanvasHtml = '<canvas id="char'+quadrantString+i+'" width="'+charset.qWidth+'" height="'+charset.qHeight+'"></canvas>'
 				$('#charQuadrants').append newCanvasHtml
 				cvs = document.getElementById('char'+quadrantString+i)
 				ctx = cvs.getContext("2d")
@@ -252,7 +251,7 @@ charset =
 
 		charset.combos = combos
 
-		minBright = 255 # implausibly bright for a minimum
+		minBright = 100000000 # implausibly bright for a minimum
 		maxBright = 0   # implausibly dark for a maximum
 
 		# find min and max brightness
@@ -266,6 +265,10 @@ charset =
 						if bright<minBright
 							minBright = bright
 
+		console.log minBright
+		console.log maxBright
+
+
 		# normalize and invert brightness
 		for a in [0...selected.length]
 			for b in [0...selected.length]
@@ -274,8 +277,9 @@ charset =
 						combo = charset.combos[a][b][c][d]
 						combo.brightness = 255 - (255*(combo.brightness-minBright))/(maxBright-minBright)
 
-		# debugging
-		window.combos = combos
+		# sort chars array by char.brightness
+		charset.combos = _(charset.combos).sortBy('brightness')
+
 
 		drawCombos = ->
 			$('#comboPreview').empty()

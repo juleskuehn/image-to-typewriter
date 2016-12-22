@@ -19,6 +19,8 @@ class window.Combo
 
     chars = selected
 
+    this.brightness = 0
+
     # set up composite image canvas
     cvs = document.createElement('canvas')
     cvs.width = charset.qWidth
@@ -28,28 +30,26 @@ class window.Combo
 
     # generate composite image from 4 characters
     img = document.createElement("img");
-    # document.getElementById('char'+TL).toDataURL("image/png")
     # draw bottom right quadrant of top left character
-    # img.src = chars[this.TL].BR
-    img.src = document.getElementById('charQ_BL_'+this.TL).toDataURL("image/png")
+    img.src = document.getElementById('charBR'+this.TL).toDataURL("image/png")
     ctx.drawImage(img,0,0,cvs.width,cvs.height)
     # draw bottom left quadrant of top right character
-    #  img.src = chars[this.TR].BL
-    #  ctx.drawImage(img,0,0,cvs.width,cvs.height)
+    img.src = document.getElementById('charBL'+this.TR).toDataURL("image/png")
+    ctx.drawImage(img,0,0,cvs.width,cvs.height)
     # draw top right quadrant of bottom left character
-    #  img.src = chars[this.BL].TR
-    #  ctx.drawImage(img,0,0,cvs.width,cvs.height)
+    img.src = document.getElementById('charTR'+this.BL).toDataURL("image/png")
+    ctx.drawImage(img,0,0,cvs.width,cvs.height)
     # draw top left quadrant of bottom right character
-    #  img.src = chars[this.BR].TL
-    #  ctx.drawImage(img,0,0,cvs.width,cvs.height)
+    img.src = document.getElementById('charTL'+this.BR).toDataURL("image/png")
+    ctx.drawImage(img,0,0,cvs.width,cvs.height)
     
     # combo image has been generated store it in object
     this.image = ctx.getImageData 0,0,cvs.width,cvs.height
-
-    console.log this.image
 
     # sum brightness of all pixels in combo image
     for p in [0...this.image.data.length] by 4
       this.brightness += this.image.data[p]
       this.brightness += this.image.data[p+1]
       this.brightness += this.image.data[p+2]
+
+    console.log this
