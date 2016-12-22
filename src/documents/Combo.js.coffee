@@ -31,16 +31,16 @@ class window.Combo
     # generate composite image from 4 characters
     img = document.createElement("img");
     # draw bottom right quadrant of top left character
-    img.src = document.getElementById('charBR'+this.TL).toDataURL("image/png")
+    img.src = document.getElementById('charBR'+selected[this.TL].index).toDataURL("image/png")
     ctx.drawImage(img,0,0,cvs.width,cvs.height)
     # draw bottom left quadrant of top right character
-    img.src = document.getElementById('charBL'+this.TR).toDataURL("image/png")
+    img.src = document.getElementById('charBL'+selected[this.TR].index).toDataURL("image/png")
     ctx.drawImage(img,0,0,cvs.width,cvs.height)
     # draw top right quadrant of bottom left character
-    img.src = document.getElementById('charTR'+this.BL).toDataURL("image/png")
+    img.src = document.getElementById('charTR'+selected[this.BL].index).toDataURL("image/png")
     ctx.drawImage(img,0,0,cvs.width,cvs.height)
     # draw top left quadrant of bottom right character
-    img.src = document.getElementById('charTL'+this.BR).toDataURL("image/png")
+    img.src = document.getElementById('charTL'+selected[this.BR].index).toDataURL("image/png")
     ctx.drawImage(img,0,0,cvs.width,cvs.height)
     
     # combo image has been generated store it in object

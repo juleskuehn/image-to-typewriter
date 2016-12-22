@@ -6,9 +6,6 @@
 
 class window.Char
 
-  # used for correlating combo indexes
-  index = 0
-
   constructor: (@TL,@TR,@BL,@BR) ->
     this.brightness = 0
     # sum brightness of all pixels in all quadrants
@@ -27,3 +24,4 @@ class window.Char
         this.brightness += this.BR.data[p+2]
 
     this.selected = false
+    this.index = 0

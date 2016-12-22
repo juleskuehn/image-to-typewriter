@@ -1,9 +1,5 @@
 (function() {
   window.Char = (function() {
-    var index;
-
-    index = 0;
-
     function Char(TL, TR, BL, BR) {
       var i, p, ref;
       this.TL = TL;
@@ -26,6 +22,7 @@
         this.brightness += this.BR.data[p + 2];
       }
       this.selected = false;
+      this.index = 0;
     }
 
     return Char;

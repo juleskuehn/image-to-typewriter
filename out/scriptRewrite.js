@@ -68,7 +68,7 @@
       return drawGrid();
     },
     chopCharset: function() {
-      var BL, BR, TL, TR, char, charHeight, charWidth, col, ctx, k, len, m, maxBright, minBright, n, numCols, numRows, offsetX, offsetY, ref, ref1, ref2, resizeCanvasToMultiplesOfCharSize, row, start, startChar;
+      var BL, BR, TL, TR, char, charHeight, charWidth, col, ctx, i, k, len, m, maxBright, minBright, n, numCols, numRows, o, offsetX, offsetY, ref, ref1, ref2, ref3, resizeCanvasToMultiplesOfCharSize, row, start, startChar;
       resizeCanvasToMultiplesOfCharSize = function() {
         var newHeight, newWidth, tempCanvas, wCanvas;
         wCanvas = charset.workingCanvas;
@@ -115,7 +115,11 @@
         char = ref2[n];
         char.brightness = 255 - (255 * (char.brightness - minBright)) / (maxBright - minBright);
       }
-      return charset.chars = _(charset.chars).sortBy('brightness');
+      charset.chars = _(charset.chars).sortBy('brightness');
+      for (i = o = 0, ref3 = charset.chars.length; 0 <= ref3 ? o < ref3 : o > ref3; i = 0 <= ref3 ? ++o : --o) {
+        charset.chars[i].index = i;
+      }
+      return console.log(charset.chars);
     },
     drawCharQuadrants: function() {
       var char, drawQuadrant, i, k, ref, results;

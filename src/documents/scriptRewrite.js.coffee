@@ -148,6 +148,12 @@ charset =
 
 		# sort chars array by char.brightness
 		charset.chars = _(charset.chars).sortBy('brightness')
+
+		# now create indexes to correlate with combo objects
+		for i in [0...charset.chars.length]
+			charset.chars[i].index = i
+
+		console.log charset.chars
 			
 		# do not change character indexes after this!
 
