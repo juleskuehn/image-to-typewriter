@@ -97,6 +97,7 @@ div#tabs {
 #charQuadrants {
   position: relative;
   top: 400px;
+  display: none;
 }
 #charQuadrants canvas {
   border: solid 2px #000;

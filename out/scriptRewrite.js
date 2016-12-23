@@ -205,7 +205,28 @@
         for (b = t = 0, ref6 = selected.length; 0 <= ref6 ? t < ref6 : t > ref6; b = 0 <= ref6 ? ++t : --t) {
           for (c = u = 0, ref7 = selected.length; 0 <= ref7 ? u < ref7 : u > ref7; c = 0 <= ref7 ? ++u : --u) {
             for (d = v = 0, ref8 = selected.length; 0 <= ref8 ? v < ref8 : v > ref8; d = 0 <= ref8 ? ++v : --v) {
-              bright = charset.combos[a][b][c][d].brightness;
+              bright = charset.combos[a][b][c][d].TLbrightness;
+              if (bright > maxBright) {
+                maxBright = bright;
+              }
+              if (bright < minBright) {
+                minBright = bright;
+              }
+              bright = charset.combos[a][b][c][d].TRbrightness;
+              if (bright > maxBright) {
+                maxBright = bright;
+              }
+              if (bright < minBright) {
+                minBright = bright;
+              }
+              bright = charset.combos[a][b][c][d].BLbrightness;
+              if (bright > maxBright) {
+                maxBright = bright;
+              }
+              if (bright < minBright) {
+                minBright = bright;
+              }
+              bright = charset.combos[a][b][c][d].BRbrightness;
               if (bright > maxBright) {
                 maxBright = bright;
               }
@@ -222,6 +243,10 @@
             for (d = aa = 0, ref12 = selected.length; 0 <= ref12 ? aa < ref12 : aa > ref12; d = 0 <= ref12 ? ++aa : --aa) {
               combo = charset.combos[a][b][c][d];
               combo.brightness = 255 - (255 * (combo.brightness - minBright)) / (maxBright - minBright);
+              combo.TLbrightness = 255 - (255 * (combo.TLbrightness - minBright)) / (maxBright - minBright);
+              combo.TRbrightness = 255 - (255 * (combo.TRbrightness - minBright)) / (maxBright - minBright);
+              combo.BLbrightness = 255 - (255 * (combo.BLbrightness - minBright)) / (maxBright - minBright);
+              combo.BRbrightness = 255 - (255 * (combo.BRbrightness - minBright)) / (maxBright - minBright);
             }
           }
         }

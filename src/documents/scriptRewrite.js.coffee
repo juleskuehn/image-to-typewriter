@@ -263,12 +263,27 @@ charset =
 		minBright = 100000000 # implausibly bright for a minimum
 		maxBright = 0   # implausibly dark for a maximum
 
-		# find min and max brightness
+		# find min and max brightness for each quadrant of the quadrant!
 		for a in [0...selected.length]
 			for b in [0...selected.length]
 				for c in [0...selected.length]
 					for d in [0...selected.length]
-						bright = charset.combos[a][b][c][d].brightness
+						bright = charset.combos[a][b][c][d].TLbrightness
+						if bright>maxBright
+							maxBright = bright
+						if bright<minBright
+							minBright = bright
+						bright = charset.combos[a][b][c][d].TRbrightness
+						if bright>maxBright
+							maxBright = bright
+						if bright<minBright
+							minBright = bright
+						bright = charset.combos[a][b][c][d].BLbrightness
+						if bright>maxBright
+							maxBright = bright
+						if bright<minBright
+							minBright = bright
+						bright = charset.combos[a][b][c][d].BRbrightness
 						if bright>maxBright
 							maxBright = bright
 						if bright<minBright
@@ -282,6 +297,10 @@ charset =
 					for d in [0...selected.length]
 						combo = charset.combos[a][b][c][d]
 						combo.brightness = 255 - (255*(combo.brightness-minBright))/(maxBright-minBright)
+						combo.TLbrightness = 255 - (255*(combo.TLbrightness-minBright))/(maxBright-minBright)
+						combo.TRbrightness = 255 - (255*(combo.TRbrightness-minBright))/(maxBright-minBright)
+						combo.BLbrightness = 255 - (255*(combo.BLbrightness-minBright))/(maxBright-minBright)
+						combo.BRbrightness = 255 - (255*(combo.BRbrightness-minBright))/(maxBright-minBright)
 
 		console.log combos
 
