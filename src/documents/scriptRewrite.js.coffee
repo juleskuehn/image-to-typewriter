@@ -289,7 +289,6 @@ charset =
 						if bright<minBright
 							minBright = bright
 
-
 		# normalize and invert brightness
 		for a in [0...selected.length]
 			for b in [0...selected.length]
@@ -301,7 +300,20 @@ charset =
 						combo.TRbrightness = 255 - (255*(combo.TRbrightness-minBright))/(maxBright-minBright)
 						combo.BLbrightness = 255 - (255*(combo.BLbrightness-minBright))/(maxBright-minBright)
 						combo.BRbrightness = 255 - (255*(combo.BRbrightness-minBright))/(maxBright-minBright)
+		###
 
+		# invert brightness
+		for a in [0...selected.length]
+			for b in [0...selected.length]
+				for c in [0...selected.length]
+					for d in [0...selected.length]
+						combo = charset.combos[a][b][c][d]
+						combo.brightness = 255 - (255*(combo.brightness)/maxBright)
+						combo.TLbrightness = 255 - (255*(combo.TLbrightness)/maxBright)
+						combo.TRbrightness = 255 - (255*(combo.TRbrightness)/maxBright)
+						combo.BLbrightness = 255 - (255*(combo.BLbrightness)/maxBright)
+						combo.BRbrightness = 255 - (255*(combo.BRbrightness)/maxBright)
+		###
 		console.log combos
 
 
@@ -414,6 +426,8 @@ combosArray = []
 bestCombos = []
 
 imgToText = ->
+	combosArray = []
+	bestCombos = []
 	source = document.getElementById("inputImage")
 	cvs = source.getContext('2d')
 	dither = document.getElementById('dithering').checked
@@ -461,35 +475,7 @@ imgToText = ->
 					bestErr = errTot
 					closest = k
 					bestCombo = combo
-			###
-			# floyd-steinberg dithering
-			# macro dithering - whole quadrants (not subpixels)
-			if dither
-				# distribute error to the right
-				if j+1 < w
-					gr[i*w + j+2] += -(errTL * 7/16)/4
-					gr[i*w + j+3] += -(errTR * 7/16)/4
-					gr[(i+1)*w + j+2] += -(errBL * 7/16)/4
-					gr[(i+1)*w + j+3] += -(errBR * 7/16)/4
-				# distribute error to the bottom left
-				if i+1 < h and j-1 > 0
-					gr[(i+2)*w + j-1] += -(errTR * 3/16)/4
-					gr[(i+2)*w + j-2] += -(errTL * 3/16)/4
-					gr[(i+3)*w + j-1] += -(errBR * 3/16)/4
-					gr[(i+3)*w + j-2] += -(errBL * 3/16)/4
-				# distribute error to the bottom
-				if i+1 < h
-					gr[(i+2)*w + j] += -(errTL * 5/16)/4
-					gr[(i+2)*w + j+1] += -(errTR * 5/16)/4
-					gr[(i+3)*w + j] += -(errBL * 5/16)/4
-					gr[(i+3)*w + j+1] += -(errBR * 5/16)/4
-				# distribute error to the bottom right
-				if i+1 < h and j+1 < w
-					gr[(i+2)*w + j+1] += -(errTL * 1/16)/4
-					gr[(i+2)*w + j+2] += -(errTR * 1/16)/4
-					gr[(i+3)*w + j+1] += -(errBL * 1/16)/4
-					gr[(i+3)*w + j+2] += -(errBR * 1/16)/4
-				###
+				
 			row.push closest
 			comboRow.push bestCombo
 		combosArray.push row
@@ -507,6 +493,7 @@ drawCharImage = ->
 	outCanvas.width = charset.qWidth * inCanvas.width / 2
 	outCanvas.height = charset.qHeight * inCanvas.height / 2
 	ctx = outCanvas.getContext("2d")
+	ctx.clearRect(0, 0, outCanvas.width, outCanvas.height)
 	for i in [0...bestCombos.length]
 		for j in [0...bestCombos[0].length]
 			combo = bestCombos[i][j]
