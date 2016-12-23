@@ -467,28 +467,28 @@ imgToText = ->
 			if dither
 				# distribute error to the right
 				if j+1 < w
-					gr[i*w + j+2] += (errTot * 7/16)
-					gr[i*w + j+3] += (errTot * 7/16)
-					gr[(i+1)*w + j+2] += (errTot * 7/16)
-					gr[(i+1)*w + j+3] += (errTot * 7/16)
+					gr[i*w + j+2] += -(errTL * 7/16)/4
+					gr[i*w + j+3] += -(errTR * 7/16)/4
+					gr[(i+1)*w + j+2] += -(errBL * 7/16)/4
+					gr[(i+1)*w + j+3] += -(errBR * 7/16)/4
 				# distribute error to the bottom left
 				if i+1 < h and j-1 > 0
-					gr[(i+2)*w + j-1] += (errTot * 3/16)
-					gr[(i+2)*w + j-2] += (errTot * 3/16)
-					gr[(i+3)*w + j-1] += (errTot * 3/16)
-					gr[(i+3)*w + j-2] += (errTot * 3/16)
+					gr[(i+2)*w + j-1] += -(errTR * 3/16)/4
+					gr[(i+2)*w + j-2] += -(errTL * 3/16)/4
+					gr[(i+3)*w + j-1] += -(errBR * 3/16)/4
+					gr[(i+3)*w + j-2] += -(errBL * 3/16)/4
 				# distribute error to the bottom
 				if i+1 < h
-					gr[(i+2)*w + j] += (errTot * 5/16)
-					gr[(i+2)*w + j+1] += (errTot * 5/16)
-					gr[(i+3)*w + j] += (errTot * 5/16)
-					gr[(i+3)*w + j+1] += (errTot * 5/16)
+					gr[(i+2)*w + j] += -(errTL * 5/16)/4
+					gr[(i+2)*w + j+1] += -(errTR * 5/16)/4
+					gr[(i+3)*w + j] += -(errBL * 5/16)/4
+					gr[(i+3)*w + j+1] += -(errBR * 5/16)/4
 				# distribute error to the bottom right
 				if i+1 < h and j+1 < w
-					gr[(i+2)*w + j+1] += (errTot * 1/16)
-					gr[(i+2)*w + j+2] += (errTot * 1/16)
-					gr[(i+3)*w + j+1] += (errTot * 1/16)
-					gr[(i+3)*w + j+2] += (errTot * 1/16)
+					gr[(i+2)*w + j+1] += -(errTL * 1/16)/4
+					gr[(i+2)*w + j+2] += -(errTR * 1/16)/4
+					gr[(i+3)*w + j+1] += -(errBL * 1/16)/4
+					gr[(i+3)*w + j+2] += -(errBR * 1/16)/4
 			
 			row.push closest
 			comboRow.push bestCombo
