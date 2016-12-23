@@ -475,6 +475,38 @@ imgToText = ->
 					bestErr = errTot
 					closest = k
 					bestCombo = combo
+
+			# floyd-steinberg dithering
+			# macro dithering - whole quadrants (not subpixels)
+			if dither
+
+				ditherAmount = 16
+
+				# distribute error to the right
+				if j+1 < w
+					gr[i*w + j+2] += (errTL * 7/16)/ditherAmount
+					gr[i*w + j+3] += (errTR * 7/16)/ditherAmount
+					gr[(i+1)*w + j+2] += (errBL * 7/16)/ditherAmount
+					gr[(i+1)*w + j+3] += (errBR * 7/16)/ditherAmount
+				# distribute error to the bottom left
+				if i+1 < h and j-1 > 0
+					gr[(i+2)*w + j-2] += (errTL * 3/16)/ditherAmount
+					gr[(i+2)*w + j-1] += (errTR * 3/16)/ditherAmount
+					gr[(i+3)*w + j-2] += (errBL * 3/16)/ditherAmount
+					gr[(i+3)*w + j-1] += (errBR * 3/16)/ditherAmount
+				# distribute error to the bottom
+				if i+1 < h
+					gr[(i+2)*w + j] += (errTL * 5/16)/ditherAmount
+					gr[(i+2)*w + j+1] += (errTR * 5/16)/ditherAmount
+					gr[(i+3)*w + j] += (errBL * 5/16)/ditherAmount
+					gr[(i+3)*w + j+1] += (errBR * 5/16)/ditherAmount
+				# distribute error to the bottom right
+				if i+1 < h and j+1 < w
+					gr[(i+2)*w + j+2] += (errTL * 1/16)/4
+					gr[(i+2)*w + j+3] += (errTR * 1/16)/4
+					gr[(i+3)*w + j+2] += (errBL * 1/16)/4
+					gr[(i+3)*w + j+3] += (errBR * 1/16)/4
+				
 				
 			row.push closest
 			comboRow.push bestCombo
@@ -545,6 +577,7 @@ greyscale = (canvas) ->
 
 	return greyArray
 
+theImage = ''
 
 inputImage =
 	dropImage: (source) ->
@@ -577,6 +610,7 @@ inputImage =
 			reader.readAsDataURL(src)
 
 		loadImage(source)
+		theImage = source
 
 
 # handle UI events
@@ -613,3 +647,27 @@ target.addEventListener 'drop', ((e) ->
 	inputImage.dropImage e.dataTransfer.files[0]
 	return
 ), true
+
+$('#row_length').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#customR').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#customG').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#customB').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#bw').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#dithering').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)

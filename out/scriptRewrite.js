@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, combosArray, drawCharImage, greyscale, imgToText, inputImage, target;
+  var bestCombos, charset, combosArray, drawCharImage, greyscale, imgToText, inputImage, target, theImage;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -358,7 +358,7 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBR, bTL, bTR, bestCombo, bestErr, closest, combo, comboRow, cvs, dither, errBL, errBR, errTL, errTR, errTot, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, w;
+    var BL, TL, TR, bBL, bBR, bTL, bTR, bestCombo, bestErr, closest, combo, comboRow, cvs, dither, ditherAmount, errBL, errBR, errTL, errTR, errTot, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
@@ -398,6 +398,33 @@
             bestErr = errTot;
             closest = k;
             bestCombo = combo;
+          }
+        }
+        if (dither) {
+          ditherAmount = 16;
+          if (j + 1 < w) {
+            gr[i * w + j + 2] += (errTL * 7 / 16) / ditherAmount;
+            gr[i * w + j + 3] += (errTR * 7 / 16) / ditherAmount;
+            gr[(i + 1) * w + j + 2] += (errBL * 7 / 16) / ditherAmount;
+            gr[(i + 1) * w + j + 3] += (errBR * 7 / 16) / ditherAmount;
+          }
+          if (i + 1 < h && j - 1 > 0) {
+            gr[(i + 2) * w + j - 2] += (errTL * 3 / 16) / ditherAmount;
+            gr[(i + 2) * w + j - 1] += (errTR * 3 / 16) / ditherAmount;
+            gr[(i + 3) * w + j - 2] += (errBL * 3 / 16) / ditherAmount;
+            gr[(i + 3) * w + j - 1] += (errBR * 3 / 16) / ditherAmount;
+          }
+          if (i + 1 < h) {
+            gr[(i + 2) * w + j] += (errTL * 5 / 16) / ditherAmount;
+            gr[(i + 2) * w + j + 1] += (errTR * 5 / 16) / ditherAmount;
+            gr[(i + 3) * w + j] += (errBL * 5 / 16) / ditherAmount;
+            gr[(i + 3) * w + j + 1] += (errBR * 5 / 16) / ditherAmount;
+          }
+          if (i + 1 < h && j + 1 < w) {
+            gr[(i + 2) * w + j + 2] += (errTL * 1 / 16) / 4;
+            gr[(i + 2) * w + j + 3] += (errTR * 1 / 16) / 4;
+            gr[(i + 3) * w + j + 2] += (errBL * 1 / 16) / 4;
+            gr[(i + 3) * w + j + 3] += (errBR * 1 / 16) / 4;
           }
         }
         row.push(closest);
@@ -475,6 +502,8 @@
     return greyArray;
   };
 
+  theImage = '';
+
   inputImage = {
     dropImage: function(source) {
       var loadImage, render;
@@ -507,7 +536,8 @@
         };
         return reader.readAsDataURL(src);
       };
-      return loadImage(source);
+      loadImage(source);
+      return theImage = source;
     }
   };
 
@@ -544,5 +574,41 @@
     e.preventDefault();
     inputImage.dropImage(e.dataTransfer.files[0]);
   }), true);
+
+  $('#row_length').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#customR').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#customG').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#customB').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#bw').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#dithering').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
 
 }).call(this);
