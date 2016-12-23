@@ -461,7 +461,7 @@ imgToText = ->
 					bestErr = errTot
 					closest = k
 					bestCombo = combo
-
+			
 			# floyd-steinberg dithering
 			# macro dithering - whole quadrants (not subpixels)
 			if dither
