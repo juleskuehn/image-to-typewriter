@@ -367,48 +367,52 @@
         if (j > 0) {
           BL = row[row.length - 1];
         }
-        closest = -1;
+        closest = 0;
         bestErr = 0;
         bestCombo = null;
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
-          errTL = bTL - combo.TLbrightness;
-          errTR = bTR - combo.TRbrightness;
-          errBL = bBL - combo.BLbrightness;
-          errBR = bBR - combo.BRbrightness;
-          errTot = -(errTL + errTR + errBL + errBR) / 16;
-          if (closest === -1 || Math.abs(errTot) < Math.abs(bestErr)) {
+          errTL = combo.TLbrightness - bTL;
+          errTR = combo.TRbrightness - bTR;
+          errBL = combo.BLbrightness - bBL;
+          errBR = combo.BRbrightness - bBR;
+          errTot = (errTL + errTR + errBL + errBR) / 4;
+          if (bestCombo === null || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
             closest = k;
             bestCombo = combo;
           }
         }
-        if (dither) {
-          if (j + 1 < w) {
-            gr[i * w + j + 2] += -(errTL * 7 / 16) / 4;
-            gr[i * w + j + 3] += -(errTR * 7 / 16) / 4;
-            gr[(i + 1) * w + j + 2] += -(errBL * 7 / 16) / 4;
-            gr[(i + 1) * w + j + 3] += -(errBR * 7 / 16) / 4;
-          }
-          if (i + 1 < h && j - 1 > 0) {
-            gr[(i + 2) * w + j - 1] += -(errTR * 3 / 16) / 4;
-            gr[(i + 2) * w + j - 2] += -(errTL * 3 / 16) / 4;
-            gr[(i + 3) * w + j - 1] += -(errBR * 3 / 16) / 4;
-            gr[(i + 3) * w + j - 2] += -(errBL * 3 / 16) / 4;
-          }
-          if (i + 1 < h) {
-            gr[(i + 2) * w + j] += -(errTL * 5 / 16) / 4;
-            gr[(i + 2) * w + j + 1] += -(errTR * 5 / 16) / 4;
-            gr[(i + 3) * w + j] += -(errBL * 5 / 16) / 4;
-            gr[(i + 3) * w + j + 1] += -(errBR * 5 / 16) / 4;
-          }
-          if (i + 1 < h && j + 1 < w) {
-            gr[(i + 2) * w + j + 1] += -(errTL * 1 / 16) / 4;
-            gr[(i + 2) * w + j + 2] += -(errTR * 1 / 16) / 4;
-            gr[(i + 3) * w + j + 1] += -(errBL * 1 / 16) / 4;
-            gr[(i + 3) * w + j + 2] += -(errBR * 1 / 16) / 4;
-          }
-        }
+
+        /*
+        			 * floyd-steinberg dithering
+        			 * macro dithering - whole quadrants (not subpixels)
+        			if dither
+        				 * distribute error to the right
+        				if j+1 < w
+        					gr[i*w + j+2] += -(errTL * 7/16)/4
+        					gr[i*w + j+3] += -(errTR * 7/16)/4
+        					gr[(i+1)*w + j+2] += -(errBL * 7/16)/4
+        					gr[(i+1)*w + j+3] += -(errBR * 7/16)/4
+        				 * distribute error to the bottom left
+        				if i+1 < h and j-1 > 0
+        					gr[(i+2)*w + j-1] += -(errTR * 3/16)/4
+        					gr[(i+2)*w + j-2] += -(errTL * 3/16)/4
+        					gr[(i+3)*w + j-1] += -(errBR * 3/16)/4
+        					gr[(i+3)*w + j-2] += -(errBL * 3/16)/4
+        				 * distribute error to the bottom
+        				if i+1 < h
+        					gr[(i+2)*w + j] += -(errTL * 5/16)/4
+        					gr[(i+2)*w + j+1] += -(errTR * 5/16)/4
+        					gr[(i+3)*w + j] += -(errBL * 5/16)/4
+        					gr[(i+3)*w + j+1] += -(errBR * 5/16)/4
+        				 * distribute error to the bottom right
+        				if i+1 < h and j+1 < w
+        					gr[(i+2)*w + j+1] += -(errTL * 1/16)/4
+        					gr[(i+2)*w + j+2] += -(errTR * 1/16)/4
+        					gr[(i+3)*w + j+1] += -(errBL * 1/16)/4
+        					gr[(i+3)*w + j+2] += -(errBR * 1/16)/4
+         */
         row.push(closest);
         comboRow.push(bestCombo);
       }
@@ -472,6 +476,14 @@
       l = 255 - l;
       greyArray.push(l);
     }
+
+    /*
+    	 * normalize image weights
+    	maxBright = _.max(greyArray)
+    	minBright = _.min(greyArray)
+    	for pixel in greyArray
+    		pixel = 255 - (255*(pixel-minBright))/(maxBright-minBright)
+     */
     return greyArray;
   };
 

@@ -443,7 +443,7 @@ imgToText = ->
 
 			# find closest ascii brightness value
 			# closest is the index in charset.selected of the best char choice
-			closest = -1
+			closest = 0
 			bestErr = 0
 			bestCombo = null
 
@@ -451,17 +451,17 @@ imgToText = ->
 			for k in [0...charset.combos[TL][TR][BL].length]
 				combo = charset.combos[TL][TR][BL][k]
 				# check each subpixel against input image
-				errTL = bTL-combo.TLbrightness
-				errTR = bTR-combo.TRbrightness
-				errBL = bBL-combo.BLbrightness
-				errBR = bBR-combo.BRbrightness
-				errTot = -(errTL+errTR+errBL+errBR)/16
+				errTL = combo.TLbrightness-bTL
+				errTR = combo.TRbrightness-bTR
+				errBL = combo.BLbrightness-bBL
+				errBR = combo.BRbrightness-bBR
+				errTot = (errTL+errTR+errBL+errBR)/4
 
-				if closest is -1 or Math.abs(errTot) < Math.abs(bestErr)
+				if bestCombo is null or Math.abs(errTot) < Math.abs(bestErr)
 					bestErr = errTot
 					closest = k
 					bestCombo = combo
-			
+			###
 			# floyd-steinberg dithering
 			# macro dithering - whole quadrants (not subpixels)
 			if dither
@@ -489,7 +489,7 @@ imgToText = ->
 					gr[(i+2)*w + j+2] += -(errTR * 1/16)/4
 					gr[(i+3)*w + j+1] += -(errBL * 1/16)/4
 					gr[(i+3)*w + j+2] += -(errBR * 1/16)/4
-			
+				###
 			row.push closest
 			comboRow.push bestCombo
 		combosArray.push row
@@ -547,6 +547,15 @@ greyscale = (canvas) ->
 		l = 255-l
 
 		greyArray.push(l)
+
+	###
+	# normalize image weights
+	maxBright = _.max(greyArray)
+	minBright = _.min(greyArray)
+	for pixel in greyArray
+		pixel = 255 - (255*(pixel-minBright))/(maxBright-minBright)
+	###
+
 	return greyArray
 
 
