@@ -411,6 +411,7 @@ charset =
 
 # this will be populated as a 2d array (rows, cols) of charset.selected indices
 combosArray = []
+bestCombos = []
 
 imgToText = ->
 	source = document.getElementById("inputImage")
@@ -421,6 +422,7 @@ imgToText = ->
 	# looping through input image array in 2x2 pixel increments
 	for i in [0...h] by 2
 		row = []
+		comboRow = []
 		for j in [0...w] by 2
 			# weigh subpixels of input image
 			bTL = gr[i*w + j] # brightness value of input image subpixel
@@ -443,6 +445,7 @@ imgToText = ->
 			# closest is the index in charset.selected of the best char choice
 			closest = -1
 			bestErr = 0
+			bestCombo = null
 
 			# loop through appropriate subsection of combos and weigh each subpixel against the input image
 			for k in [0...charset.combos[TL][TR][BL].length]
@@ -457,6 +460,7 @@ imgToText = ->
 				if closest is -1 or Math.abs(errTot) < Math.abs(bestErr)
 					bestErr = errTot
 					closest = k
+					bestCombo = combo
 
 			###
 			# floyd-steinberg dithering
@@ -472,8 +476,11 @@ imgToText = ->
 					gr[(i+1)*w + j+1] += (err * 1/16)
 			###
 			row.push closest
+			comboRow.push bestCombo
 		combosArray.push row
+		bestCombos.push comboRow
 
+	console.log combosArray
 	drawCharImage()
 
 drawCharImage = ->
@@ -485,10 +492,12 @@ drawCharImage = ->
 	outCanvas.width = charset.qWidth * inCanvas.width / 2
 	outCanvas.height = charset.qHeight * inCanvas.height / 2
 	ctx = outCanvas.getContext("2d")
-	for i in [0...combosArray.length]
-		for j in [0...combosArray[0].length]
-			charIndex = combosArray[i][j]
-			ctx.putImageData(charset.selected[charIndex].TL,j*charset.qWidth,i*charset.qHeight)
+	for i in [0...bestCombos.length]
+		for j in [0...bestCombos[0].length]
+			combo = bestCombos[i][j]
+			# print combo image
+			# TODO print actual characters
+			ctx.putImageData(combo.image,j*charset.qWidth,i*charset.qHeight)
 
 
 

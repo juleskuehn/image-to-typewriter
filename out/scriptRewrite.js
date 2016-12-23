@@ -1,5 +1,5 @@
 (function() {
-  var charset, combosArray, drawCharImage, greyscale, imgToText, inputImage, target;
+  var bestCombos, charset, combosArray, drawCharImage, greyscale, imgToText, inputImage, target;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -340,8 +340,10 @@
 
   combosArray = [];
 
+  bestCombos = [];
+
   imgToText = function() {
-    var BL, TL, TR, bBL, bBR, bTL, bTR, bestErr, closest, combo, cvs, dither, errBL, errBR, errTL, errTR, errTot, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, w;
+    var BL, TL, TR, bBL, bBR, bTL, bTR, bestCombo, bestErr, closest, combo, comboRow, cvs, dither, errBL, errBR, errTL, errTR, errTot, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, w;
     source = document.getElementById("inputImage");
     cvs = source.getContext('2d');
     dither = document.getElementById('dithering').checked;
@@ -349,6 +351,7 @@
     ref = [source.height, source.width], h = ref[0], w = ref[1];
     for (i = m = 0, ref1 = h; m < ref1; i = m += 2) {
       row = [];
+      comboRow = [];
       for (j = n = 0, ref2 = w; n < ref2; j = n += 2) {
         bTL = gr[i * w + j];
         bTR = gr[i * w + j + 1];
@@ -366,6 +369,7 @@
         }
         closest = -1;
         bestErr = 0;
+        bestCombo = null;
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
           errTL = bTL - combo.TLbrightness;
@@ -376,6 +380,7 @@
           if (closest === -1 || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
             closest = k;
+            bestCombo = combo;
           }
         }
 
@@ -393,27 +398,30 @@
         					gr[(i+1)*w + j+1] += (err * 1/16)
          */
         row.push(closest);
+        comboRow.push(bestCombo);
       }
       combosArray.push(row);
+      bestCombos.push(comboRow);
     }
+    console.log(combosArray);
     return drawCharImage();
   };
 
   drawCharImage = function() {
-    var charIndex, ctx, i, inCanvas, j, m, outCanvas, ref, results;
+    var combo, ctx, i, inCanvas, j, m, outCanvas, ref, results;
     inCanvas = document.getElementById('inputImage');
     outCanvas = document.getElementById('outputImage');
     outCanvas.width = charset.qWidth * inCanvas.width / 2;
     outCanvas.height = charset.qHeight * inCanvas.height / 2;
     ctx = outCanvas.getContext("2d");
     results = [];
-    for (i = m = 0, ref = combosArray.length; 0 <= ref ? m < ref : m > ref; i = 0 <= ref ? ++m : --m) {
+    for (i = m = 0, ref = bestCombos.length; 0 <= ref ? m < ref : m > ref; i = 0 <= ref ? ++m : --m) {
       results.push((function() {
         var n, ref1, results1;
         results1 = [];
-        for (j = n = 0, ref1 = combosArray[0].length; 0 <= ref1 ? n < ref1 : n > ref1; j = 0 <= ref1 ? ++n : --n) {
-          charIndex = combosArray[i][j];
-          results1.push(ctx.putImageData(charset.selected[charIndex].TL, j * charset.qWidth, i * charset.qHeight));
+        for (j = n = 0, ref1 = bestCombos[0].length; 0 <= ref1 ? n < ref1 : n > ref1; j = 0 <= ref1 ? ++n : --n) {
+          combo = bestCombos[i][j];
+          results1.push(ctx.putImageData(combo.image, j * charset.qWidth, i * charset.qHeight));
         }
         return results1;
       })());
