@@ -355,16 +355,25 @@
         bBL = gr[(i + 1) * w + j];
         bBR = gr[(i + 1) * w + j + 1];
         TL = TR = BL = 0;
+        if (i > 0 && j > 0) {
+          TL = combosArray[i / 2 - 1][j / 2 - 1];
+        }
+        if (i > 0) {
+          TR = combosArray[i / 2 - 1][j / 2];
+        }
+        if (j > 0) {
+          BL = row[row.length - 1];
+        }
         closest = -1;
         bestErr = 0;
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
           errTL = bTL - combo.TLbrightness;
-          errTR = bTL - combo.TRbrightness;
-          errBL = bTL - combo.BLbrightness;
-          errBR = bTL - combo.BRbrightness;
+          errTR = bTR - combo.TRbrightness;
+          errBL = bBL - combo.BLbrightness;
+          errBR = bBR - combo.BRbrightness;
           errTot = errTL + errTR + errBL + errBR;
-          if (closest === -1 || errTot < bestErr) {
+          if (closest === -1 || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
             closest = k;
           }
@@ -392,7 +401,6 @@
 
   drawCharImage = function() {
     var charIndex, ctx, i, inCanvas, j, m, outCanvas, ref, results;
-    console.log(combosArray);
     inCanvas = document.getElementById('inputImage');
     outCanvas = document.getElementById('outputImage');
     outCanvas.width = charset.qWidth * inCanvas.width / 2;

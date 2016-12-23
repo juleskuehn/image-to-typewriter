@@ -431,6 +431,12 @@ imgToText = ->
 			# establish constraints on character selection
 			# TODO
 			TL=TR=BL=0
+			if i>0 and j>0
+				TL=combosArray[i/2-1][j/2-1]
+			if i>0
+				TR=combosArray[i/2-1][j/2]
+			if j>0
+				BL=row[row.length-1]
 			
 
 			# find closest ascii brightness value
@@ -443,12 +449,12 @@ imgToText = ->
 				combo = charset.combos[TL][TR][BL][k]
 				# check each subpixel against input image
 				errTL = bTL-combo.TLbrightness
-				errTR = bTL-combo.TRbrightness
-				errBL = bTL-combo.BLbrightness
-				errBR = bTL-combo.BRbrightness
+				errTR = bTR-combo.TRbrightness
+				errBL = bBL-combo.BLbrightness
+				errBR = bBR-combo.BRbrightness
 				errTot = errTL+errTR+errBL+errBR
 
-				if closest is -1 or errTot < bestErr
+				if closest is -1 or Math.abs(errTot) < Math.abs(bestErr)
 					bestErr = errTot
 					closest = k
 
@@ -472,8 +478,6 @@ imgToText = ->
 
 drawCharImage = ->
 	
-
-	console.log combosArray
 	
 	inCanvas = document.getElementById('inputImage')
 	outCanvas = document.getElementById('outputImage')
