@@ -376,7 +376,7 @@
           errTR = bTR - combo.TRbrightness;
           errBL = bBL - combo.BLbrightness;
           errBR = bBR - combo.BRbrightness;
-          errTot = (errTL + errTR + errBL + errBR) / 4;
+          errTot = -(errTL + errTR + errBL + errBR) / 16;
           if (closest === -1 || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
             closest = k;
@@ -391,10 +391,10 @@
             gr[(i + 1) * w + j + 3] += errTot * 7 / 16;
           }
           if (i + 1 < h && j - 1 > 0) {
+            gr[(i + 2) * w + j - 1] += errTot * 3 / 16;
             gr[(i + 2) * w + j - 2] += errTot * 3 / 16;
-            gr[(i + 2) * w + j - 3] += errTot * 3 / 16;
+            gr[(i + 3) * w + j - 1] += errTot * 3 / 16;
             gr[(i + 3) * w + j - 2] += errTot * 3 / 16;
-            gr[(i + 3) * w + j - 3] += errTot * 3 / 16;
           }
           if (i + 1 < h) {
             gr[(i + 2) * w + j] += errTot * 5 / 16;
