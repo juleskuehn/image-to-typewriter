@@ -376,27 +376,39 @@
           errTR = bTR - combo.TRbrightness;
           errBL = bBL - combo.BLbrightness;
           errBR = bBR - combo.BRbrightness;
-          errTot = errTL + errTR + errBL + errBR;
+          errTot = (errTL + errTR + errBL + errBR) / 4;
           if (closest === -1 || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
             closest = k;
             bestCombo = combo;
           }
         }
-
-        /*
-        			 * floyd-steinberg dithering
-        			if dither
-        				gr[i*w + j] = c.brightness
-        				if j+1 < w
-        					gr[i*w + j+1] += (err * 7/16)
-        				if i+1 < h and j-1 > 0
-        					gr[(i+1)*w + j-1] += (err * 3/16)
-        				if i+1 < h
-        					gr[(i+1)*w + j] += (err * 5/16)
-        				if i+1 < h and j+1 < w
-        					gr[(i+1)*w + j+1] += (err * 1/16)
-         */
+        if (dither) {
+          if (j + 1 < w) {
+            gr[i * w + j + 2] += errTot * 7 / 16;
+            gr[i * w + j + 3] += errTot * 7 / 16;
+            gr[(i + 1) * w + j + 2] += errTot * 7 / 16;
+            gr[(i + 1) * w + j + 3] += errTot * 7 / 16;
+          }
+          if (i + 1 < h && j - 1 > 0) {
+            gr[(i + 2) * w + j - 2] += errTot * 3 / 16;
+            gr[(i + 2) * w + j - 3] += errTot * 3 / 16;
+            gr[(i + 3) * w + j - 2] += errTot * 3 / 16;
+            gr[(i + 3) * w + j - 3] += errTot * 3 / 16;
+          }
+          if (i + 1 < h) {
+            gr[(i + 2) * w + j] += errTot * 5 / 16;
+            gr[(i + 2) * w + j + 1] += errTot * 5 / 16;
+            gr[(i + 3) * w + j] += errTot * 5 / 16;
+            gr[(i + 3) * w + j + 1] += errTot * 5 / 16;
+          }
+          if (i + 1 < h && j + 1 < w) {
+            gr[(i + 2) * w + j + 1] += errTot * 1 / 16;
+            gr[(i + 2) * w + j + 2] += errTot * 1 / 16;
+            gr[(i + 3) * w + j + 1] += errTot * 1 / 16;
+            gr[(i + 3) * w + j + 2] += errTot * 1 / 16;
+          }
+        }
         row.push(closest);
         comboRow.push(bestCombo);
       }
