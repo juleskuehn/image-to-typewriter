@@ -1,5 +1,5 @@
 (function() {
-  var charset, drawCharImage, greyscale, imgToText, inputImage, target;
+  var charset, combosArray, drawCharImage, greyscale, imgToText, inputImage, target;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -336,8 +336,10 @@
     }
   };
 
+  combosArray = [];
+
   imgToText = function() {
-    var b, c, closest, combosArray, cvs, dither, err, gr, h, i, j, k, len, m, n, ref, ref1, ref2, ref3, row, source, w;
+    var b, c, closest, cvs, dither, err, gr, h, i, j, k, len, m, n, ref, ref1, ref2, ref3, row, source, w;
     source = document.getElementById("inputImage");
     cvs = source.getContext('2d');
     dither = document.getElementById('dithering').checked;
@@ -352,18 +354,6 @@
         ref3 = charset.combos;
         for (n = 0, len = ref3.length; n < len; n++) {
           c = ref3[n];
-          if (i === 0 && (c.chars[0] !== 0 || c.chars[1] !== 0)) {
-            continue;
-          }
-          if (j === 0 && (c.chars[2] !== 0 || c.chars[3] !== 0)) {
-            continue;
-          }
-          if (i === h - 1 && (c.chars[2] !== 0 || c.chars[3] !== 0)) {
-            continue;
-          }
-          if (j === w - 1 && (c.chars[2] !== 0 || c.chars[3] !== 0)) {
-            continue;
-          }
           if (closest === null || Math.abs(c.brightness - b) < Math.abs(err)) {
             closest = c;
             err = b - c.brightness;
@@ -384,11 +374,33 @@
             gr[(i + 1) * w + j + 1] += err * 1 / 16;
           }
         }
-        row.push(closest.index);
+        row.push(closest);
       }
       combosArray.push(row);
     }
     return drawCharImage();
+  };
+
+  drawCharImage = function() {
+    var combo, ctx, i, inCanvas, j, k, outCanvas, ref, results;
+    inCanvas = document.getElementById('inputImage');
+    outCanvas = document.getElementById('outputImage');
+    outCanvas.width = charset.qWidth * inCanvas.width / 2;
+    outCanvas.height = charset.qHeight * inCanvas.height / 2;
+    ctx = outCanvas.getContext("2d");
+    results = [];
+    for (i = k = 0, ref = combosArray.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
+      results.push((function() {
+        var m, ref1, results1;
+        results1 = [];
+        for (j = m = 0, ref1 = combosArray[0].length; 0 <= ref1 ? m < ref1 : m > ref1; j = 0 <= ref1 ? ++m : --m) {
+          combo = combosArray[i][j];
+          results1.push(ctx.putImageData(combo.image, j * charset.qWidth, i * charset.qHeight));
+        }
+        return results1;
+      })());
+    }
+    return results;
   };
 
   greyscale = function(canvas) {
@@ -425,29 +437,6 @@
     return greyArray;
   };
 
-  drawCharImage = function() {
-    var combo, ctx, i, inCanvas, j, k, outCanvas, ref, results;
-    charset.combos = _(charset.combos).sortBy('index');
-    inCanvas = document.getElementById('inputImage');
-    outCanvas = document.getElementById('outputImage');
-    outCanvas.width = charset.combos[0].imgData.width * inCanvas.width;
-    outCanvas.height = charset.combos[0].imgData.height * inCanvas.height;
-    ctx = outCanvas.getContext("2d");
-    results = [];
-    for (i = k = 0, ref = combosArray.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
-      results.push((function() {
-        var m, ref1, results1;
-        results1 = [];
-        for (j = m = 0, ref1 = combosArray[0].length; 0 <= ref1 ? m < ref1 : m > ref1; j = 0 <= ref1 ? ++m : --m) {
-          combo = charset.combos[combosArray[i][j]];
-          results1.push(ctx.putImageData(combo.imgData, j * combo.imgData.width, i * combo.imgData.height));
-        }
-        return results1;
-      })());
-    }
-    return results;
-  };
-
   inputImage = {
     dropImage: function(source) {
       var loadImage, render;
@@ -461,8 +450,8 @@
           ctx = canvas.getContext("2d");
           aspectRatio = image.height / image.width;
           charAspect = charset.chars[0].TL.width / charset.chars[0].TL.height;
-          canvas.width = rowLength * 2;
-          canvas.height = rowLength * aspectRatio * 2 * charAspect;
+          canvas.width = rowLength * 4;
+          canvas.height = rowLength * aspectRatio * 4 * charAspect;
           ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
           return imgToText();
         };

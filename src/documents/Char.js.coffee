@@ -23,5 +23,5 @@ class window.Char
         this.brightness += this.BR.data[p+1]
         this.brightness += this.BR.data[p+2]
 
-    this.selected = false
+    this.selected = true
     this.index = 0

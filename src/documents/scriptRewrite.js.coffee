@@ -409,7 +409,7 @@ charset =
 
 
 
-
+combosArray = []
 
 imgToText = ->
 	source = document.getElementById("inputImage")
@@ -425,23 +425,6 @@ imgToText = ->
 			# find closest ascii brightness value
 			closest = null
 			for c in charset.combos
-				# characters above first row must be blank
-				# 0 is the index of the lightest character (blank)
-				if i is 0 and (c.chars[0] != 0 or c.chars[1] != 0) 
-					continue
-				# characters to the left of first col must be blank
-				if j is 0 and (c.chars[2] != 0 or c.chars[3] != 0)
-					continue
-				# characters below last row must be blank
-				if i is h-1 and (c.chars[2] != 0 or c.chars[3] != 0) 
-					continue
-				# characters to the right of last col must be blank
-				if j is w-1 and (c.chars[2] != 0 or c.chars[3] != 0)
-					continue
-				# otherwise, characters to the top left, right, bottom left must match
-				# ...
-				# ...
-				# ...
 				if closest is null or Math.abs(c.brightness-b) < Math.abs(err)
 					closest = c
 					err = b-c.brightness
@@ -456,9 +439,24 @@ imgToText = ->
 					gr[(i+1)*w + j] += (err * 5/16)
 				if i+1 < h and j+1 < w
 					gr[(i+1)*w + j+1] += (err * 1/16)
-			row.push closest.index
+			row.push closest
 		combosArray.push row
+
 	drawCharImage()
+
+drawCharImage = ->
+	inCanvas = document.getElementById('inputImage')
+	outCanvas = document.getElementById('outputImage')
+	# the input image will have been resized to (cols,rows)*2*2 (quadrant,subpixel)
+	outCanvas.width = charset.qWidth * inCanvas.width / 2
+	outCanvas.height = charset.qHeight * inCanvas.height / 2
+	ctx = outCanvas.getContext("2d")
+	for i in [0...combosArray.length]
+		for j in [0...combosArray[0].length]
+			combo = combosArray[i][j]
+			ctx.putImageData(combo.image,j*charset.qWidth,i*charset.qHeight)
+
+
 
 greyscale = (canvas) ->
 	greyscaleMethod = $('#bw').val()
@@ -493,17 +491,6 @@ greyscale = (canvas) ->
 		greyArray.push(l)
 	return greyArray
 
-drawCharImage = ->
-	charset.combos = _(charset.combos).sortBy('index')
-	inCanvas = document.getElementById('inputImage')
-	outCanvas = document.getElementById('outputImage')
-	outCanvas.width = charset.combos[0].imgData.width * inCanvas.width
-	outCanvas.height = charset.combos[0].imgData.height * inCanvas.height
-	ctx = outCanvas.getContext("2d")
-	for i in [0...combosArray.length]
-		for j in [0...combosArray[0].length]
-			combo = charset.combos[ combosArray[i][j] ]
-			ctx.putImageData(combo.imgData,j*combo.imgData.width,i*combo.imgData.height)
 
 inputImage =
 	dropImage: (source) ->
@@ -515,8 +502,9 @@ inputImage =
 				ctx = canvas.getContext("2d")
 				aspectRatio = image.height/image.width
 				charAspect = charset.chars[0].TL.width/charset.chars[0].TL.height
-				canvas.width = rowLength*2
-				canvas.height = rowLength*aspectRatio*2*charAspect
+				# multiplier of 4 accounts for quadrant splitting and subpixels
+				canvas.width = rowLength*4
+				canvas.height = rowLength*aspectRatio*4*charAspect
 				ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
 				# run the comparison
 				imgToText()
