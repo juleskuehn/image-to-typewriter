@@ -338,7 +338,9 @@ charset =
 
 		drawCombos()
 
+		charset.selected = selected
 
+		console.log charset.selected
 
 
 
@@ -407,8 +409,7 @@ charset =
 
 
 
-
-
+# this will be populated as a 2d array (rows, cols) of charset.selected indices
 combosArray = []
 
 imgToText = ->
@@ -416,18 +417,42 @@ imgToText = ->
 	cvs = source.getContext('2d')
 	dither = document.getElementById('dithering').checked
 	gr = greyscale(source)
-	combosArray = [] # store combo indexes here to be rendered on a canvas block by block
 	[h,w] = [source.height,source.width]
-	for i in [0...h]
+	# looping through input image array in 2x2 pixel increments
+	for i in [0...h] by 2
 		row = []
-		for j in [0...w]
-			b = gr[i*w + j] # brightness value of input image pixel
+		for j in [0...w] by 2
+			# weigh subpixels of input image
+			bTL = gr[i*w + j] # brightness value of input image subpixel
+			bTR = gr[i*w + j+1] # brightness value of input image subpixel
+			bBL = gr[(i+1)*w + j] # brightness value of input image subpixel
+			bBR = gr[(i+1)*w + j+1] # brightness value of input image subpixel
+			
+			# establish constraints on character selection
+			# TODO
+			TL=TR=BL=0
+			
+
 			# find closest ascii brightness value
-			closest = null
-			for c in charset.combos
-				if closest is null or Math.abs(c.brightness-b) < Math.abs(err)
-					closest = c
-					err = b-c.brightness
+			# closest is the index in charset.selected of the best char choice
+			closest = -1
+			bestErr = 0
+
+			# loop through appropriate subsection of combos and weigh each subpixel against the input image
+			for k in [0...charset.combos[TL][TR][BL].length]
+				combo = charset.combos[TL][TR][BL][k]
+				# check each subpixel against input image
+				errTL = bTL-combo.TLbrightness
+				errTR = bTL-combo.TRbrightness
+				errBL = bTL-combo.BLbrightness
+				errBR = bTL-combo.BRbrightness
+				errTot = errTL+errTR+errBL+errBR
+
+				if closest is -1 or errTot < bestErr
+					bestErr = errTot
+					closest = k
+
+			###
 			# floyd-steinberg dithering
 			if dither
 				gr[i*w + j] = c.brightness
@@ -439,12 +464,17 @@ imgToText = ->
 					gr[(i+1)*w + j] += (err * 5/16)
 				if i+1 < h and j+1 < w
 					gr[(i+1)*w + j+1] += (err * 1/16)
+			###
 			row.push closest
 		combosArray.push row
 
 	drawCharImage()
 
 drawCharImage = ->
+	
+
+	console.log combosArray
+	
 	inCanvas = document.getElementById('inputImage')
 	outCanvas = document.getElementById('outputImage')
 	# the input image will have been resized to (cols,rows)*2*2 (quadrant,subpixel)
@@ -453,8 +483,8 @@ drawCharImage = ->
 	ctx = outCanvas.getContext("2d")
 	for i in [0...combosArray.length]
 		for j in [0...combosArray[0].length]
-			combo = combosArray[i][j]
-			ctx.putImageData(combo.image,j*charset.qWidth,i*charset.qHeight)
+			charIndex = combosArray[i][j]
+			ctx.putImageData(charset.selected[charIndex].TL,j*charset.qWidth,i*charset.qHeight)
 
 
 
