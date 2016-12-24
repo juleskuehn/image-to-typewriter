@@ -389,10 +389,10 @@
         bestCombo = null;
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
-          errTL = combo.TLbrightness - bTL;
-          errTR = combo.TRbrightness - bTR;
-          errBL = combo.BLbrightness - bBL;
-          errBR = combo.BRbrightness - bBR;
+          errTL = bTL - combo.TLbrightness;
+          errTR = bTR - combo.TRbrightness;
+          errBL = bBL - combo.BLbrightness;
+          errBR = bBR - combo.BRbrightness;
           errTot = (errTL + errTR + errBL + errBR) / 4;
           if (bestCombo === null || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
@@ -401,7 +401,10 @@
           }
         }
         if (dither) {
-          ditherAmount = 16;
+          ditherAmount = document.getElementById('ditherAmount').value;
+          if (document.getElementById('ditherFine').checked) {
+            errTL = errTR = errBL = errBR = errTot;
+          }
           if (j + 1 < w) {
             gr[i * w + j + 2] += (errTL * 7 / 16) / ditherAmount;
             gr[i * w + j + 3] += (errTR * 7 / 16) / ditherAmount;
@@ -609,6 +612,30 @@
     if (theImage !== '') {
       return inputImage.dropImage(theImage);
     }
+  });
+
+  $('#ditherAmount').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#ditherFine').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $(document).ready(function() {
+    var downloadCanvas;
+    document.getElementById("outputImage").setAttribute('crossOrigin', 'anonymous');
+    downloadCanvas = function(link, canvasId, filename) {
+      link.href = document.getElementById(canvasId).toDataURL();
+      return link.download = filename;
+    };
+    return document.getElementById('download').addEventListener('click', function() {
+      return downloadCanvas(this, 'outputImage', 'asciiOutput.png');
+    }, false);
   });
 
 }).call(this);

@@ -465,10 +465,10 @@ imgToText = ->
 			for k in [0...charset.combos[TL][TR][BL].length]
 				combo = charset.combos[TL][TR][BL][k]
 				# check each subpixel against input image
-				errTL = combo.TLbrightness-bTL
-				errTR = combo.TRbrightness-bTR
-				errBL = combo.BLbrightness-bBL
-				errBR = combo.BRbrightness-bBR
+				errTL = bTL-combo.TLbrightness
+				errTR = bTR-combo.TRbrightness
+				errBL = bBL-combo.BLbrightness
+				errBR = bBR-combo.BRbrightness
 				errTot = (errTL+errTR+errBL+errBR)/4
 
 				if bestCombo is null or Math.abs(errTot) < Math.abs(bestErr)
@@ -480,7 +480,11 @@ imgToText = ->
 			# macro dithering - whole quadrants (not subpixels)
 			if dither
 
-				ditherAmount = 16
+				ditherAmount = document.getElementById('ditherAmount').value
+
+				if document.getElementById('ditherFine').checked
+					# average the error to distribute across subpixels
+					errTL=errTR=errBL=errBR=errTot
 
 				# distribute error to the right
 				if j+1 < w
@@ -671,3 +675,23 @@ $('#bw').change ->
 $('#dithering').change ->
 	if theImage != ''
 		inputImage.dropImage(theImage)
+
+$('#ditherAmount').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#ditherFine').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$(document).ready ->
+
+	document.getElementById("outputImage").setAttribute('crossOrigin', 'anonymous')
+
+	downloadCanvas = (link, canvasId, filename) ->
+	    link.href = document.getElementById(canvasId).toDataURL()
+	    link.download = filename
+
+	document.getElementById('download').addEventListener('click', ->
+	    downloadCanvas(this, 'outputImage', 'asciiOutput.png')
+	, false)

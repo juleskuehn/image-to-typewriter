@@ -23,16 +23,16 @@ html
        input(type="text" value="0.57" id="offsetY")
      div
       label Charset Start Col:
-      input(type="text" value="8" id="colStart")
+      input(type="text" value="0" id="colStart")
      div
       label Charset End Col:
-      input(type="text" value="8" id="colEnd")
+      input(type="text" value="25" id="colEnd")
      div
       label Charset Start Row:
       input(type="text" value="5" id="rowStart")
      div
       label Charset End Row:
-      input(type="text" value="9" id="rowEnd")
+      input(type="text" value="8" id="rowEnd")
      div(class="hidden") 
       div
        label Overlap 1 On
@@ -65,7 +65,13 @@ html
       option(value="blue") Blue
      div
       label Dither
-      input(type="checkbox" id="dithering" checked)
+      input(type="checkbox" id="dithering")
+     div
+      label Dither Fine?
+      input(type="checkbox" id="ditherFine" checked)
+     div
+      label Dither Divider:
+      input(type="text" value="-16" id="ditherAmount")
      div
       input(type="range" id="customR" min="0" max="3" value="1" step="0.01")
       label Red
@@ -75,7 +81,9 @@ html
       label Blue
      div
       label Row Length
-      input(type="text" id="row_length" value="74")
+      input(type="text" id="row_length" value="40")
+     div
+      a(id="download") Download as image
 
     div(id='viewChop')
      canvas(id="charsetPreview" width="0" height="0")
