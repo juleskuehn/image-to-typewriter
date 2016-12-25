@@ -67,8 +67,14 @@ html
       label Dither
       input(type="checkbox" id="dithering")
      div
-      label Dither Fine?
-      input(type="checkbox" id="ditherFine" checked)
+      label Consider Spill?
+      input(type="checkbox" id="considerSpill" checked)
+     div 
+      input(type="range" id="spillRatio" min="0" max="1" value="1" step="0.01")
+      label Spill Ratio
+     div
+      input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.01")
+      label Spill Brightness
      div
       label Dither Divider:
       input(type="text" value="-16" id="ditherAmount")

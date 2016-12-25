@@ -86,8 +86,16 @@
         <input type="checkbox" id="dithering">
       </div>
       <div>
-        <label>Dither Fine?</label>
-        <input type="checkbox" id="ditherFine" checked>
+        <label>Consider Spill?</label>
+        <input type="checkbox" id="considerSpill" checked>
+      </div>
+      <div> 
+        <input type="range" id="spillRatio" min="0" max="1" value="1" step="0.01">
+        <label>Spill Ratio</label>
+      </div>
+      <div>
+        <input type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.01">
+        <label>Spill Brightness</label>
       </div>
       <div>
         <label>Dither Divider:</label>

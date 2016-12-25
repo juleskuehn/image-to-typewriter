@@ -431,6 +431,7 @@ imgToText = ->
 	source = document.getElementById("inputImage")
 	cvs = source.getContext('2d')
 	dither = document.getElementById('dithering').checked
+	considerSpill = document.getElementById('considerSpill').checked
 	gr = greyscale(source)
 	[h,w] = [source.height,source.width]
 	# looping through input image array in 2x2 pixel increments
@@ -443,9 +444,26 @@ imgToText = ->
 			bTR = gr[i*w + j+1] # brightness value of input image subpixel
 			bBL = gr[(i+1)*w + j] # brightness value of input image subpixel
 			bBR = gr[(i+1)*w + j+1] # brightness value of input image subpixel
+
+			# weigh subpixels of input image - spill to the right
+			bTLr = gr[i*w + j+3] # brightness value of input image subpixel
+			bTRr = gr[i*w + j+4] # brightness value of input image subpixel
+			bBLr = gr[(i+1)*w + j+3] # brightness value of input image subpixel
+			bBRr = gr[(i+1)*w + j+4] # brightness value of input image subpixel
+
+			# weigh subpixels of input image - spill to the bottom
+			bTLb = gr[(i+2)*w + j] # brightness value of input image subpixel
+			bTRb = gr[(i+2)*w + j+1] # brightness value of input image subpixel
+			bBLb = gr[(i+3)*w + j] # brightness value of input image subpixel
+			bBRb = gr[(i+3)*w + j+1] # brightness value of input image subpixel
+
+			# weigh subpixels of input image - spill to the bottom right
+			bTLbr = gr[(i+2)*w + j+3] # brightness value of input image subpixel
+			bTRbr = gr[(i+2)*w + j+4] # brightness value of input image subpixel
+			bBLbr = gr[(i+3)*w + j+3] # brightness value of input image subpixel
+			bBRbr = gr[(i+3)*w + j+4] # brightness value of input image subpixel
 			
 			# establish constraints on character selection
-			# TODO
 			TL=TR=BL=0
 			if i>0 and j>0
 				TL=combosArray[i/2-1][j/2-1]
@@ -461,15 +479,51 @@ imgToText = ->
 			bestErr = 0
 			bestCombo = null
 
+			# how much should the spill be considered?
+			spillRatio = $('#spillRatio').val()
+
+			# how much brighter should the spill be?
+			spillBrightness = 1 - $('#spillBrightness').val()
+
 			# loop through appropriate subsection of combos and weigh each subpixel against the input image
 			for k in [0...charset.combos[TL][TR][BL].length]
+				
 				combo = charset.combos[TL][TR][BL][k]
+
+				# get spill images
+				spillBottom = charset.combos[0][k][0][0]
+				spillRight = charset.combos[0][0][k][0]
+				spillBottomRight = charset.combos[k][0][0][0]
+
 				# check each subpixel against input image
 				errTL = bTL-combo.TLbrightness
 				errTR = bTR-combo.TRbrightness
 				errBL = bBL-combo.BLbrightness
 				errBR = bBR-combo.BRbrightness
 				errTot = (errTL+errTR+errBL+errBR)/4
+
+				# compare spill areas
+				errTL = bTLb*spillBrightness-spillBottom.TLbrightness
+				errTR = bTRb*spillBrightness-spillBottom.TRbrightness
+				errBL = bBLb*spillBrightness-spillBottom.BLbrightness
+				errBR = bBRb*spillBrightness-spillBottom.BRbrightness
+				errTotBottom = (errTL+errTR+errBL+errBR)/4
+
+				errTL = bTLr*spillBrightness-spillRight.TLbrightness
+				errTR = bTRr*spillBrightness-spillRight.TRbrightness
+				errBL = bBLr*spillBrightness-spillRight.BLbrightness
+				errBR = bBRr*spillBrightness-spillRight.BRbrightness
+				errTotRight = (errTL+errTR+errBL+errBR)/4
+
+				errTL = bTLbr*spillBrightness-spillBottomRight.TLbrightness
+				errTR = bTRbr*spillBrightness-spillBottomRight.TRbrightness
+				errBL = bBLbr*spillBrightness-spillBottomRight.BLbrightness
+				errBR = bBRbr*spillBrightness-spillBottomRight.BRbrightness
+				errTotBottomRight = (errTL+errTR+errBL+errBR)/4
+
+				if considerSpill
+					# combine spill with primary pixel weight
+					errTot = Math.abs(errTot) + Math.abs(errTotBottom)*spillRatio + Math.abs(errTotRight)*spillRatio + Math.abs(errTotBottomRight)*spillRatio
 
 				if bestCombo is null or Math.abs(errTot) < Math.abs(bestErr)
 					bestErr = errTot
@@ -478,6 +532,7 @@ imgToText = ->
 
 			# floyd-steinberg dithering
 			# macro dithering - whole quadrants (not subpixels)
+			###
 			if dither
 
 				ditherAmount = document.getElementById('ditherAmount').value
@@ -510,7 +565,7 @@ imgToText = ->
 					gr[(i+2)*w + j+3] += (errTR * 1/16)/4
 					gr[(i+3)*w + j+2] += (errBL * 1/16)/4
 					gr[(i+3)*w + j+3] += (errBR * 1/16)/4
-				
+			###	
 				
 			row.push closest
 			comboRow.push bestCombo
@@ -680,7 +735,15 @@ $('#ditherAmount').change ->
 	if theImage != ''
 		inputImage.dropImage(theImage)
 
-$('#ditherFine').change ->
+$('#considerSpill').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#spillRatio').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#spillBrightness').change ->
 	if theImage != ''
 		inputImage.dropImage(theImage)
 

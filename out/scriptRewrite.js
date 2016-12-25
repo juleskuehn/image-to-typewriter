@@ -358,12 +358,13 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBR, bTL, bTR, bestCombo, bestErr, closest, combo, comboRow, cvs, dither, ditherAmount, errBL, errBR, errTL, errTR, errTot, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, closest, combo, comboRow, considerSpill, cvs, dither, errBL, errBR, errTL, errTR, errTot, errTotBottom, errTotBottomRight, errTotRight, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, spillBottom, spillBottomRight, spillBrightness, spillRatio, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
     cvs = source.getContext('2d');
     dither = document.getElementById('dithering').checked;
+    considerSpill = document.getElementById('considerSpill').checked;
     gr = greyscale(source);
     ref = [source.height, source.width], h = ref[0], w = ref[1];
     for (i = m = 0, ref1 = h; m < ref1; i = m += 2) {
@@ -374,6 +375,18 @@
         bTR = gr[i * w + j + 1];
         bBL = gr[(i + 1) * w + j];
         bBR = gr[(i + 1) * w + j + 1];
+        bTLr = gr[i * w + j + 3];
+        bTRr = gr[i * w + j + 4];
+        bBLr = gr[(i + 1) * w + j + 3];
+        bBRr = gr[(i + 1) * w + j + 4];
+        bTLb = gr[(i + 2) * w + j];
+        bTRb = gr[(i + 2) * w + j + 1];
+        bBLb = gr[(i + 3) * w + j];
+        bBRb = gr[(i + 3) * w + j + 1];
+        bTLbr = gr[(i + 2) * w + j + 3];
+        bTRbr = gr[(i + 2) * w + j + 4];
+        bBLbr = gr[(i + 3) * w + j + 3];
+        bBRbr = gr[(i + 3) * w + j + 4];
         TL = TR = BL = 0;
         if (i > 0 && j > 0) {
           TL = combosArray[i / 2 - 1][j / 2 - 1];
@@ -387,49 +400,77 @@
         closest = 0;
         bestErr = 0;
         bestCombo = null;
+        spillRatio = $('#spillRatio').val();
+        spillBrightness = 1 - $('#spillBrightness').val();
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
+          spillBottom = charset.combos[0][k][0][0];
+          spillRight = charset.combos[0][0][k][0];
+          spillBottomRight = charset.combos[k][0][0][0];
           errTL = bTL - combo.TLbrightness;
           errTR = bTR - combo.TRbrightness;
           errBL = bBL - combo.BLbrightness;
           errBR = bBR - combo.BRbrightness;
           errTot = (errTL + errTR + errBL + errBR) / 4;
+          errTL = bTLb * spillBrightness - spillBottom.TLbrightness;
+          errTR = bTRb * spillBrightness - spillBottom.TRbrightness;
+          errBL = bBLb * spillBrightness - spillBottom.BLbrightness;
+          errBR = bBRb * spillBrightness - spillBottom.BRbrightness;
+          errTotBottom = (errTL + errTR + errBL + errBR) / 4;
+          errTL = bTLr * spillBrightness - spillRight.TLbrightness;
+          errTR = bTRr * spillBrightness - spillRight.TRbrightness;
+          errBL = bBLr * spillBrightness - spillRight.BLbrightness;
+          errBR = bBRr * spillBrightness - spillRight.BRbrightness;
+          errTotRight = (errTL + errTR + errBL + errBR) / 4;
+          errTL = bTLbr * spillBrightness - spillBottomRight.TLbrightness;
+          errTR = bTRbr * spillBrightness - spillBottomRight.TRbrightness;
+          errBL = bBLbr * spillBrightness - spillBottomRight.BLbrightness;
+          errBR = bBRbr * spillBrightness - spillBottomRight.BRbrightness;
+          errTotBottomRight = (errTL + errTR + errBL + errBR) / 4;
+          if (considerSpill) {
+            errTot = Math.abs(errTot) + Math.abs(errTotBottom) * spillRatio + Math.abs(errTotRight) * spillRatio + Math.abs(errTotBottomRight) * spillRatio;
+          }
           if (bestCombo === null || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
             closest = k;
             bestCombo = combo;
           }
         }
-        if (dither) {
-          ditherAmount = document.getElementById('ditherAmount').value;
-          if (document.getElementById('ditherFine').checked) {
-            errTL = errTR = errBL = errBR = errTot;
-          }
-          if (j + 1 < w) {
-            gr[i * w + j + 2] += (errTL * 7 / 16) / ditherAmount;
-            gr[i * w + j + 3] += (errTR * 7 / 16) / ditherAmount;
-            gr[(i + 1) * w + j + 2] += (errBL * 7 / 16) / ditherAmount;
-            gr[(i + 1) * w + j + 3] += (errBR * 7 / 16) / ditherAmount;
-          }
-          if (i + 1 < h && j - 1 > 0) {
-            gr[(i + 2) * w + j - 2] += (errTL * 3 / 16) / ditherAmount;
-            gr[(i + 2) * w + j - 1] += (errTR * 3 / 16) / ditherAmount;
-            gr[(i + 3) * w + j - 2] += (errBL * 3 / 16) / ditherAmount;
-            gr[(i + 3) * w + j - 1] += (errBR * 3 / 16) / ditherAmount;
-          }
-          if (i + 1 < h) {
-            gr[(i + 2) * w + j] += (errTL * 5 / 16) / ditherAmount;
-            gr[(i + 2) * w + j + 1] += (errTR * 5 / 16) / ditherAmount;
-            gr[(i + 3) * w + j] += (errBL * 5 / 16) / ditherAmount;
-            gr[(i + 3) * w + j + 1] += (errBR * 5 / 16) / ditherAmount;
-          }
-          if (i + 1 < h && j + 1 < w) {
-            gr[(i + 2) * w + j + 2] += (errTL * 1 / 16) / 4;
-            gr[(i + 2) * w + j + 3] += (errTR * 1 / 16) / 4;
-            gr[(i + 3) * w + j + 2] += (errBL * 1 / 16) / 4;
-            gr[(i + 3) * w + j + 3] += (errBR * 1 / 16) / 4;
-          }
-        }
+
+        /*
+        			if dither
+        
+        				ditherAmount = document.getElementById('ditherAmount').value
+        
+        				if document.getElementById('ditherFine').checked
+        					 * average the error to distribute across subpixels
+        					errTL=errTR=errBL=errBR=errTot
+        
+        				 * distribute error to the right
+        				if j+1 < w
+        					gr[i*w + j+2] += (errTL * 7/16)/ditherAmount
+        					gr[i*w + j+3] += (errTR * 7/16)/ditherAmount
+        					gr[(i+1)*w + j+2] += (errBL * 7/16)/ditherAmount
+        					gr[(i+1)*w + j+3] += (errBR * 7/16)/ditherAmount
+        				 * distribute error to the bottom left
+        				if i+1 < h and j-1 > 0
+        					gr[(i+2)*w + j-2] += (errTL * 3/16)/ditherAmount
+        					gr[(i+2)*w + j-1] += (errTR * 3/16)/ditherAmount
+        					gr[(i+3)*w + j-2] += (errBL * 3/16)/ditherAmount
+        					gr[(i+3)*w + j-1] += (errBR * 3/16)/ditherAmount
+        				 * distribute error to the bottom
+        				if i+1 < h
+        					gr[(i+2)*w + j] += (errTL * 5/16)/ditherAmount
+        					gr[(i+2)*w + j+1] += (errTR * 5/16)/ditherAmount
+        					gr[(i+3)*w + j] += (errBL * 5/16)/ditherAmount
+        					gr[(i+3)*w + j+1] += (errBR * 5/16)/ditherAmount
+        				 * distribute error to the bottom right
+        				if i+1 < h and j+1 < w
+        					gr[(i+2)*w + j+2] += (errTL * 1/16)/4
+        					gr[(i+2)*w + j+3] += (errTR * 1/16)/4
+        					gr[(i+3)*w + j+2] += (errBL * 1/16)/4
+        					gr[(i+3)*w + j+3] += (errBR * 1/16)/4
+         */
         row.push(closest);
         comboRow.push(bestCombo);
       }
@@ -620,7 +661,19 @@
     }
   });
 
-  $('#ditherFine').change(function() {
+  $('#considerSpill').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#spillRatio').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#spillBrightness').change(function() {
     if (theImage !== '') {
       return inputImage.dropImage(theImage);
     }
