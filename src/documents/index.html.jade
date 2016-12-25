@@ -70,8 +70,14 @@ html
       label Consider Spill?
       input(type="checkbox" id="considerSpill" checked)
      div 
-      input(type="range" id="spillRatio" min="0" max="1" value="1" step="0.01")
-      label Spill Ratio
+      input(type="range" id="spillRatioRight" min="0" max="1" value="0.5" step="0.01")
+      label Spill Ratio Right
+     div 
+      input(type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.01")
+      label Spill Ratio Bottom
+     div 
+      input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.01")
+      label Spill Ratio Bottom Right
      div
       input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.01")
       label Spill Brightness
@@ -87,7 +93,7 @@ html
       label Blue
      div
       label Row Length
-      input(type="text" id="row_length" value="40")
+      input(type="range" id="row_length" min="1" max="100" value="40" step="1")
      div
       a(id="download") Download as image
 

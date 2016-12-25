@@ -480,7 +480,10 @@ imgToText = ->
 			bestCombo = null
 
 			# how much should the spill be considered?
-			spillRatio = $('#spillRatio').val()
+			spillRatioRight = $('#spillRatioRight').val()
+			spillRatioBottomRight = $('#spillRatioBottomRight').val()
+			spillRatioBottom = $('#spillRatioBottom').val()
+
 
 			# how much brighter should the spill be?
 			spillBrightness = 1 - $('#spillBrightness').val()
@@ -523,7 +526,7 @@ imgToText = ->
 
 				if considerSpill
 					# combine spill with primary pixel weight
-					errTot = Math.abs(errTot) + Math.abs(errTotBottom)*spillRatio + Math.abs(errTotRight)*spillRatio + Math.abs(errTotBottomRight)*spillRatio
+					errTot = Math.abs(errTot) + Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight
 
 				if bestCombo is null or Math.abs(errTot) < Math.abs(bestErr)
 					bestErr = errTot
@@ -739,7 +742,15 @@ $('#considerSpill').change ->
 	if theImage != ''
 		inputImage.dropImage(theImage)
 
-$('#spillRatio').change ->
+$('#spillRatioRight').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#spillRatioBottom').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#spillRatioBottomRight').change ->
 	if theImage != ''
 		inputImage.dropImage(theImage)
 

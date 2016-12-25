@@ -358,7 +358,7 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, closest, combo, comboRow, considerSpill, cvs, dither, errBL, errBR, errTL, errTR, errTot, errTotBottom, errTotBottomRight, errTotRight, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, spillBottom, spillBottomRight, spillBrightness, spillRatio, spillRight, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, closest, combo, comboRow, considerSpill, cvs, dither, errBL, errBR, errTL, errTR, errTot, errTotBottom, errTotBottomRight, errTotRight, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
@@ -400,7 +400,9 @@
         closest = 0;
         bestErr = 0;
         bestCombo = null;
-        spillRatio = $('#spillRatio').val();
+        spillRatioRight = $('#spillRatioRight').val();
+        spillRatioBottomRight = $('#spillRatioBottomRight').val();
+        spillRatioBottom = $('#spillRatioBottom').val();
         spillBrightness = 1 - $('#spillBrightness').val();
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
@@ -428,7 +430,7 @@
           errBR = bBRbr * spillBrightness - spillBottomRight.BRbrightness;
           errTotBottomRight = (errTL + errTR + errBL + errBR) / 4;
           if (considerSpill) {
-            errTot = Math.abs(errTot) + Math.abs(errTotBottom) * spillRatio + Math.abs(errTotRight) * spillRatio + Math.abs(errTotBottomRight) * spillRatio;
+            errTot = Math.abs(errTot) + Math.abs(errTotBottom) * spillRatioBottom + Math.abs(errTotRight) * spillRatioRight + Math.abs(errTotBottomRight) * spillRatioBottomRight;
           }
           if (bestCombo === null || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
@@ -667,7 +669,19 @@
     }
   });
 
-  $('#spillRatio').change(function() {
+  $('#spillRatioRight').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#spillRatioBottom').change(function() {
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('#spillRatioBottomRight').change(function() {
     if (theImage !== '') {
       return inputImage.dropImage(theImage);
     }
