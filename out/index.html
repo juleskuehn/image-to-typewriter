@@ -87,7 +87,7 @@
       </div>
       <div>
         <label>Dither Fine</label>
-        <input type="checkbox" id="ditherFine">
+        <input type="checkbox" id="ditherFine" checked>
       </div>
       <div>
         <label>Consider Spill?</label>
@@ -106,7 +106,7 @@
         <label>Spill Ratio Bottom Right</label>
       </div>
       <div> 
-        <input type="range" id="spillRatio" min="0" max="1" value="0.5" step="0.05">
+        <input type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.01">
         <label>Spill Ratio Master</label>
       </div>
       <div>
@@ -140,6 +140,10 @@
     <div id="charQuadrants"></div>
     <canvas id="inputImage"></canvas>
     <canvas id="outputImage"></canvas>
+    <canvas id="layer1"></canvas>
+    <canvas id="layer2"></canvas>
+    <canvas id="layer3"></canvas>
+    <canvas id="layer4"></canvas>
     <div id="tabs" style="display:none">
       <button type="button" id="tabChop">Crop and Chop</button>
       <button type="button" id="tabSelect">Select Chars</button>

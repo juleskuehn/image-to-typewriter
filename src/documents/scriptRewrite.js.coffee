@@ -583,6 +583,7 @@ imgToText = ->
 
 	console.log combosArray
 	drawCharImage()
+	drawLayers()
 
 drawCharImage = ->
 	
@@ -602,6 +603,26 @@ drawCharImage = ->
 			ctx.putImageData(combo.image,j*charset.qWidth,i*charset.qHeight)
 
 
+drawLayers = ->
+
+	layer1 = document.getElementById('layer1')
+	layer2 = document.getElementById('layer2')
+	layer3 = document.getElementById('layer3')
+	layer4 = document.getElementById('layer4')
+
+	for layer in [layer1,layer2,layer3,layer4]
+		# each character is the size of 4 quadrants
+		outCanvas.width = charset.qWidth * combosArray[0].length * 2
+		outCanvas.height = charset.qHeight * combosArray.length * 2
+		ctx = outCanvas.getContext("2d")
+		ctx.clearRect(0, 0, outCanvas.width, outCanvas.height)
+		for i in [0...combosArray.length]
+			for j in [0...combosArray[0].length]
+				# print all quadrants of each character
+				ctx.putImageData(q.TL,j*charset.qWidth*2,i*charset.qHeight*2)
+				ctx.putImageData(q.TR,j*charset.qWidth*2+charset.qWidth,i*charset.qHeight*2)
+				ctx.putImageData(q.BL,j*charset.qWidth*2,i*charset.qHeight*2+charset.qHeight)
+				ctx.putImageData(q.BR,j*charset.qWidth*2+charset.qWidth,i*charset.qHeight*2+charset.qHeight)
 
 greyscale = (canvas) ->
 	greyscaleMethod = $('#bw').val()
