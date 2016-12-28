@@ -585,36 +585,6 @@ imgToText = ->
   drawCharImage()
   drawLayers()
 
-
-
-drawLayers = ->
-
-  layers = []
-
-  layers[0] = document.getElementById('layer1')
-  layers[1] = document.getElementById('layer2')
-  layers[2] = document.getElementById('layer3')
-  layers[3] = document.getElementById('layer4')
-
-  for layer in [0...layers.length]
-    outCanvas = layers[layer]
-    # each character is the size of 4 quadrants
-    outCanvas.width = charset.qWidth * combosArray[0].length
-    outCanvas.height = charset.qHeight * combosArray.length
-    ctx = outCanvas.getContext("2d")
-    ctx.clearRect(0, 0, outCanvas.width, outCanvas.height)
-    for i in [0...combosArray.length]
-      for j in [0...combosArray[0].length]
-        char = charset.chars[combosArray[i][j]]
-        # print all quadrants of each character
-        ctx.putImageData(char.TL,j*charset.qWidth*2,i*charset.qHeight*2)
-        ctx.putImageData(char.TR,j*charset.qWidth*2+charset.qWidth,i*charset.qHeight*2)
-        ctx.putImageData(char.BL,j*charset.qWidth*2,i*charset.qHeight*2+charset.qHeight)
-        ctx.putImageData(char.BR,j*charset.qWidth*2+charset.qWidth,i*charset.qHeight*2+charset.qHeight)
-
-
-
-
 drawCharImage = ->
   
   
@@ -633,6 +603,40 @@ drawCharImage = ->
       ctx.putImageData(combo.image,j*charset.qWidth,i*charset.qHeight)
 
 
+drawLayers = ->
+
+  layers = []
+
+  layers[0] = document.getElementById('layer1')
+  layers[1] = document.getElementById('layer2')
+  layers[2] = document.getElementById('layer3')
+  layers[3] = document.getElementById('layer4')
+
+  for n in [0...layers.length]
+    outCanvas = layers[n]
+    # each character is the size of 4 quadrants
+    outCanvas.width = charset.qWidth * combosArray[0].length
+    outCanvas.height = charset.qHeight * combosArray.length
+    ctx = outCanvas.getContext("2d")
+    ctx.clearRect(0, 0, outCanvas.width, outCanvas.height)
+
+    for i in [0...combosArray.length-1]
+      for j in [0...combosArray[0].length-1]
+
+        if n = 0
+          charLayer = charset.selected[ combosArray[i][j] ]
+        if n = 2
+          charLayer = charset.selected[ combosArray[i][j+1] ]
+        if n = 3
+          charLayer = charset.selected[ combosArray[i+1][j] ]
+        if n = 4
+          charLayer = charset.selected[ combosArray[i+1][j+1] ]
+
+
+        ctx.putImageData(charLayer.TL,i*charset.qWidth*2,j*charset.qHeight*2)
+        ctx.putImageData(charLayer.TR,i*charset.qWidth*2+charset.qWidth,j*charset.qHeight*2)
+        ctx.putImageData(charLayer.BL,i*charset.qWidth*2,j*charset.qHeight*2+charset.qHeight)
+        ctx.putImageData(charLayer.BR,i*charset.qWidth*2+charset.qWidth,j*charset.qHeight*2+charset.qHeight)
 
 
 
