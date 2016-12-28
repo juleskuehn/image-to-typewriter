@@ -480,9 +480,9 @@ imgToText = ->
 			bestCombo = null
 
 			# how much should the spill be considered?
-			spillRatioRight = $('#spillRatioRight').val()
-			spillRatioBottomRight = $('#spillRatioBottomRight').val()
-			spillRatioBottom = $('#spillRatioBottom').val()
+			spillRatioRight = $('#spillRatioRight').val() * $('#spillRatio').val()
+			spillRatioBottomRight = $('#spillRatioBottomRight').val() * $('#spillRatio').val()
+			spillRatioBottom = $('#spillRatioBottom').val() * $('#spillRatio').val()
 
 
 			# how much brighter should the spill be?
@@ -499,11 +499,12 @@ imgToText = ->
 				spillBottomRight = charset.combos[k][0][0][0]
 
 				# check each subpixel against input image
-				errTL = bTL-combo.TLbrightness
-				errTR = bTR-combo.TRbrightness
-				errBL = bBL-combo.BLbrightness
-				errBR = bBR-combo.BRbrightness
-				errTot = (errTL+errTR+errBL+errBR)/4
+				# save subpixel errors separately to avoid including spill in dithering
+				errTL = errTL1 = bTL-combo.TLbrightness
+				errTR = errTR1 = bTR-combo.TRbrightness
+				errBL = errBL1 = bBL-combo.BLbrightness
+				errBR = errBR1 = bBR-combo.BRbrightness
+				errTot = errTot1 = (errTL+errTR+errBL+errBR)/4
 
 				# compare spill areas
 				errTL = bTLb*spillBrightness-spillBottom.TLbrightness
@@ -535,40 +536,45 @@ imgToText = ->
 
 			# floyd-steinberg dithering
 			# macro dithering - whole quadrants (not subpixels)
-			###
+			
 			if dither
 
 				ditherAmount = document.getElementById('ditherAmount').value
 
 				if document.getElementById('ditherFine').checked
+					errTL = errTL1
+					errTR = errTR1
+					errBL = errBL1
+					errBR = errBR1
+				else
 					# average the error to distribute across subpixels
-					errTL=errTR=errBL=errBR=errTot
+					errTL=errTR=errBL=errBR=errTot1
 
 				# distribute error to the right
 				if j+1 < w
-					gr[i*w + j+2] += (errTL * 7/16)/ditherAmount
-					gr[i*w + j+3] += (errTR * 7/16)/ditherAmount
-					gr[(i+1)*w + j+2] += (errBL * 7/16)/ditherAmount
-					gr[(i+1)*w + j+3] += (errBR * 7/16)/ditherAmount
+					gr[i*w + j+2] += (errTL * 7/16)*ditherAmount
+					gr[i*w + j+3] += (errTR * 7/16)*ditherAmount
+					gr[(i+1)*w + j+2] += (errBL * 7/16)*ditherAmount
+					gr[(i+1)*w + j+3] += (errBR * 7/16)*ditherAmount
 				# distribute error to the bottom left
 				if i+1 < h and j-1 > 0
-					gr[(i+2)*w + j-2] += (errTL * 3/16)/ditherAmount
-					gr[(i+2)*w + j-1] += (errTR * 3/16)/ditherAmount
-					gr[(i+3)*w + j-2] += (errBL * 3/16)/ditherAmount
-					gr[(i+3)*w + j-1] += (errBR * 3/16)/ditherAmount
+					gr[(i+2)*w + j-2] += (errTL * 3/16)*ditherAmount
+					gr[(i+2)*w + j-1] += (errTR * 3/16)*ditherAmount
+					gr[(i+3)*w + j-2] += (errBL * 3/16)*ditherAmount
+					gr[(i+3)*w + j-1] += (errBR * 3/16)*ditherAmount
 				# distribute error to the bottom
 				if i+1 < h
-					gr[(i+2)*w + j] += (errTL * 5/16)/ditherAmount
-					gr[(i+2)*w + j+1] += (errTR * 5/16)/ditherAmount
-					gr[(i+3)*w + j] += (errBL * 5/16)/ditherAmount
-					gr[(i+3)*w + j+1] += (errBR * 5/16)/ditherAmount
+					gr[(i+2)*w + j] += (errTL * 5/16)*ditherAmount
+					gr[(i+2)*w + j+1] += (errTR * 5/16)*ditherAmount
+					gr[(i+3)*w + j] += (errBL * 5/16)*ditherAmount
+					gr[(i+3)*w + j+1] += (errBR * 5/16)*ditherAmount
 				# distribute error to the bottom right
 				if i+1 < h and j+1 < w
-					gr[(i+2)*w + j+2] += (errTL * 1/16)/4
-					gr[(i+2)*w + j+3] += (errTR * 1/16)/4
-					gr[(i+3)*w + j+2] += (errBL * 1/16)/4
-					gr[(i+3)*w + j+3] += (errBR * 1/16)/4
-			###	
+					gr[(i+2)*w + j+2] += (errTL * 1/16)*ditherAmount
+					gr[(i+2)*w + j+3] += (errTR * 1/16)*ditherAmount
+					gr[(i+3)*w + j+2] += (errBL * 1/16)*ditherAmount
+					gr[(i+3)*w + j+3] += (errBR * 1/16)*ditherAmount
+				
 				
 			row.push closest
 			comboRow.push bestCombo
@@ -734,11 +740,19 @@ $('#dithering').change ->
 	if theImage != ''
 		inputImage.dropImage(theImage)
 
+$('#ditherFine').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
 $('#ditherAmount').change ->
 	if theImage != ''
 		inputImage.dropImage(theImage)
 
 $('#considerSpill').change ->
+	if theImage != ''
+		inputImage.dropImage(theImage)
+
+$('#spillRatio').change ->
 	if theImage != ''
 		inputImage.dropImage(theImage)
 
