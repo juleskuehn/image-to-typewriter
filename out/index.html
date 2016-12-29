@@ -106,7 +106,7 @@
         <label>Spill Ratio Bottom Right</label>
       </div>
       <div> 
-        <input type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.01">
+        <input type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.005">
         <label>Spill Ratio Master</label>
       </div>
       <div>
@@ -154,9 +154,7 @@
     <script src="jquery-ui.min.js"></script>
     <script src="Char.js"></script>
     <script src="Combo.js"></script>
-    <script src="genCombos.js"></script>
-    <script src="imgToText.js"></script>
-    <script src="scriptRewrite.js"></script><script >(function(){
+    <script src="kword.js"></script><script >(function(){
 	/* Did we just livereload? */
 var log = !!(localStorage && console && console.log && true);
 if ( log && localStorage.getItem('/docpad-livereload/reloaded') === 'yes' ) {

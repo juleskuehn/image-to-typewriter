@@ -82,7 +82,7 @@ html
       input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05")
       label Spill Ratio Bottom Right
      div 
-      input(type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.01")
+      input(type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.005")
       label Spill Ratio Master
      div
       input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.05")
@@ -131,7 +131,5 @@ html
     script(src='jquery-ui.min.js')
     script(src='Char.js')
     script(src='Combo.js')
-    script(src='genCombos.js')
-    script(src='imgToText.js')
-    script(src='scriptRewrite.js')
+    script(src='kword.js')
     != getBlock('scripts').toHTML()
