@@ -5,103 +5,109 @@ html
     title='kword X2'
     link(href='style.css', rel='stylesheet')
   body
-    div(id="charset-target") 1. Drop Charset
-    div(id="image-target") 4. Drop Image
-    div(id='options')
-     div(class="hidden") 
-      div
-       button(type="button" id="chopCharset") 2. Chop Character Set
-       button(type="button" id="genCombos") 3. Generate Combos
-      div
-       label Cols:
-       input(type="text" value="59" id="cols")
-      div
-       label Rows:
-       input(type="text" value="20" id="rows")
-      div
-       label Grid Offset X:
-       input(type="text" value="0.5" id="offsetX")
-      div
-       label Grid Offset Y:
-       input(type="text" value="0.57" id="offsetY")
-     div
-      label Charset Start Col:
-      input(type="text" value="0" id="colStart")
-     div
-      label Charset End Col:
-      input(type="text" value="25" id="colEnd")
-     div
-      label Charset Start Row:
-      input(type="text" value="5" id="rowStart")
-     div
-      label Charset End Row:
-      input(type="text" value="8" id="rowEnd")
-     div(class="hidden") 
-      div
-       label Overlap 1 On
-       input(type="checkbox" id="overlap1")
-      div
-       label Overlap 1 +X:
-       input(type="text" value="0" id="o1offsetX")
-      div
-       label Overlap 1 +Y:
-       input(type="text" value="0.5" id="o1offsetY")
-      div
-       label Overlap 2 On
-       input(type="checkbox" id="overlap2")
-      div
-       label Overlap 2 +X:
-       input(type="text" value="0.5" id="o2offsetX")
-      div
-       label Overlap 2 +Y:
-       input(type="text" value="0" id="o2offsetY")
 
-     select(id="bw")
-      option(value="ccir") CCIR 601
-      option(value="cie") CIE Luma
-      option(value="flat") Equal
-      option(value="red") Red
-      option(value="green") Green
-      option(value="blue") Blue
+    div(id="buttons")
+
+     h3 Instructions
+     div(id="charset-target") 1. Drop Charset
+     button(type="button" id="chopCharset") 2. Chop Character Set
+     p 3. Select chars to be typed - less than 10
+     button(type="button" id="genCombos") 4. Generate Combos
+     div(id="image-target") 5. Drop Image
+
+    div(id='options')
+
+      div(id="charset_options")
+        h3 Chopping Options
+        div
+         input(type="text" value="59" id="cols")
+         label Columns
+        div
+         input(type="text" value="20" id="rows")
+         label Rows
+        div
+         input(type="text" value="0.5" id="offsetX")
+         label Grid Offset X
+        div
+         input(type="text" value="0.57" id="offsetY")
+         label Grid Offset Y
+        div
+         input(type="text" value="0" id="colStart")
+         label Crop Start Column
+        div
+         input(type="text" value="25" id="colEnd")
+         label Crop End Column
+        div
+         input(type="text" value="5" id="rowStart")
+         label Crop Start Row
+        div
+         input(type="text" value="8" id="rowEnd")
+         label Crop End Row
+
+     div(id="image_options")
+       h3 Generator Options
+       div
+        input(type="range" id="row_length" min="1" max="100" value="40" step="1")
+        label Row Length
+       div
+        select(id="bw")
+         option(value="ccir") CCIR 601
+         option(value="cie") CIE Luma
+         option(value="flat") Equal
+         option(value="red") Red
+         option(value="green") Green
+         option(value="blue") Blue
+        label B/W Conversion
+       div
+        input(type="range" id="customR" min="0" max="3" value="1" step="0.10")
+        label Red
+       div
+        input(type="range" id="customG" min="0" max="3" value="1" step="0.10")
+        label Green
+       div
+        input(type="range" id="customB" min="0" max="3" value="1" step="0.10")
+        label Blue
+       div
+        input(type="checkbox" id="dithering" checked)
+        label Dither
+       div
+        input(type="checkbox" id="ditherFine" checked)
+        label Dither Fine
+       div
+        input(type="checkbox" id="considerSpill" checked)
+        label Consider Spill?
+       div 
+        input(type="range" id="spillRatioRight" min="0" max="1" value="0.5" step="0.01")
+        label Spill Ratio Right
+       div 
+        input(type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.05")
+        label Spill Ratio Bottom
+       div 
+        input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05")
+        label Spill Ratio Bottom Right
+       div 
+        input(type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.005")
+        label Spill Ratio Master
+       div
+        input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.05")
+        label Spill Brightness
+       div
+        input(type="range" id="ditherAmount" min="-1" max="1" value=".1" step="0.05")
+        label Dither Strength
+
+    div(id="downloads")
+     h3 Download Output
      div
-      label Dither
-      input(type="checkbox" id="dithering" checked)
+      a(id="download" href="#") Combined mockup
      div
-      label Dither Fine
-      input(type="checkbox" id="ditherFine" checked)
+      a(id="download_layer_1" href="#") Top Left Layer
      div
-      label Consider Spill?
-      input(type="checkbox" id="considerSpill" checked)
-     div 
-      input(type="range" id="spillRatioRight" min="0" max="1" value="0.5" step="0.01")
-      label Spill Ratio Right
-     div 
-      input(type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.05")
-      label Spill Ratio Bottom
-     div 
-      input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05")
-      label Spill Ratio Bottom Right
-     div 
-      input(type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.005")
-      label Spill Ratio Master
+      a(id="download_layer_2" href="#") Top Right Layer
      div
-      input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.05")
-      label Spill Brightness
+      a(id="download_layer_3" href="#") Bottom Left Layer
      div
-      label Dither Divider:
-      input(type="range" id="ditherAmount" min="-1" max="1" value=".1" step="0.05")
-     div
-      input(type="range" id="customR" min="0" max="3" value="1" step="0.10")
-      label Red
-      input(type="range" id="customG" min="0" max="3" value="1" step="0.10")
-      label Green
-      input(type="range" id="customB" min="0" max="3" value="1" step="0.10")
-      label Blue
-     div
-      label Row Length
-      input(type="range" id="row_length" min="1" max="100" value="40" step="1")
-     div
-      a(id="download") Download as image
+      a(id="download_layer_4" href="#") Bottom Right Layer
+
 
     div(id='viewChop')
      canvas(id="charsetPreview" width="0" height="0")
@@ -120,10 +126,6 @@ html
     canvas(id="layer3")
     canvas(id="layer4")
 
-
-    div(id='tabs' style="display:none")
-     button(type='button' id='tabChop') Crop and Chop
-     button(type='button' id='tabSelect') Select Chars
 
     script(src='https://code.jquery.com/jquery-3.1.0.slim.min.js' integrity='sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=' crossorigin='anonymous')
     script(src='underscore-min.js')

@@ -6,92 +6,91 @@
     <link href="style.css" rel="stylesheet">
   </head>
   <body>
-    <div id="charset-target">1. Drop Charset</div>
-    <div id="image-target">4. Drop Image</div>
+    <div id="buttons">
+      <h3>Instructions</h3>
+      <div id="charset-target">1. Drop Charset</div>
+      <button type="button" id="chopCharset">2. Chop Character Set</button>
+      <p>3. Select chars to be typed - less than 10</p>
+      <button type="button" id="genCombos">4. Generate Combos</button>
+      <div id="image-target">5. Drop Image</div>
+    </div>
     <div id="options">
-      <div class="hidden"> 
+      <div id="charset_options">
+        <h3>Chopping Options</h3>
         <div>
-          <button type="button" id="chopCharset">2. Chop Character Set</button>
-          <button type="button" id="genCombos">3. Generate Combos</button>
-        </div>
-        <div>
-          <label>Cols:</label>
           <input type="text" value="59" id="cols">
+          <label>Columns</label>
         </div>
         <div>
-          <label>Rows:</label>
           <input type="text" value="20" id="rows">
+          <label>Rows</label>
         </div>
         <div>
-          <label>Grid Offset X:</label>
           <input type="text" value="0.5" id="offsetX">
+          <label>Grid Offset X</label>
         </div>
         <div>
-          <label>Grid Offset Y:</label>
           <input type="text" value="0.57" id="offsetY">
+          <label>Grid Offset Y</label>
         </div>
+        <div>
+          <input type="text" value="0" id="colStart">
+          <label>Crop Start Column</label>
+        </div>
+        <div>
+          <input type="text" value="25" id="colEnd">
+          <label>Crop End Column</label>
+        </div>
+        <div>
+          <input type="text" value="5" id="rowStart">
+          <label>Crop Start Row</label>
+        </div>
+        <div>
+          <input type="text" value="8" id="rowEnd">
+          <label>Crop End Row</label>
+        </div>
+      </div>
+    </div>
+    <div id="image_options">
+      <h3>Generator Options</h3>
+      <div>
+        <input type="range" id="row_length" min="1" max="100" value="40" step="1">
+        <label>Row Length</label>
       </div>
       <div>
-        <label>Charset Start Col:</label>
-        <input type="text" value="0" id="colStart">
+        <select id="bw">
+          <option value="ccir">CCIR 601</option>
+          <option value="cie">CIE Luma</option>
+          <option value="flat">Equal</option>
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+        </select>
+        <label>B/W Conversion</label>
       </div>
       <div>
-        <label>Charset End Col:</label>
-        <input type="text" value="25" id="colEnd">
+        <input type="range" id="customR" min="0" max="3" value="1" step="0.10">
+        <label>Red</label>
       </div>
       <div>
-        <label>Charset Start Row:</label>
-        <input type="text" value="5" id="rowStart">
+        <input type="range" id="customG" min="0" max="3" value="1" step="0.10">
+        <label>Green</label>
       </div>
       <div>
-        <label>Charset End Row:</label>
-        <input type="text" value="8" id="rowEnd">
+        <input type="range" id="customB" min="0" max="3" value="1" step="0.10">
+        <label>Blue</label>
       </div>
-      <div class="hidden"> 
-        <div>
-          <label>Overlap 1 On</label>
-          <input type="checkbox" id="overlap1">
-        </div>
-        <div>
-          <label>Overlap 1 +X:</label>
-          <input type="text" value="0" id="o1offsetX">
-        </div>
-        <div>
-          <label>Overlap 1 +Y:</label>
-          <input type="text" value="0.5" id="o1offsetY">
-        </div>
-        <div>
-          <label>Overlap 2 On</label>
-          <input type="checkbox" id="overlap2">
-        </div>
-        <div>
-          <label>Overlap 2 +X:</label>
-          <input type="text" value="0.5" id="o2offsetX">
-        </div>
-        <div>
-          <label>Overlap 2 +Y:</label>
-          <input type="text" value="0" id="o2offsetY">
-        </div>
-      </div>
-      <select id="bw">
-        <option value="ccir">CCIR 601</option>
-        <option value="cie">CIE Luma</option>
-        <option value="flat">Equal</option>
-        <option value="red">Red</option>
-        <option value="green">Green</option>
-        <option value="blue">Blue</option>
-      </select>
       <div>
-        <label>Dither</label>
         <input type="checkbox" id="dithering" checked>
+        <label>Dither</label>
       </div>
       <div>
-        <label>Dither Fine</label>
         <input type="checkbox" id="ditherFine" checked>
+        <label>Dither Fine</label>
       </div>
       <div>
-        <label>Consider Spill?</label>
         <input type="checkbox" id="considerSpill" checked>
+        <label>Consider Spill?</label>
       </div>
       <div> 
         <input type="range" id="spillRatioRight" min="0" max="1" value="0.5" step="0.01">
@@ -114,22 +113,17 @@
         <label>Spill Brightness</label>
       </div>
       <div>
-        <label>Dither Divider:</label>
         <input type="range" id="ditherAmount" min="-1" max="1" value=".1" step="0.05">
+        <label>Dither Strength</label>
       </div>
-      <div>
-        <input type="range" id="customR" min="0" max="3" value="1" step="0.10">
-        <label>Red</label>
-        <input type="range" id="customG" min="0" max="3" value="1" step="0.10">
-        <label>Green</label>
-        <input type="range" id="customB" min="0" max="3" value="1" step="0.10">
-        <label>Blue</label>
-      </div>
-      <div>
-        <label>Row Length</label>
-        <input type="range" id="row_length" min="1" max="100" value="40" step="1">
-      </div>
-      <div><a id="download">Download as image</a></div>
+    </div>
+    <div id="downloads">
+      <h3>Download Output</h3>
+      <div><a id="download" href="#">Combined mockup</a></div>
+      <div><a id="download_layer_1" href="#">Top Left Layer</a></div>
+      <div><a id="download_layer_2" href="#">Top Right Layer</a></div>
+      <div><a id="download_layer_3" href="#">Bottom Left Layer</a></div>
+      <div><a id="download_layer_4" href="#">Bottom Right Layer</a></div>
     </div>
     <div id="viewChop">
       <canvas id="charsetPreview" width="0" height="0"></canvas>
@@ -144,10 +138,6 @@
     <canvas id="layer2"></canvas>
     <canvas id="layer3"></canvas>
     <canvas id="layer4"></canvas>
-    <div id="tabs" style="display:none">
-      <button type="button" id="tabChop">Crop and Chop</button>
-      <button type="button" id="tabSelect">Select Chars</button>
-    </div>
     <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
     <script src="underscore-min.js"></script>
     <script src="combinatorics.js"></script>

@@ -79,17 +79,12 @@ div#tabs {
 }
 #charset-target,
 #image-target {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 10;
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 40px;
   background: #f00;
 }
 #image-target {
   background: #808080;
-  right: 105px;
 }
 #inputImage,
 #outputImage {
