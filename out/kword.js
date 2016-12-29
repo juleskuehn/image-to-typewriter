@@ -771,8 +771,24 @@
       link.href = document.getElementById(canvasId).toDataURL();
       return link.download = filename;
     };
-    return document.getElementById('download').addEventListener('click', function() {
-      return downloadCanvas(this, 'outputImage', 'asciiOutput.png');
+    document.getElementById('download').addEventListener('click', function() {
+      return downloadCanvas(this, 'outputImage', 'kword_mockup.png');
+    }, false);
+    document.getElementById("layer1").setAttribute('crossOrigin', 'anonymous');
+    document.getElementById('download_layer_1').addEventListener('click', function() {
+      return downloadCanvas(this, 'layer1', 'kword_layer1_TopLeft.png');
+    }, false);
+    document.getElementById("layer2").setAttribute('crossOrigin', 'anonymous');
+    document.getElementById('download_layer_2').addEventListener('click', function() {
+      return downloadCanvas(this, 'layer2', 'kword_layer2_TopRight.png');
+    }, false);
+    document.getElementById("layer3").setAttribute('crossOrigin', 'anonymous');
+    document.getElementById('download_layer_3').addEventListener('click', function() {
+      return downloadCanvas(this, 'layer3', 'kword_layer3_BottomLeft.png');
+    }, false);
+    document.getElementById("layer4").setAttribute('crossOrigin', 'anonymous');
+    return document.getElementById('download_layer_4').addEventListener('click', function() {
+      return downloadCanvas(this, 'layer4', 'kword_layer4_BottomRight.png');
     }, false);
   });
 
