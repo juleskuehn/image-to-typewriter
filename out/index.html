@@ -6,10 +6,14 @@
     <link href="style.css" rel="stylesheet">
   </head>
   <body>
-    <div id="charset-target"></div>
-    <div id="image-target"></div>
+    <div id="charset-target">1. Drop Charset</div>
+    <div id="image-target">4. Drop Image</div>
     <div id="options">
       <div class="hidden"> 
+        <div>
+          <button type="button" id="chopCharset">2. Chop Character Set</button>
+          <button type="button" id="genCombos">3. Generate Combos</button>
+        </div>
         <div>
           <label>Cols:</label>
           <input type="text" value="59" id="cols">
@@ -68,10 +72,6 @@
           <label>Overlap 2 +Y:</label>
           <input type="text" value="0" id="o2offsetY">
         </div>
-      </div>
-      <div>
-        <button type="button" id="chopCharset">Chop Character Set</button>
-        <button type="button" id="genCombos">Generate Combos</button>
       </div>
       <select id="bw">
         <option value="ccir">CCIR 601</option>

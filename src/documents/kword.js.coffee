@@ -599,44 +599,72 @@ drawCharImage = ->
     for j in [0...bestCombos[0].length]
       combo = bestCombos[i][j]
       # print combo image
-      # TODO print actual characters
+     # TODO print actual characters
       ctx.putImageData(combo.image,j*charset.qWidth,i*charset.qHeight)
 
 
 drawLayers = ->
 
-  layers = []
+  layer1 = document.getElementById('layer1')
+  layer2 = document.getElementById('layer2')
+  layer3 = document.getElementById('layer3')
+  layer4 = document.getElementById('layer4')
 
-  layers[0] = document.getElementById('layer1')
-  layers[1] = document.getElementById('layer2')
-  layers[2] = document.getElementById('layer3')
-  layers[3] = document.getElementById('layer4')
+  outCanvas = outCanvas1 = layer1
+  # each character is the size of 4 quadrants
+  outCanvas1.width = charset.qWidth * combosArray[0].length
+  outCanvas1.height = charset.qHeight * combosArray.length
+  ctx1 = outCanvas1.getContext("2d")
+  ctx1.clearRect(0, 0, outCanvas.width, outCanvas.height)
 
-  for n in [0...layers.length]
-    outCanvas = layers[n]
-    # each character is the size of 4 quadrants
-    outCanvas.width = charset.qWidth * combosArray[0].length
-    outCanvas.height = charset.qHeight * combosArray.length
-    ctx = outCanvas.getContext("2d")
-    ctx.clearRect(0, 0, outCanvas.width, outCanvas.height)
+  outCanvas2 = layer2
+  # each character is the size of 4 quadrants
+  outCanvas2.width = charset.qWidth * combosArray[0].length
+  outCanvas2.height = charset.qHeight * combosArray.length
+  ctx2 = outCanvas2.getContext("2d")
+  ctx2.clearRect(0, 0, outCanvas.width, outCanvas.height)
 
-    for i in [0...combosArray.length-1]
-      for j in [0...combosArray[0].length-1]
+  outCanvas3 = layer3
+  # each character is the size of 4 quadrants
+  outCanvas3.width = charset.qWidth * combosArray[0].length
+  outCanvas3.height = charset.qHeight * combosArray.length
+  ctx3 = outCanvas3.getContext("2d")
+  ctx3.clearRect(0, 0, outCanvas.width, outCanvas.height)
 
-        if n = 0
-          charLayer = charset.selected[ combosArray[i][j] ]
-        if n = 2
-          charLayer = charset.selected[ combosArray[i][j+1] ]
-        if n = 3
-          charLayer = charset.selected[ combosArray[i+1][j] ]
-        if n = 4
-          charLayer = charset.selected[ combosArray[i+1][j+1] ]
+  outCanvas4 = layer4
+  # each character is the size of 4 quadrants
+  outCanvas4.width = charset.qWidth * combosArray[0].length
+  outCanvas4.height = charset.qHeight * combosArray.length
+  ctx4 = outCanvas4.getContext("2d")
+  ctx4.clearRect(0, 0, outCanvas.width, outCanvas.height)
 
+  for i in [0...combosArray.length-1] by 2
+    for j in [0...combosArray[0].length-1] by 2
 
-        ctx.putImageData(charLayer.TL,i*charset.qWidth*2,j*charset.qHeight*2)
-        ctx.putImageData(charLayer.TR,i*charset.qWidth*2+charset.qWidth,j*charset.qHeight*2)
-        ctx.putImageData(charLayer.BL,i*charset.qWidth*2,j*charset.qHeight*2+charset.qHeight)
-        ctx.putImageData(charLayer.BR,i*charset.qWidth*2+charset.qWidth,j*charset.qHeight*2+charset.qHeight)
+      charLayer1 = charset.selected[ combosArray[i][j] ]
+      charLayer2 = charset.selected[ combosArray[i][j+1] ]
+      charLayer3 = charset.selected[ combosArray[i+1][j] ]
+      charLayer4 = charset.selected[ combosArray[i+1][j+1] ]
+
+      ctx1.putImageData(charLayer1.TL,i*charset.qWidth,j*charset.qHeight)
+      ctx1.putImageData(charLayer1.TR,i*charset.qWidth+charset.qWidth,j*charset.qHeight)
+      ctx1.putImageData(charLayer1.BL,i*charset.qWidth,j*charset.qHeight+charset.qHeight)
+      ctx1.putImageData(charLayer1.BR,i*charset.qWidth+charset.qWidth,j*charset.qHeight+charset.qHeight)
+      
+      ctx2.putImageData(charLayer2.TL,i*charset.qWidth,j*charset.qHeight)
+      ctx2.putImageData(charLayer2.TR,i*charset.qWidth+charset.qWidth,j*charset.qHeight)
+      ctx2.putImageData(charLayer2.BL,i*charset.qWidth,j*charset.qHeight+charset.qHeight)
+      ctx2.putImageData(charLayer2.BR,i*charset.qWidth+charset.qWidth,j*charset.qHeight+charset.qHeight)
+      
+      ctx3.putImageData(charLayer3.TL,i*charset.qWidth,j*charset.qHeight)
+      ctx3.putImageData(charLayer3.TR,i*charset.qWidth+charset.qWidth,j*charset.qHeight)
+      ctx3.putImageData(charLayer3.BL,i*charset.qWidth,j*charset.qHeight+charset.qHeight)
+      ctx3.putImageData(charLayer3.BR,i*charset.qWidth+charset.qWidth,j*charset.qHeight+charset.qHeight)
+      
+      ctx4.putImageData(charLayer4.TL,i*charset.qWidth,j*charset.qHeight)
+      ctx4.putImageData(charLayer4.TR,i*charset.qWidth+charset.qWidth,j*charset.qHeight)
+      ctx4.putImageData(charLayer4.BL,i*charset.qWidth,j*charset.qHeight+charset.qHeight)
+      ctx4.putImageData(charLayer4.BR,i*charset.qWidth+charset.qWidth,j*charset.qHeight+charset.qHeight)
 
 
 

@@ -5,10 +5,13 @@ html
     title='kword X2'
     link(href='style.css', rel='stylesheet')
   body
-    div(id="charset-target")
-    div(id="image-target")
+    div(id="charset-target") 1. Drop Charset
+    div(id="image-target") 4. Drop Image
     div(id='options')
      div(class="hidden") 
+      div
+       button(type="button" id="chopCharset") 2. Chop Character Set
+       button(type="button" id="genCombos") 3. Generate Combos
       div
        label Cols:
        input(type="text" value="59" id="cols")
@@ -52,9 +55,6 @@ html
       div
        label Overlap 2 +Y:
        input(type="text" value="0" id="o2offsetY")
-     div
-      button(type="button" id="chopCharset") Chop Character Set
-      button(type="button" id="genCombos") Generate Combos
 
      select(id="bw")
       option(value="ccir") CCIR 601
