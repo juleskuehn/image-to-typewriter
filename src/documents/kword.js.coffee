@@ -155,8 +155,6 @@ charset =
     # now create indexes to correlate with combo objects
     for i in [0...charset.chars.length]
       charset.chars[i].index = i
-
-    console.log charset.chars
       
     # do not change character indexes after this!
 
@@ -314,7 +312,6 @@ charset =
             combo.BLbrightness = 255 - (255*(combo.BLbrightness)/maxBright)
             combo.BRbrightness = 255 - (255*(combo.BRbrightness)/maxBright)
     ###
-    console.log combos
 
 
 
@@ -352,7 +349,6 @@ charset =
 
     charset.selected = selected
 
-    console.log charset.selected
 
 
 
@@ -581,7 +577,6 @@ imgToText = ->
     combosArray.push row
     bestCombos.push comboRow
 
-  console.log combosArray
   drawCharImage()
   drawLayers()
 
@@ -604,6 +599,8 @@ drawCharImage = ->
 
 
 drawLayers = ->
+
+  console.log combosArray
 
   layer1 = document.getElementById('layer1')
   layer2 = document.getElementById('layer2')
@@ -646,26 +643,27 @@ drawLayers = ->
       charLayer3 = charset.selected[ combosArray[i+1][j] ]
       charLayer4 = charset.selected[ combosArray[i+1][j+1] ]
 
-      ctx1.putImageData(charLayer1.TL,i*charset.qWidth,j*charset.qHeight)
-      ctx1.putImageData(charLayer1.TR,i*charset.qWidth+charset.qWidth,j*charset.qHeight)
-      ctx1.putImageData(charLayer1.BL,i*charset.qWidth,j*charset.qHeight+charset.qHeight)
-      ctx1.putImageData(charLayer1.BR,i*charset.qWidth+charset.qWidth,j*charset.qHeight+charset.qHeight)
-      
-      ctx2.putImageData(charLayer2.TL,i*charset.qWidth,j*charset.qHeight)
-      ctx2.putImageData(charLayer2.TR,i*charset.qWidth+charset.qWidth,j*charset.qHeight)
-      ctx2.putImageData(charLayer2.BL,i*charset.qWidth,j*charset.qHeight+charset.qHeight)
-      ctx2.putImageData(charLayer2.BR,i*charset.qWidth+charset.qWidth,j*charset.qHeight+charset.qHeight)
-      
-      ctx3.putImageData(charLayer3.TL,i*charset.qWidth,j*charset.qHeight)
-      ctx3.putImageData(charLayer3.TR,i*charset.qWidth+charset.qWidth,j*charset.qHeight)
-      ctx3.putImageData(charLayer3.BL,i*charset.qWidth,j*charset.qHeight+charset.qHeight)
-      ctx3.putImageData(charLayer3.BR,i*charset.qWidth+charset.qWidth,j*charset.qHeight+charset.qHeight)
-      
-      ctx4.putImageData(charLayer4.TL,i*charset.qWidth,j*charset.qHeight)
-      ctx4.putImageData(charLayer4.TR,i*charset.qWidth+charset.qWidth,j*charset.qHeight)
-      ctx4.putImageData(charLayer4.BL,i*charset.qWidth,j*charset.qHeight+charset.qHeight)
-      ctx4.putImageData(charLayer4.BR,i*charset.qWidth+charset.qWidth,j*charset.qHeight+charset.qHeight)
 
+      ctx1.putImageData(charLayer1.TL,j*charset.qWidth,i*charset.qHeight)
+      ctx1.putImageData(charLayer1.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
+      ctx1.putImageData(charLayer1.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
+      ctx1.putImageData(charLayer1.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
+      
+      ctx2.putImageData(charLayer2.TL,j*charset.qWidth,i*charset.qHeight)
+      ctx2.putImageData(charLayer2.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
+      ctx2.putImageData(charLayer2.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
+      ctx2.putImageData(charLayer2.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
+      
+      ctx3.putImageData(charLayer3.TL,j*charset.qWidth,i*charset.qHeight)
+      ctx3.putImageData(charLayer3.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
+      ctx3.putImageData(charLayer3.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
+      ctx3.putImageData(charLayer3.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
+      
+      ctx4.putImageData(charLayer4.TL,j*charset.qWidth,i*charset.qHeight)
+      ctx4.putImageData(charLayer4.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
+      ctx4.putImageData(charLayer4.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
+      ctx4.putImageData(charLayer4.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
+      
 
 
 greyscale = (canvas) ->

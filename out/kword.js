@@ -68,7 +68,7 @@
       return drawGrid();
     },
     chopCharset: function() {
-      var BL, BR, TL, TR, char, charHeight, charWidth, col, ctx, i, len, m, maxBright, minBright, n, numCols, numRows, o, offsetX, offsetY, q, ref, ref1, ref2, ref3, resizeCanvasToMultiplesOfCharSize, row, start, startChar;
+      var BL, BR, TL, TR, char, charHeight, charWidth, col, ctx, i, len, m, maxBright, minBright, n, numCols, numRows, o, offsetX, offsetY, q, ref, ref1, ref2, ref3, resizeCanvasToMultiplesOfCharSize, results, row, start, startChar;
       resizeCanvasToMultiplesOfCharSize = function() {
         var newHeight, newWidth, tempCanvas, wCanvas;
         wCanvas = charset.workingCanvas;
@@ -116,10 +116,11 @@
         char.brightness = 255 - (255 * (char.brightness - minBright)) / (maxBright - minBright);
       }
       charset.chars = _(charset.chars).sortBy('brightness');
+      results = [];
       for (i = q = 0, ref3 = charset.chars.length; 0 <= ref3 ? q < ref3 : q > ref3; i = 0 <= ref3 ? ++q : --q) {
-        charset.chars[i].index = i;
+        results.push(charset.chars[i].index = i);
       }
-      return console.log(charset.chars);
+      return results;
     },
     drawCharQuadrants: function() {
       var char, drawQuadrant, i, m, ref, results;
@@ -266,7 +267,6 @@
               combo.BLbrightness = 255 - (255*(combo.BLbrightness)/maxBright)
               combo.BRbrightness = 255 - (255*(combo.BRbrightness)/maxBright)
        */
-      console.log(combos);
       drawCombos = function() {
         var ac, ad, ae, af, ag, ctx, cvs, id, len1, newCanvasHtml, ref13, ref14, ref15, ref16, results, sortedCombos;
         $('#comboPreview').empty();
@@ -295,8 +295,7 @@
         return results;
       };
       drawCombos();
-      charset.selected = selected;
-      return console.log(charset.selected);
+      return charset.selected = selected;
     },
     dropImage: function(source) {
       var MAX_HEIGHT, loadImage, render, renderWorking;
@@ -479,7 +478,6 @@
       combosArray.push(row);
       bestCombos.push(comboRow);
     }
-    console.log(combosArray);
     drawCharImage();
     return drawLayers();
   };
@@ -509,6 +507,7 @@
 
   drawLayers = function() {
     var charLayer1, charLayer2, charLayer3, charLayer4, ctx1, ctx2, ctx3, ctx4, i, j, layer1, layer2, layer3, layer4, m, outCanvas, outCanvas1, outCanvas2, outCanvas3, outCanvas4, ref, results;
+    console.log(combosArray);
     layer1 = document.getElementById('layer1');
     layer2 = document.getElementById('layer2');
     layer3 = document.getElementById('layer3');
@@ -543,22 +542,22 @@
           charLayer2 = charset.selected[combosArray[i][j + 1]];
           charLayer3 = charset.selected[combosArray[i + 1][j]];
           charLayer4 = charset.selected[combosArray[i + 1][j + 1]];
-          ctx1.putImageData(charLayer1.TL, i * charset.qWidth, j * charset.qHeight);
-          ctx1.putImageData(charLayer1.TR, i * charset.qWidth + charset.qWidth, j * charset.qHeight);
-          ctx1.putImageData(charLayer1.BL, i * charset.qWidth, j * charset.qHeight + charset.qHeight);
-          ctx1.putImageData(charLayer1.BR, i * charset.qWidth + charset.qWidth, j * charset.qHeight + charset.qHeight);
-          ctx2.putImageData(charLayer2.TL, i * charset.qWidth, j * charset.qHeight);
-          ctx2.putImageData(charLayer2.TR, i * charset.qWidth + charset.qWidth, j * charset.qHeight);
-          ctx2.putImageData(charLayer2.BL, i * charset.qWidth, j * charset.qHeight + charset.qHeight);
-          ctx2.putImageData(charLayer2.BR, i * charset.qWidth + charset.qWidth, j * charset.qHeight + charset.qHeight);
-          ctx3.putImageData(charLayer3.TL, i * charset.qWidth, j * charset.qHeight);
-          ctx3.putImageData(charLayer3.TR, i * charset.qWidth + charset.qWidth, j * charset.qHeight);
-          ctx3.putImageData(charLayer3.BL, i * charset.qWidth, j * charset.qHeight + charset.qHeight);
-          ctx3.putImageData(charLayer3.BR, i * charset.qWidth + charset.qWidth, j * charset.qHeight + charset.qHeight);
-          ctx4.putImageData(charLayer4.TL, i * charset.qWidth, j * charset.qHeight);
-          ctx4.putImageData(charLayer4.TR, i * charset.qWidth + charset.qWidth, j * charset.qHeight);
-          ctx4.putImageData(charLayer4.BL, i * charset.qWidth, j * charset.qHeight + charset.qHeight);
-          results1.push(ctx4.putImageData(charLayer4.BR, i * charset.qWidth + charset.qWidth, j * charset.qHeight + charset.qHeight));
+          ctx1.putImageData(charLayer1.TL, j * charset.qWidth, i * charset.qHeight);
+          ctx1.putImageData(charLayer1.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
+          ctx1.putImageData(charLayer1.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx1.putImageData(charLayer1.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx2.putImageData(charLayer2.TL, j * charset.qWidth, i * charset.qHeight);
+          ctx2.putImageData(charLayer2.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
+          ctx2.putImageData(charLayer2.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx2.putImageData(charLayer2.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx3.putImageData(charLayer3.TL, j * charset.qWidth, i * charset.qHeight);
+          ctx3.putImageData(charLayer3.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
+          ctx3.putImageData(charLayer3.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx3.putImageData(charLayer3.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx4.putImageData(charLayer4.TL, j * charset.qWidth, i * charset.qHeight);
+          ctx4.putImageData(charLayer4.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
+          ctx4.putImageData(charLayer4.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
+          results1.push(ctx4.putImageData(charLayer4.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight));
         }
         return results1;
       })());
