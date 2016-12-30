@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, chopCharset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage;
+  var bestCombos, charset, chopCharset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage, updateView;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -809,14 +809,12 @@
     }, false);
   });
 
-  $('#show_charset_crop').click(function() {});
+  $('#tabs button').click(function() {
+    $('#tabs button.selected').removeClass('selected');
+    $(this).addClass('selected');
+    return updateView();
+  });
 
-  $('#show_char_select').click(function() {});
-
-  $('#show_combos').click(function() {});
-
-  $('#show_image_text').click(function() {});
-
-  $('#show_layers').click(function() {});
+  updateView = function() {};
 
 }).call(this);

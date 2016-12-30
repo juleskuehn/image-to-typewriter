@@ -10,10 +10,10 @@
       <h1>kword</h1>
       <div id="tabs">
         <button type="button" id="show_charset_crop" class="selected">Chop Charset</button>
-        <button type="button" id="show_charset_crop">Select Chars</button>
-        <button type="button" id="show_charset_crop">View Combos</button>
-        <button type="button" id="show_charset_crop">Image to Text</button>
-        <button type="button" id="show_charset_crop">Type Layers</button>
+        <button type="button" id="show_char_select">Select Chars</button>
+        <button type="button" id="show_combos">View Combos</button>
+        <button type="button" id="show_image_text">Image to Text</button>
+        <button type="button" id="show_layers">Type Layers</button>
       </div>
     </div>
     <div id="sidebar">
@@ -136,19 +136,31 @@
         <div><a id="download_layer_4" href="#">Bottom Right Layer</a></div>
       </div>
     </div>
-    <div id="viewChop">
-      <canvas id="charsetPreview" width="0" height="0"></canvas>
-      <canvas id="charsetOverlay" width="100" height="100"></canvas>
+    <div id="viewport">
+      <div id="view_show_charset_crop" class="show">
+        <div id="viewChop">
+          <canvas id="charsetPreview" width="0" height="0"></canvas>
+          <canvas id="charsetOverlay" width="100" height="100"></canvas>
+        </div>
+      </div>
+      <div id="view_show_char_select">
+        <div id="charQuadrants"></div>
+        <div id="viewSelect"></div>
+      </div>
+      <div id="view_show_combos">
+        <div id="comboPreview"></div>
+      </div>
+      <div id="view_show_image_text">
+        <canvas id="inputImage"></canvas>
+        <canvas id="outputImage"></canvas>
+      </div>
+      <div id="view_show_layers">
+        <canvas id="layer1"></canvas>
+        <canvas id="layer2"></canvas>
+        <canvas id="layer3"></canvas>
+        <canvas id="layer4"></canvas>
+      </div>
     </div>
-    <div id="viewSelect"></div>
-    <div id="comboPreview"></div>
-    <div id="charQuadrants"></div>
-    <canvas id="inputImage"></canvas>
-    <canvas id="outputImage"></canvas>
-    <canvas id="layer1"></canvas>
-    <canvas id="layer2"></canvas>
-    <canvas id="layer3"></canvas>
-    <canvas id="layer4"></canvas>
     <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
     <script src="underscore-min.js"></script>
     <script src="combinatorics.js"></script>

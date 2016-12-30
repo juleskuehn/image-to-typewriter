@@ -893,15 +893,12 @@ $(document).ready ->
   , false)
 
 
-# switch between display panes
+# user interface buttons
 
-$('#show_charset_crop').click ->
+$('#tabs button').click ->
+  $('#tabs button.selected').removeClass('selected')
+  $(this).addClass('selected')
+  updateView()
 
-$('#show_char_select').click ->
-  
-$('#show_combos').click ->
-  
-$('#show_image_text').click ->
-
-$('#show_layers').click ->
+updateView = ->
   

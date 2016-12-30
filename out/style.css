@@ -13,6 +13,7 @@ h1 {
 #sidebar {
   position: relative;
   width: 200px;
+  top: 30px;
   padding: 10px;
   background: #eee;
   font-size: small;
@@ -43,8 +44,14 @@ h1 {
   background: #fff;
 }
 #topBar {
+  z-index: 2;
+  background: #fff;
   border-bottom: solid 1px #808080;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 29px;
+  width: 100%;
 }
 #topBar h1,
 #topBar #tabs {
@@ -68,6 +75,10 @@ h1 {
 }
 #topBar #tabs button:active {
   border-color: #000;
+}
+#viewport {
+  position: fixed;
+  top: 40px;
 }
 #viewChop canvas {
   position: absolute;
