@@ -18,7 +18,6 @@ html
     div(id="sidebar")
       div(id="buttons")
 
-       div(id="charset-target") 1. Drop Character Set Image
        button(type="button" id="chopCharset") 2. Chop Character Set
        p 3. Select <10 characters
        button(type="button" id="genCombos") 4. Generate Combos
@@ -121,27 +120,29 @@ html
     div(id="viewport")
 
       div(id="view_show_charset_crop" class="show")
+        h4 Crop and Chop Character Set
+        div(id="charset-target") Drop Character Set Image Here
 
         div(id='viewChop')
          canvas(id="charsetPreview" width="0" height="0")
          canvas(id="charsetOverlay" width="100" height="100")
 
       div(id="view_show_char_select")
-
+        h4 Select Characters
         div(id="charQuadrants")
         div(id='viewSelect')
 
       div(id="view_show_combos")
-
+        h4 View Combinations
         div(id='comboPreview')
 
       div(id="view_show_image_text")
-
+        h4 View and Adjust Output
         canvas(id="inputImage")
         canvas(id="outputImage")
 
       div(id="view_show_layers")
-
+        h4 Layers for Typing
         canvas(id="layer1")
         canvas(id="layer2")
         canvas(id="layer3")

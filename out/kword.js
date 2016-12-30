@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, chopCharset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage, updateView;
+  var bestCombos, charset, chopCharset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -810,11 +810,12 @@
   });
 
   $('#tabs button').click(function() {
+    var id;
     $('#tabs button.selected').removeClass('selected');
     $(this).addClass('selected');
-    return updateView();
+    id = $(this).attr('id');
+    $('#viewport div.show').removeClass('show');
+    return $('#view_' + id).addClass('show');
   });
-
-  updateView = function() {};
 
 }).call(this);

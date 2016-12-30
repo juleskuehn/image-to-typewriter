@@ -898,7 +898,7 @@ $(document).ready ->
 $('#tabs button').click ->
   $('#tabs button.selected').removeClass('selected')
   $(this).addClass('selected')
-  updateView()
-
-updateView = ->
+  id = $(this).attr('id')
+  $('#viewport div.show').removeClass('show')
+  $('#view_'+id).addClass('show')
   
