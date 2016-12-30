@@ -5,6 +5,7 @@ body {
   position: absolute;
   width: 100%;
   font-family: "Helvetica", "Arial", "Droid Sans", sans;
+  overflow-x: hidden;
 }
 canvas {
   margin-bottom: -5px;
@@ -70,14 +71,9 @@ h1 {
   border-color: #000;
 }
 #viewport {
-  position: fixed;
-  padding-top: 30px;
-  padding-left: 221px;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: #eef;
+  position: absolute;
+  top: 30px;
+  left: 221px;
 }
 #viewport div {
   display: none;
@@ -124,9 +120,11 @@ h1 {
 }
 #viewport #comboPreview {
   position: absolute;
-  zoom: 30%;
 }
 #viewport #comboPreview canvas {
   position: relative;
   margin-bottom: -5px;
+}
+#viewport #view_show_layers canvas {
+  position: relative;
 }

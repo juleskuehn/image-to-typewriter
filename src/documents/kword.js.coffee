@@ -236,7 +236,7 @@ charset =
 
       makeClickHandler(char,ctx)
 
-      
+    updateContainer()  
 
 
 
@@ -596,7 +596,7 @@ imgToText = ->
     bestCombos.push comboRow
 
   drawCharImage()
-  drawLayers()
+  updateContainer()
 
 drawCharImage = ->
   
@@ -846,6 +846,16 @@ $('#tabs button').click ->
   id = $(this).attr('id')
   $('#viewport div.show').removeClass('show')
   $('#view_'+id).addClass('show')
+  updateContainer()
+
+$('#show_layers').click ->
+  $('#tabs button.selected').removeClass('selected')
+  $(this).addClass('selected')
+  id = $(this).attr('id')
+  $('#viewport div.show').removeClass('show')
+  $('#view_'+id).addClass('show')
+  drawLayers()
+  updateContainer()
   
 $('input').change ->
   chopCharset()
@@ -856,3 +866,27 @@ $('select').change ->
   chopCharset()
   if theImage != ''
     inputImage.dropImage(theImage)
+
+
+# resize viewport
+
+$(document).ready ->
+  updateContainer()
+  
+  $(window).resize ->
+    updateContainer()
+  
+
+updateContainer = ->
+  h = $(window).height()
+  w = $(window).width()
+  $('#viewport').css("width":w-221+"px").css("height":h-30+"px")
+  $('canvas.resize').each( ->
+    scaleX = scaleY = 100
+    if $(this).width() > $('#viewport').width()
+      scaleX = ( $('#viewport').width() / $(this).width() ) * 100
+    if $(this).height() > $('#viewport').height()
+      scaleY = ( $('#viewport').height() / $(this).height() ) * 100
+    $(this).css("zoom":Math.min(scaleY,scaleX)+"%")
+    
+  )

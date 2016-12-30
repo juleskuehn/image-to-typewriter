@@ -134,8 +134,8 @@
         <h4>Crop and Chop Character Set</h4>
         <div id="charset-target">Drop Character Set Image Here</div>
         <div id="viewChop">
-          <canvas id="charsetPreview" width="0" height="0"></canvas>
-          <canvas id="charsetOverlay" width="100" height="100"></canvas>
+          <canvas id="charsetPreview" width="0" height="0" class="resize"></canvas>
+          <canvas id="charsetOverlay" width="0" height="0" class="resize"></canvas>
           <button type="button" id="chopCharset">Crop and Chop</button>
         </div>
       </div>
@@ -151,16 +151,16 @@
       </div>
       <div id="view_show_image_text">
         <h4>View and Adjust Output</h4>
-        <canvas id="inputImage"></canvas>
-        <canvas id="outputImage"></canvas>
         <div id="image-target">Drop Image To Type Here</div>
+        <canvas id="inputImage" style="display:none"></canvas>
+        <canvas id="outputImage" class="resize"></canvas>
       </div>
       <div id="view_show_layers">
         <h4>Layers for Typing</h4>
-        <canvas id="layer1"></canvas>
-        <canvas id="layer2"></canvas>
-        <canvas id="layer3"></canvas>
-        <canvas id="layer4"></canvas>
+        <canvas id="layer1" class="resize"></canvas>
+        <canvas id="layer2" class="resize"></canvas>
+        <canvas id="layer3" class="resize"></canvas>
+        <canvas id="layer4" class="resize"></canvas>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>

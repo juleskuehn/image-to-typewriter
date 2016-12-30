@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, chopCharset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage;
+  var bestCombos, charset, chopCharset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage, updateContainer;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -144,9 +144,8 @@
       return results;
     },
     drawCharSelect: function() {
-      var char, ctx, cvs, drawChar, i, m, makeClickHandler, newCanvasHtml, ref, results, spaceWeight;
+      var char, ctx, cvs, drawChar, i, m, makeClickHandler, newCanvasHtml, ref, spaceWeight;
       $('#viewSelect').empty();
-      results = [];
       for (i = m = 0, ref = charset.chars.length; 0 <= ref ? m < ref : m > ref; i = 0 <= ref ? ++m : --m) {
         char = charset.chars[i];
         spaceWeight;
@@ -184,9 +183,9 @@
             return drawChar(char, ctx);
           }));
         };
-        results.push(makeClickHandler(char, ctx));
+        makeClickHandler(char, ctx);
       }
-      return results;
+      return updateContainer();
     },
     genCombos: function() {
       var a, aa, ab, b, bright, c, combo, combos, d, drawCombos, len, m, maxBright, minBright, n, o, q, ref, ref1, ref10, ref11, ref12, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, s, selected, t, u, v, x, y, z;
@@ -492,7 +491,7 @@
       bestCombos.push(comboRow);
     }
     drawCharImage();
-    return drawLayers();
+    return updateContainer();
   };
 
   drawCharImage = function() {
@@ -731,7 +730,19 @@
     $(this).addClass('selected');
     id = $(this).attr('id');
     $('#viewport div.show').removeClass('show');
-    return $('#view_' + id).addClass('show');
+    $('#view_' + id).addClass('show');
+    return updateContainer();
+  });
+
+  $('#show_layers').click(function() {
+    var id;
+    $('#tabs button.selected').removeClass('selected');
+    $(this).addClass('selected');
+    id = $(this).attr('id');
+    $('#viewport div.show').removeClass('show');
+    $('#view_' + id).addClass('show');
+    drawLayers();
+    return updateContainer();
   });
 
   $('input').change(function() {
@@ -747,5 +758,36 @@
       return inputImage.dropImage(theImage);
     }
   });
+
+  $(document).ready(function() {
+    updateContainer();
+    return $(window).resize(function() {
+      return updateContainer();
+    });
+  });
+
+  updateContainer = function() {
+    var h, w;
+    h = $(window).height();
+    w = $(window).width();
+    $('#viewport').css({
+      "width": w - 221 + "px"
+    }).css({
+      "height": h - 30 + "px"
+    });
+    return $('canvas.resize').each(function() {
+      var scaleX, scaleY;
+      scaleX = scaleY = 100;
+      if ($(this).width() > $('#viewport').width()) {
+        scaleX = ($('#viewport').width() / $(this).width()) * 100;
+      }
+      if ($(this).height() > $('#viewport').height()) {
+        scaleY = ($('#viewport').height() / $(this).height()) * 100;
+      }
+      return $(this).css({
+        "zoom": Math.min(scaleY, scaleX) + "%"
+      });
+    });
+  };
 
 }).call(this);

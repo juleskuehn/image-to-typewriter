@@ -5,6 +5,7 @@ body
 	position absolute
 	width 100%
 	font-family "Helvetica", "Arial", "Droid Sans", sans
+	overflow-x hidden
 
 canvas
 	margin-bottom -5px
@@ -63,14 +64,9 @@ h1
 
 
 #viewport
-	position fixed
-	padding-top 30px
-	padding-left 221px
-	width 100%
-	height 100%
-	top 0
-	left 0
-	background #eeeeff
+	position absolute
+	top 30px
+	left 221px
 	div
 		display none
 
@@ -111,7 +107,9 @@ h1
 
 	#comboPreview
 		position absolute
-		zoom 30%
 		canvas
 			position relative
 			margin-bottom -5px
+
+	#view_show_layers canvas
+		position relative

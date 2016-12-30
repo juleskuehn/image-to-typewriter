@@ -118,8 +118,8 @@ html
         div(id="charset-target") Drop Character Set Image Here
 
         div(id='viewChop')
-         canvas(id="charsetPreview" width="0" height="0")
-         canvas(id="charsetOverlay" width="100" height="100")
+         canvas(id="charsetPreview" width="0" height="0"  class="resize")
+         canvas(id="charsetOverlay" width="0" height="0" class="resize")
          button(type="button" id="chopCharset") Crop and Chop
 
       div(id="view_show_char_select")
@@ -134,16 +134,16 @@ html
 
       div(id="view_show_image_text")
         h4 View and Adjust Output
-        canvas(id="inputImage")
-        canvas(id="outputImage")
         div(id="image-target") Drop Image To Type Here
+        canvas(id="inputImage" style="display:none")
+        canvas(id="outputImage" class="resize")
 
       div(id="view_show_layers")
         h4 Layers for Typing
-        canvas(id="layer1")
-        canvas(id="layer2")
-        canvas(id="layer3")
-        canvas(id="layer4")
+        canvas(id="layer1" class="resize")
+        canvas(id="layer2" class="resize")
+        canvas(id="layer3" class="resize")
+        canvas(id="layer4" class="resize")
 
 
     script(src='https://code.jquery.com/jquery-3.1.0.slim.min.js' integrity='sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=' crossorigin='anonymous')
