@@ -7,7 +7,7 @@
     brightness = 0;
 
     function Combo(TL, TR, BL, BR, charset, selected) {
-      var chars, ctx, ctx1, ctx2, ctx3, ctx4, cvs, cvs1, cvs2, cvs3, cvs4, i, img, j, k, l, m, p, ref, ref1, ref2, ref3, ref4;
+      var chars, compStyle, ctx, ctx1, ctx2, ctx3, ctx4, cvs, cvs1, cvs2, cvs3, cvs4, i, img, j, k, l, m, p, ref, ref1, ref2, ref3, ref4;
       this.TL = TL;
       this.TR = TR;
       this.BL = BL;
@@ -18,26 +18,27 @@
       this.BRbrightness = 0;
       this.TLbrightness = 0;
       this.TRbrightness = 0;
+      compStyle = "multiply";
       cvs = document.createElement('canvas');
       cvs.width = charset.qWidth;
       cvs.height = charset.qHeight;
       ctx = cvs.getContext("2d");
-      ctx.globalCompositeOperation = 'multiply';
+      ctx.globalCompositeOperation = compStyle;
       cvs1 = document.createElement('canvas');
       cvs1.width = charset.qWidth / 2;
       cvs1.height = charset.qHeight / 2;
       ctx1 = cvs1.getContext("2d");
-      ctx1.globalCompositeOperation = 'multiply';
+      ctx1.globalCompositeOperation = compStyle;
       cvs2 = document.createElement('canvas');
       cvs2.width = charset.qWidth / 2;
       cvs2.height = charset.qHeight / 2;
       ctx2 = cvs2.getContext("2d");
-      ctx2.globalCompositeOperation = 'multiply';
+      ctx2.globalCompositeOperation = compStyle;
       cvs3 = document.createElement('canvas');
       cvs3.width = charset.qWidth / 2;
       cvs3.height = charset.qHeight / 2;
       ctx3 = cvs3.getContext("2d");
-      ctx3.globalCompositeOperation = 'multiply';
+      ctx3.globalCompositeOperation = compStyle;
       cvs4 = document.createElement('canvas');
       cvs4.width = charset.qWidth / 2;
       cvs4.height = charset.qHeight / 2;

@@ -93,8 +93,8 @@ div#tabs {
 }
 #outputImage {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  top: 600px;
+  right: 0;
 }
 #charQuadrants {
   position: relative;

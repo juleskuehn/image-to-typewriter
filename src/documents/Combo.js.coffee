@@ -25,33 +25,35 @@ class window.Combo
     this.TLbrightness = 0
     this.TRbrightness = 0
 
+    compStyle = "multiply"
+
     # set up composite image canvas
     cvs = document.createElement('canvas')
     cvs.width = charset.qWidth
     cvs.height = charset.qHeight
     ctx = cvs.getContext("2d")
-    ctx.globalCompositeOperation = 'multiply'
+    ctx.globalCompositeOperation = compStyle
 
     # set up composite image canvas
     cvs1 = document.createElement('canvas')
     cvs1.width = charset.qWidth/2
     cvs1.height = charset.qHeight/2
     ctx1 = cvs1.getContext("2d")
-    ctx1.globalCompositeOperation = 'multiply'
+    ctx1.globalCompositeOperation = compStyle
 
     # set up composite image canvas
     cvs2 = document.createElement('canvas')
     cvs2.width = charset.qWidth/2
     cvs2.height = charset.qHeight/2
     ctx2 = cvs2.getContext("2d")
-    ctx2.globalCompositeOperation = 'multiply'
+    ctx2.globalCompositeOperation = compStyle
 
     # set up composite image canvas
     cvs3 = document.createElement('canvas')
     cvs3.width = charset.qWidth/2
     cvs3.height = charset.qHeight/2
     ctx3 = cvs3.getContext("2d")
-    ctx3.globalCompositeOperation = 'multiply'
+    ctx3.globalCompositeOperation = compStyle
 
     # set up composite image canvas
     cvs4 = document.createElement('canvas')
