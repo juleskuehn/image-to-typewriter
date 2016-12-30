@@ -17,12 +17,6 @@
       </div>
     </div>
     <div id="sidebar">
-      <div id="buttons">
-        <button type="button" id="chopCharset">2. Chop Character Set</button>
-        <p>3. Select <10 characters</p>
-        <button type="button" id="genCombos">4. Generate Combos</button>
-        <div id="image-target">5. Drop Image to Make Text</div>
-      </div>
       <div id="options">
         <div id="charset_options">
           <h3>Chopping Options</h3>
@@ -35,11 +29,11 @@
             <label>Rows</label>
           </div>
           <div>
-            <input type="text" value="0.65" id="offsetX">
+            <input type="text" value="0.57" id="offsetX">
             <label>Grid Offset X</label>
           </div>
           <div>
-            <input type="text" value="0.24" id="offsetY">
+            <input type="text" value="0.23" id="offsetY">
             <label>Grid Offset Y</label>
           </div>
           <div>
@@ -142,12 +136,14 @@
         <div id="viewChop">
           <canvas id="charsetPreview" width="0" height="0"></canvas>
           <canvas id="charsetOverlay" width="100" height="100"></canvas>
+          <button type="button" id="chopCharset">Crop and Chop</button>
         </div>
       </div>
       <div id="view_show_char_select">
         <h4>Select Characters</h4>
         <div id="charQuadrants"></div>
         <div id="viewSelect"></div>
+        <button type="button" id="genCombos">Generate Combos</button>
       </div>
       <div id="view_show_combos">
         <h4>View Combinations</h4>
@@ -157,6 +153,7 @@
         <h4>View and Adjust Output</h4>
         <canvas id="inputImage"></canvas>
         <canvas id="outputImage"></canvas>
+        <div id="image-target">Drop Image To Type Here</div>
       </div>
       <div id="view_show_layers">
         <h4>Layers for Typing</h4>

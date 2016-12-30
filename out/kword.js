@@ -697,90 +697,6 @@
     inputImage.dropImage(e.dataTransfer.files[0]);
   }), true);
 
-  $('#row_length').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#customR').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#customG').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#customB').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#bw').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#dithering').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#ditherFine').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#ditherAmount').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#considerSpill').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#spillRatio').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#spillRatioRight').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#spillRatioBottom').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#spillRatioBottomRight').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
-  $('#spillBrightness').change(function() {
-    if (theImage !== '') {
-      return inputImage.dropImage(theImage);
-    }
-  });
-
   $(document).ready(function() {
     var downloadCanvas;
     document.getElementById("outputImage").setAttribute('crossOrigin', 'anonymous');
@@ -816,6 +732,20 @@
     id = $(this).attr('id');
     $('#viewport div.show').removeClass('show');
     return $('#view_' + id).addClass('show');
+  });
+
+  $('input').change(function() {
+    chopCharset();
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
+  });
+
+  $('select').change(function() {
+    chopCharset();
+    if (theImage !== '') {
+      return inputImage.dropImage(theImage);
+    }
   });
 
 }).call(this);

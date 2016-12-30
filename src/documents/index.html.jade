@@ -16,12 +16,6 @@ html
         button(type="button" id="show_layers") Type Layers
 
     div(id="sidebar")
-      div(id="buttons")
-
-       button(type="button" id="chopCharset") 2. Chop Character Set
-       p 3. Select <10 characters
-       button(type="button" id="genCombos") 4. Generate Combos
-       div(id="image-target") 5. Drop Image to Make Text
 
       div(id='options')
 
@@ -34,10 +28,10 @@ html
            input(type="text" value="7" id="rows")
            label Rows
           div
-           input(type="text" value="0.65" id="offsetX")
+           input(type="text" value="0.57" id="offsetX")
            label Grid Offset X
           div
-           input(type="text" value="0.24" id="offsetY")
+           input(type="text" value="0.23" id="offsetY")
            label Grid Offset Y
           div
            input(type="text" value="0" id="colStart")
@@ -126,11 +120,13 @@ html
         div(id='viewChop')
          canvas(id="charsetPreview" width="0" height="0")
          canvas(id="charsetOverlay" width="100" height="100")
+         button(type="button" id="chopCharset") Crop and Chop
 
       div(id="view_show_char_select")
         h4 Select Characters
         div(id="charQuadrants")
         div(id='viewSelect')
+        button(type="button" id="genCombos") Generate Combos
 
       div(id="view_show_combos")
         h4 View Combinations
@@ -140,6 +136,7 @@ html
         h4 View and Adjust Output
         canvas(id="inputImage")
         canvas(id="outputImage")
+        div(id="image-target") Drop Image To Type Here
 
       div(id="view_show_layers")
         h4 Layers for Typing

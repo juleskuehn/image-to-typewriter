@@ -800,62 +800,7 @@ target.addEventListener 'drop', ((e) ->
   return
 ), true
 
-$('#row_length').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#customR').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#customG').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#customB').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#bw').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#dithering').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#ditherFine').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#ditherAmount').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#considerSpill').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#spillRatio').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#spillRatioRight').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#spillRatioBottom').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#spillRatioBottomRight').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
-$('#spillBrightness').change ->
-  if theImage != ''
-    inputImage.dropImage(theImage)
-
+# make canvases downloadable
 $(document).ready ->
 
   document.getElementById("outputImage").setAttribute('crossOrigin', 'anonymous')
@@ -902,3 +847,12 @@ $('#tabs button').click ->
   $('#viewport div.show').removeClass('show')
   $('#view_'+id).addClass('show')
   
+$('input').change ->
+  chopCharset()
+  if theImage != ''
+    inputImage.dropImage(theImage)
+
+$('select').change ->
+  chopCharset()
+  if theImage != ''
+    inputImage.dropImage(theImage)
