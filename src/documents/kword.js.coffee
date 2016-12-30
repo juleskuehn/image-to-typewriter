@@ -183,12 +183,28 @@ charset =
   drawCharSelect: ->
     $('#viewSelect').empty()
     for i in [0...charset.chars.length]
+
       char = charset.chars[i]
+
+      # redundant spaces removed from preview
+      # min, median and max characters selected
+      spaceWeight
+      if i is 0
+        spaceWeight = char.brightness
+        char.selected = true
+      else if Math.abs(char.brightness-spaceWeight) < 20
+        continue
+      if i is charset.chars.length-1
+        char.selected = true
+      if i is Math.round(charset.chars.length*0.5)
+        char.selected = true
+
       # create canvas
       newCanvasHtml = '<canvas id="char'+i+'" width="'+charset.qWidth*2+'" height="'+charset.qHeight*2+'"></canvas>'
       $('#viewSelect').append newCanvasHtml
       cvs = document.getElementById('char'+i)
       ctx = cvs.getContext("2d")
+
 
       # draw 4 quadrants of char
 
@@ -202,6 +218,7 @@ charset =
         if ! char.selected
           ctx.fillStyle = "rgba(0,0,0,0.5)"
           ctx.fillRect(0, 0, charset.qWidth*2, charset.qHeight*2)
+
 
       drawChar(char,ctx)
 
@@ -414,6 +431,7 @@ charset =
       return
 
     loadImage(source)
+
 
 
 
@@ -746,12 +764,15 @@ inputImage =
 
 # handle UI events
 
-$('#chopCharset').click ->
+chopCharset = ->
   charset.getSettings()
   charset.chopPreview()
   charset.chopCharset()
   charset.drawCharSelect()
   charset.drawCharQuadrants()
+
+$('#chopCharset').click ->
+  chopCharset()
 
 
 $('#genCombos').click ->
@@ -870,3 +891,17 @@ $(document).ready ->
   document.getElementById('download_layer_4').addEventListener('click', ->
       downloadCanvas(this, 'layer4', 'kword_layer4_BottomRight.png')
   , false)
+
+
+# switch between display panes
+
+$('#show_charset_crop').click ->
+
+$('#show_char_select').click ->
+  
+$('#show_combos').click ->
+  
+$('#show_image_text').click ->
+
+$('#show_layers').click ->
+  

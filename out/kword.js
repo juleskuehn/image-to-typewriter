@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage;
+  var bestCombos, charset, chopCharset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -144,11 +144,24 @@
       return results;
     },
     drawCharSelect: function() {
-      var char, ctx, cvs, drawChar, i, m, makeClickHandler, newCanvasHtml, ref, results;
+      var char, ctx, cvs, drawChar, i, m, makeClickHandler, newCanvasHtml, ref, results, spaceWeight;
       $('#viewSelect').empty();
       results = [];
       for (i = m = 0, ref = charset.chars.length; 0 <= ref ? m < ref : m > ref; i = 0 <= ref ? ++m : --m) {
         char = charset.chars[i];
+        spaceWeight;
+        if (i === 0) {
+          spaceWeight = char.brightness;
+          char.selected = true;
+        } else if (Math.abs(char.brightness - spaceWeight) < 20) {
+          continue;
+        }
+        if (i === charset.chars.length - 1) {
+          char.selected = true;
+        }
+        if (i === Math.round(charset.chars.length * 0.5)) {
+          char.selected = true;
+        }
         newCanvasHtml = '<canvas id="char' + i + '" width="' + charset.qWidth * 2 + '" height="' + charset.qHeight * 2 + '"></canvas>';
         $('#viewSelect').append(newCanvasHtml);
         cvs = document.getElementById('char' + i);
@@ -646,12 +659,16 @@
     }
   };
 
-  $('#chopCharset').click(function() {
+  chopCharset = function() {
     charset.getSettings();
     charset.chopPreview();
     charset.chopCharset();
     charset.drawCharSelect();
     return charset.drawCharQuadrants();
+  };
+
+  $('#chopCharset').click(function() {
+    return chopCharset();
   });
 
   $('#genCombos').click(function() {
@@ -791,5 +808,15 @@
       return downloadCanvas(this, 'layer4', 'kword_layer4_BottomRight.png');
     }, false);
   });
+
+  $('#show_charset_crop').click(function() {});
+
+  $('#show_char_select').click(function() {});
+
+  $('#show_combos').click(function() {});
+
+  $('#show_image_text').click(function() {});
+
+  $('#show_layers').click(function() {});
 
 }).call(this);
