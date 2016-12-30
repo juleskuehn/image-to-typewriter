@@ -19,7 +19,7 @@ html
 
       div(id='options')
 
-        div(id="charset_options")
+        div(id="charset_options" class="show")
           h3 Chopping Options
           div
            input(type="text" value="79" id="cols")
@@ -45,6 +45,13 @@ html
           div
            input(type="text" value="6" id="rowEnd")
            label Crop End Row
+          br
+          div
+           button(type="button" id="chopCharset") Crop and Chop
+          br
+          div
+           button(type="button" id="genCombos") Generate Combos
+          
 
        div(id="image_options")
          h3 Generator Options
@@ -120,13 +127,11 @@ html
         div(id='viewChop')
          canvas(id="charsetPreview" width="0" height="0"  class="resize")
          canvas(id="charsetOverlay" width="0" height="0" class="resize")
-         button(type="button" id="chopCharset") Crop and Chop
 
       div(id="view_show_char_select")
         h4 Select Characters
         div(id="charQuadrants")
         div(id='viewSelect')
-        button(type="button" id="genCombos") Generate Combos
 
       div(id="view_show_combos")
         h4 View Combinations
@@ -136,7 +141,7 @@ html
         h4 View and Adjust Output
         div(id="image-target") Drop Image To Type Here
         canvas(id="inputImage" style="display:none")
-        canvas(id="outputImage" class="resize")
+        canvas(id="outputImage" class="resize" width="0" height="0")
 
       div(id="view_show_layers")
         h4 Layers for Typing

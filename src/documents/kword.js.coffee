@@ -846,6 +846,18 @@ $('#tabs button').click ->
   id = $(this).attr('id')
   $('#viewport div.show').removeClass('show')
   $('#view_'+id).addClass('show')
+  $('#charset_options').addClass('show')
+  $('#image_options').removeClass('show')
+  updateContainer()
+
+$('#show_image_text').click ->
+  $('#tabs button.selected').removeClass('selected')
+  $(this).addClass('selected')
+  id = $(this).attr('id')
+  $('#viewport div.show').removeClass('show')
+  $('#view_'+id).addClass('show')
+  $('#charset_options').removeClass('show')
+  $('#image_options').addClass('show')
   updateContainer()
 
 $('#show_layers').click ->
@@ -854,8 +866,11 @@ $('#show_layers').click ->
   id = $(this).attr('id')
   $('#viewport div.show').removeClass('show')
   $('#view_'+id).addClass('show')
+  $('#charset_options').removeClass('show')
+  $('#image_options').addClass('show')
   drawLayers()
   updateContainer()
+  
   
 $('input').change ->
   chopCharset()

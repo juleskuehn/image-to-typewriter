@@ -15,7 +15,7 @@ h1 {
   margin: 5px;
 }
 #sidebar {
-  position: relative;
+  position: fixed;
   width: 200px;
   top: 30px;
   padding: 10px;
@@ -23,19 +23,27 @@ h1 {
   font-size: small;
   border-right: solid 1px #808080;
   z-index: 1;
+  height: 100%;
 }
-#options,
-#buttons {
+#options {
   position: relative;
 }
-#options input[type="text"],
-#buttons input[type="text"] {
+#options input[type="text"] {
   width: 50px;
   margin: 5px;
 }
-#options button,
-#buttons button {
-  width: 100%;
+#options button {
+  width: 100;
+}
+#charset_options,
+#image_options,
+#downloads {
+  display: none;
+}
+#charset_options.show,
+#image_options.show,
+#downloads.show {
+  display: block;
 }
 #topBar {
   z-index: 2;

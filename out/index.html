@@ -18,7 +18,7 @@
     </div>
     <div id="sidebar">
       <div id="options">
-        <div id="charset_options">
+        <div id="charset_options" class="show">
           <h3>Chopping Options</h3>
           <div>
             <input type="text" value="79" id="cols">
@@ -51,6 +51,12 @@
           <div>
             <input type="text" value="6" id="rowEnd">
             <label>Crop End Row</label>
+          </div><br>
+          <div>
+            <button type="button" id="chopCharset">Crop and Chop</button>
+          </div><br>
+          <div>
+            <button type="button" id="genCombos">Generate Combos</button>
           </div>
         </div>
       </div>
@@ -136,14 +142,12 @@
         <div id="viewChop">
           <canvas id="charsetPreview" width="0" height="0" class="resize"></canvas>
           <canvas id="charsetOverlay" width="0" height="0" class="resize"></canvas>
-          <button type="button" id="chopCharset">Crop and Chop</button>
         </div>
       </div>
       <div id="view_show_char_select">
         <h4>Select Characters</h4>
         <div id="charQuadrants"></div>
         <div id="viewSelect"></div>
-        <button type="button" id="genCombos">Generate Combos</button>
       </div>
       <div id="view_show_combos">
         <h4>View Combinations</h4>
@@ -153,7 +157,7 @@
         <h4>View and Adjust Output</h4>
         <div id="image-target">Drop Image To Type Here</div>
         <canvas id="inputImage" style="display:none"></canvas>
-        <canvas id="outputImage" class="resize"></canvas>
+        <canvas id="outputImage" width="0" height="0" class="resize"></canvas>
       </div>
       <div id="view_show_layers">
         <h4>Layers for Typing</h4>

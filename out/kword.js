@@ -731,6 +731,20 @@
     id = $(this).attr('id');
     $('#viewport div.show').removeClass('show');
     $('#view_' + id).addClass('show');
+    $('#charset_options').addClass('show');
+    $('#image_options').removeClass('show');
+    return updateContainer();
+  });
+
+  $('#show_image_text').click(function() {
+    var id;
+    $('#tabs button.selected').removeClass('selected');
+    $(this).addClass('selected');
+    id = $(this).attr('id');
+    $('#viewport div.show').removeClass('show');
+    $('#view_' + id).addClass('show');
+    $('#charset_options').removeClass('show');
+    $('#image_options').addClass('show');
     return updateContainer();
   });
 
@@ -741,6 +755,8 @@
     id = $(this).attr('id');
     $('#viewport div.show').removeClass('show');
     $('#view_' + id).addClass('show');
+    $('#charset_options').removeClass('show');
+    $('#image_options').addClass('show');
     drawLayers();
     return updateContainer();
   });

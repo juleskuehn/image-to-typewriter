@@ -15,7 +15,7 @@ h1
 	margin 5px
 
 #sidebar
-	position relative
+	position fixed
 	width 200px
 	top 30px
 	padding 10px
@@ -23,8 +23,9 @@ h1
 	font-size small
 	border-right solid 1px grey
 	z-index 1
+	height 100%
 
-#options,#buttons
+#options
 	position relative
 
 	input[type="text"]
@@ -32,8 +33,12 @@ h1
 		margin 5px
 
 	button
-		width 100%
+		width 100
 
+#charset_options,#image_options,#downloads
+	display none
+	&.show
+		display block
 
 #topBar
 	z-index 2
