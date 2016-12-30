@@ -600,6 +600,7 @@ imgToText = ->
 
 drawCharImage = ->
   
+  # TODO add "spill" row and column (one quadrant to the right and down)
   
   inCanvas = document.getElementById('inputImage')
   outCanvas = document.getElementById('outputImage')
@@ -612,7 +613,6 @@ drawCharImage = ->
     for j in [0...bestCombos[0].length]
       combo = bestCombos[i][j]
       # print combo image
-     # TODO print actual characters
       ctx.putImageData(combo.image,j*charset.qWidth,i*charset.qHeight)
 
 
