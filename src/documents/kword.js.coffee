@@ -192,7 +192,7 @@ charset =
       if i is 0
         spaceWeight = char.brightness
         char.selected = true
-      else if Math.abs(char.brightness-spaceWeight) < 20
+      else if Math.abs(char.brightness-spaceWeight) < 10
         continue
       if i is charset.chars.length-1
         char.selected = true
