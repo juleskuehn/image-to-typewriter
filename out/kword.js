@@ -787,6 +787,14 @@
     return updateContainer();
   });
 
+  $('#closeInstructions').click(function() {
+    if ($('#instructions').hasClass('hidden')) {
+      return $('#instructions').removeClass('hidden');
+    } else {
+      return $('#instructions').addClass('hidden');
+    }
+  });
+
   $(document).ready(function() {
     updateContainer();
     return $(window).resize(function() {

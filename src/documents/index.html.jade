@@ -143,14 +143,25 @@ html
         canvas(id="outputImage" class="resize" width="0" height="0")
 
       div(id="view_show_layers")
-        h4 Top Left Layer
         canvas(id="layer1" class="resize")
-        h4 Top Right Layer
         canvas(id="layer2" class="resize")
-        h4 Bottom Left Layer
         canvas(id="layer3" class="resize")
-        h4 Bottom Right Layer
         canvas(id="layer4" class="resize")
+
+    div(id="instructions")
+
+      a(id="closeInstructions" href="#") [X]
+      h4 Instructions
+      ul
+       li Drag a <a href="#">prepared</a> character set image into the main area.
+       li Click "Crop and Chop" in the left sidebar. This will preview the chop settings. Make adjustments with the controls in the left sidebar.
+       li When chop settings are correct, switch to "Select Chars" in the top bar. You can continue to make adjustments here.
+       li Select less than 10 characters by clicking on them, then click "Generate Combos". This can take some time.
+       li Switch to "View Combos" in the top bar.
+       li Switch to "Image to Text" in the top bar. Drag a photo into the main area.
+       li Make adjustments using the controls in the left sidebar.
+       li Switch to "Type Layers" to view the 4 layers independently.
+       li The [+] icon in the top bar toggles zoom-to-fit.
 
 
     script(src='https://code.jquery.com/jquery-3.1.0.slim.min.js' integrity='sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=' crossorigin='anonymous')

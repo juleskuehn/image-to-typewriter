@@ -892,6 +892,12 @@ $('#zoom').click ->
     $('body').addClass('noZoom')
   updateContainer()
 
+$('#closeInstructions').click ->
+  if $('#instructions').hasClass('hidden')
+    $('#instructions').removeClass('hidden')
+  else
+    $('#instructions').addClass('hidden')
+
 
 # resize viewport
 
