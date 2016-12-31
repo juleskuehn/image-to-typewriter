@@ -5,7 +5,9 @@ body {
   position: absolute;
   width: 100%;
   font-family: "Helvetica", "Arial", "Droid Sans", sans;
-  overflow-x: hidden;
+}
+body.noZoom canvas {
+  zoom: 100% !important;
 }
 canvas {
   margin-bottom: -5px;
@@ -28,7 +30,7 @@ h1 {
 #options {
   position: relative;
 }
-#options input[type="text"] {
+#options input {
   width: 50px;
   margin: 5px;
 }
@@ -44,6 +46,10 @@ h1 {
 #image_options.show,
 #downloads.show {
   display: block;
+}
+#image_options input,
+#image_options select {
+  width: 85px;
 }
 #topBar {
   z-index: 2;
@@ -97,13 +103,11 @@ h1 {
 #viewport div.show h4 {
   margin: 20px;
   font-size: medium;
-  display: none;
 }
 #viewport #charset-target,
 #viewport #image-target {
   width: 100%;
   height: 100%;
-  padding: 10px;
   font-size: larger;
   font-weight: bold;
   position: absolute;
@@ -135,4 +139,7 @@ h1 {
 }
 #viewport #view_show_layers canvas {
   position: relative;
+}
+div.hidden {
+  display: none;
 }

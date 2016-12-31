@@ -7,7 +7,7 @@
   </head>
   <body>
     <div id="topBar">
-      <h1>kword</h1>
+      <h1>kword</h1><a id="zoom" href="#">[+]</a>
       <div id="tabs">
         <button type="button" id="show_charset_crop" class="selected">Chop Charset</button>
         <button type="button" id="show_char_select">Select Chars</button>
@@ -59,71 +59,71 @@
             <button type="button" id="genCombos">Generate Combos</button>
           </div>
         </div>
-      </div>
-      <div id="image_options">
-        <h3>Generator Options</h3>
-        <div>
-          <input type="range" id="row_length" min="1" max="100" value="40" step="1">
-          <label>Row Length</label>
-        </div>
-        <div>
-          <select id="bw">
-            <option value="ccir">CCIR 601</option>
-            <option value="cie">CIE Luma</option>
-            <option value="flat">Equal</option>
-            <option value="red">Red</option>
-            <option value="green">Green</option>
-            <option value="blue">Blue</option>
-          </select>
-          <label>B/W Conversion</label>
-        </div>
-        <div>
-          <input type="range" id="customR" min="0" max="3" value="1" step="0.10">
-          <label>Red</label>
-        </div>
-        <div>
-          <input type="range" id="customG" min="0" max="3" value="1" step="0.10">
-          <label>Green</label>
-        </div>
-        <div>
-          <input type="range" id="customB" min="0" max="3" value="1" step="0.10">
-          <label>Blue</label>
-        </div>
-        <div>
-          <input type="checkbox" id="dithering" checked>
-          <label>Dither</label>
-        </div>
-        <div>
-          <input type="checkbox" id="ditherFine" checked>
-          <label>Dither Fine</label>
-        </div>
-        <div>
-          <input type="checkbox" id="considerSpill" checked>
-          <label>Consider Spill?</label>
-        </div>
-        <div> 
-          <input type="range" id="spillRatioRight" min="0" max="1" value="0.5" step="0.01">
-          <label>Spill Ratio Right</label>
-        </div>
-        <div> 
-          <input type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.05">
-          <label>Spill Ratio Bottom</label>
-        </div>
-        <div> 
-          <input type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05">
-          <label>Spill Ratio Bottom Right</label>
-        </div>
-        <div> 
-          <input type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.005">
-          <label>Spill Ratio Master</label>
-        </div>
-        <div>
-          <input type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.05">
-          <label>Spill Brightness</label>
-        </div>
-        <div>
-          <input type="range" id="ditherAmount" min="-1" max="1" value=".1" step="0.05">
-          <label>Dither Strength</label>
+        <div id="image_options">
+          <h3>Generator Options</h3>
+          <div>
+            <input type="range" id="row_length" min="1" max="100" value="40" step="1">
+            <label>Row Length</label>
+          </div>
+          <div>
+            <select id="bw">
+              <option value="ccir">CCIR 601</option>
+              <option value="cie">CIE Luma</option>
+              <option value="flat">Equal</option>
+              <option value="red">Red</option>
+              <option value="green">Green</option>
+              <option value="blue">Blue</option>
+            </select>
+            <label>B/W Conversion</label>
+          </div>
+          <div>
+            <input type="range" id="customR" min="0" max="3" value="1" step="0.10">
+            <label>Red</label>
+          </div>
+          <div>
+            <input type="range" id="customG" min="0" max="3" value="1" step="0.10">
+            <label>Green</label>
+          </div>
+          <div>
+            <input type="range" id="customB" min="0" max="3" value="1" step="0.10">
+            <label>Blue</label>
+          </div>
+          <div>
+            <input type="checkbox" id="dithering" checked>
+            <label>Dither</label>
+          </div>
+          <div class="hidden">
+            <input type="checkbox" id="ditherFine" checked>
+            <label>Dither Fine</label>
+          </div>
+          <div>
+            <input type="checkbox" id="considerSpill" checked>
+            <label>Consider Spill?</label>
+          </div>
+          <div class="hidden"> 
+            <input type="range" id="spillRatioRight" min="0" max="1" value="0.5" step="0.01">
+            <label>Spill Ratio Right</label>
+          </div>
+          <div class="hidden"> 
+            <input type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.05">
+            <label>Spill Ratio Bottom</label>
+          </div>
+          <div class="hidden"> 
+            <input type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05">
+            <label>Spill Ratio Bottom Right</label>
+          </div>
+          <div> 
+            <input type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.005">
+            <label>Spill Ratio</label>
+          </div>
+          <div>
+            <input type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.05">
+            <label>Spill Brightness</label>
+          </div>
+          <div>
+            <input type="range" id="ditherAmount" min="-1" max="1" value=".1" step="0.05">
+            <label>Dither Strength</label>
+          </div>
         </div>
       </div>
       <div id="downloads">
@@ -137,33 +137,36 @@
     </div>
     <div id="viewport">
       <div id="view_show_charset_crop" class="show">
-        <h4>Crop and Chop Character Set</h4>
-        <div id="charset-target">Drop Character Set Image Here</div>
+        <div id="charset-target">
+          <h4>Drop Character Set Image Here</h4>
+        </div>
         <div id="viewChop">
           <canvas id="charsetPreview" width="0" height="0" class="resize"></canvas>
           <canvas id="charsetOverlay" width="0" height="0" class="resize"></canvas>
         </div>
       </div>
       <div id="view_show_char_select">
-        <h4>Select Characters</h4>
         <div id="charQuadrants"></div>
         <div id="viewSelect"></div>
       </div>
       <div id="view_show_combos">
-        <h4>View Combinations</h4>
         <div id="comboPreview"></div>
       </div>
       <div id="view_show_image_text">
-        <h4>View and Adjust Output</h4>
-        <div id="image-target">Drop Image To Type Here</div>
+        <div id="image-target">
+          <h4>Drop Image To Type Here</h4>
+        </div>
         <canvas id="inputImage" style="display:none"></canvas>
         <canvas id="outputImage" width="0" height="0" class="resize"></canvas>
       </div>
       <div id="view_show_layers">
-        <h4>Layers for Typing</h4>
+        <h4>Top Left Layer</h4>
         <canvas id="layer1" class="resize"></canvas>
+        <h4>Top Right Layer</h4>
         <canvas id="layer2" class="resize"></canvas>
+        <h4>Bottom Left Layer</h4>
         <canvas id="layer3" class="resize"></canvas>
+        <h4>Bottom Right Layer</h4>
         <canvas id="layer4" class="resize"></canvas>
       </div>
     </div>

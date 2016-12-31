@@ -5,7 +5,9 @@ body
 	position absolute
 	width 100%
 	font-family "Helvetica", "Arial", "Droid Sans", sans
-	overflow-x hidden
+	&.noZoom
+		canvas
+			zoom 100% !important
 
 canvas
 	margin-bottom -5px
@@ -28,7 +30,7 @@ h1
 #options
 	position relative
 
-	input[type="text"]
+	input
 		width 50px
 		margin 5px
 
@@ -39,6 +41,10 @@ h1
 	display none
 	&.show
 		display block
+
+#image_options
+	input, select
+		width 85px
 
 #topBar
 	z-index 2
@@ -84,12 +90,10 @@ h1
 		h4
 			margin 20px
 			font-size medium
-			display none
 
 	#charset-target,#image-target
 		width 100%
 		height 100%
-		padding 10px
 		font-size larger
 		font-weight bold
 		position absolute
@@ -118,3 +122,6 @@ h1
 
 	#view_show_layers canvas
 		position relative
+
+div.hidden
+	display none

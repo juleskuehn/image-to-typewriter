@@ -847,6 +847,7 @@ $('#tabs button').click ->
   $('#viewport div.show').removeClass('show')
   $('#view_'+id).addClass('show')
   $('#charset_options').addClass('show')
+  $('#downloads').removeClass('show')
   $('#image_options').removeClass('show')
   updateContainer()
 
@@ -857,6 +858,7 @@ $('#show_image_text').click ->
   $('#viewport div.show').removeClass('show')
   $('#view_'+id).addClass('show')
   $('#charset_options').removeClass('show')
+  $('#downloads').removeClass('show')
   $('#image_options').addClass('show')
   updateContainer()
 
@@ -867,7 +869,8 @@ $('#show_layers').click ->
   $('#viewport div.show').removeClass('show')
   $('#view_'+id).addClass('show')
   $('#charset_options').removeClass('show')
-  $('#image_options').addClass('show')
+  $('#image_options').removeClass('show')
+  $('#downloads').addClass('show')
   drawLayers()
   updateContainer()
   
@@ -881,6 +884,13 @@ $('select').change ->
   chopCharset()
   if theImage != ''
     inputImage.dropImage(theImage)
+
+$('#zoom').click ->
+  if $('body').hasClass('noZoom')
+    $('body').removeClass('noZoom')
+  else
+    $('body').addClass('noZoom')
+  updateContainer()
 
 
 # resize viewport

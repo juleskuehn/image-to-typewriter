@@ -732,6 +732,7 @@
     $('#viewport div.show').removeClass('show');
     $('#view_' + id).addClass('show');
     $('#charset_options').addClass('show');
+    $('#downloads').removeClass('show');
     $('#image_options').removeClass('show');
     return updateContainer();
   });
@@ -744,6 +745,7 @@
     $('#viewport div.show').removeClass('show');
     $('#view_' + id).addClass('show');
     $('#charset_options').removeClass('show');
+    $('#downloads').removeClass('show');
     $('#image_options').addClass('show');
     return updateContainer();
   });
@@ -756,7 +758,8 @@
     $('#viewport div.show').removeClass('show');
     $('#view_' + id).addClass('show');
     $('#charset_options').removeClass('show');
-    $('#image_options').addClass('show');
+    $('#image_options').removeClass('show');
+    $('#downloads').addClass('show');
     drawLayers();
     return updateContainer();
   });
@@ -773,6 +776,15 @@
     if (theImage !== '') {
       return inputImage.dropImage(theImage);
     }
+  });
+
+  $('#zoom').click(function() {
+    if ($('body').hasClass('noZoom')) {
+      $('body').removeClass('noZoom');
+    } else {
+      $('body').addClass('noZoom');
+    }
+    return updateContainer();
   });
 
   $(document).ready(function() {
