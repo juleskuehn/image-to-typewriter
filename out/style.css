@@ -85,9 +85,6 @@ h1 {
 #topBar #tabs button.selected {
   background: #fcc;
 }
-#topBar #tabs button:active {
-  border-color: #000;
-}
 #viewport {
   position: absolute;
   top: 30px;
