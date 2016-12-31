@@ -5,6 +5,10 @@ body {
   position: absolute;
   width: 100%;
   font-family: "Helvetica", "Arial", "Droid Sans", sans;
+  overflow-x: hidden;
+}
+body.noZoom {
+  overflow-x: visible;
 }
 body.noZoom canvas {
   zoom: 100% !important;
