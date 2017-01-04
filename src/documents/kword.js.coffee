@@ -689,6 +689,9 @@ greyscale = (canvas) ->
   customR = $('#customR').val()
   customG = $('#customG').val()
   customB = $('#customB').val()
+  normalize = document.getElementById('normalize').checked
+  minAdjust = $('#minAdjust').val()
+  maxAdjust = $('#maxAdjust').val()
   greyArray = []
   cvs = canvas.getContext('2d')
   imgData = cvs.getImageData(0,0,canvas.width,canvas.height)
@@ -712,17 +715,10 @@ greyscale = (canvas) ->
     l += imgData[p+2] * b * customB * imgData[p+3] / 255 #Blue
 
     # invert pixel values
-    l = 255-l
+    l = 255-l*minAdjust
+    l *= maxAdjust
 
     greyArray.push(l)
-
-  ###
-  # normalize image weights
-  maxBright = _.max(greyArray)
-  minBright = _.min(greyArray)
-  for pixel in greyArray
-    pixel = 255 - (255*(pixel-minBright))/(maxBright-minBright)
-  ###
 
   return greyArray
 

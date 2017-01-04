@@ -578,11 +578,14 @@
   };
 
   greyscale = function(canvas) {
-    var b, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
+    var b, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, maxAdjust, minAdjust, normalize, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
     greyscaleMethod = $('#bw').val();
     customR = $('#customR').val();
     customG = $('#customG').val();
     customB = $('#customB').val();
+    normalize = document.getElementById('normalize').checked;
+    minAdjust = $('#minAdjust').val();
+    maxAdjust = $('#maxAdjust').val();
     greyArray = [];
     cvs = canvas.getContext('2d');
     imgData = cvs.getImageData(0, 0, canvas.width, canvas.height);
@@ -605,17 +608,10 @@
       l += imgData[p] * r * customR * imgData[p + 3] / 255;
       l += imgData[p + 1] * g * customG * imgData[p + 3] / 255;
       l += imgData[p + 2] * b * customB * imgData[p + 3] / 255;
-      l = 255 - l;
+      l = 255 - l * minAdjust;
+      l *= maxAdjust;
       greyArray.push(l);
     }
-
-    /*
-     * normalize image weights
-    maxBright = _.max(greyArray)
-    minBright = _.min(greyArray)
-    for pixel in greyArray
-      pixel = 255 - (255*(pixel-minBright))/(maxBright-minBright)
-     */
     return greyArray;
   };
 
