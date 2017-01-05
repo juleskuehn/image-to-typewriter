@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, chopCharset, combosArray, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage, updateContainer;
+  var bestCombos, charset, chopCharset, combosArray, contrastImage, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage, updateContainer;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -578,7 +578,7 @@
   };
 
   greyscale = function(canvas) {
-    var b, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, maxAdjust, minAdjust, normalize, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
+    var b, contrast, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, maxAdjust, minAdjust, normalize, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
     greyscaleMethod = $('#bw').val();
     customR = $('#customR').val();
     customG = $('#customG').val();
@@ -586,9 +586,11 @@
     normalize = document.getElementById('normalize').checked;
     minAdjust = $('#minAdjust').val();
     maxAdjust = $('#maxAdjust').val();
+    contrast = $('#contrast').val();
     greyArray = [];
     cvs = canvas.getContext('2d');
     imgData = cvs.getImageData(0, 0, canvas.width, canvas.height);
+    imgData = contrastImage(imgData, contrast);
     imgData = imgData.data;
     for (p = m = 0, ref = imgData.length; m < ref; p = m += 4) {
       l = 0;
@@ -608,7 +610,7 @@
       l += imgData[p] * r * customR * imgData[p + 3] / 255;
       l += imgData[p + 1] * g * customG * imgData[p + 3] / 255;
       l += imgData[p + 2] * b * customB * imgData[p + 3] / 255;
-      l = 255 - l * minAdjust;
+      l = 255 - l;
       l *= maxAdjust;
       greyArray.push(l);
     }
@@ -616,6 +618,21 @@
   };
 
   theImage = '';
+
+  contrastImage = function(imageData, contrast) {
+    var data, factor, i;
+    data = imageData.data;
+    contrast = Math.floor(contrast);
+    factor = 259 * (contrast + 255) / (255 * (259 - contrast));
+    i = 0;
+    while (i < data.length) {
+      data[i] = factor * (data[i] - 128) + 128;
+      data[i + 1] = factor * (data[i + 1] - 128) + 128;
+      data[i + 2] = factor * (data[i + 2] - 128) + 128;
+      i += 4;
+    }
+    return imageData;
+  };
 
   inputImage = {
     dropImage: function(source) {

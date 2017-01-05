@@ -692,10 +692,14 @@ greyscale = (canvas) ->
   normalize = document.getElementById('normalize').checked
   minAdjust = $('#minAdjust').val()
   maxAdjust = $('#maxAdjust').val()
+  contrast = $('#contrast').val()
   greyArray = []
   cvs = canvas.getContext('2d')
   imgData = cvs.getImageData(0,0,canvas.width,canvas.height)
+  # apply contrast adjustment
+  imgData = contrastImage(imgData,contrast)
   imgData = imgData.data
+
   for p in [0...imgData.length] by 4
     l = 0
     if greyscaleMethod is 'ccir'
@@ -715,7 +719,9 @@ greyscale = (canvas) ->
     l += imgData[p+2] * b * customB * imgData[p+3] / 255 #Blue
 
     # invert pixel values
-    l = 255-l*minAdjust
+    l = 255-l
+
+    # apply max adjustment
     l *= maxAdjust
 
     greyArray.push(l)
@@ -723,6 +729,18 @@ greyscale = (canvas) ->
   return greyArray
 
 theImage = ''
+
+contrastImage = (imageData, contrast) ->
+  data = imageData.data
+  contrast = Math.floor(contrast)
+  factor = 259 * (contrast + 255) / (255 * (259 - contrast))
+  i = 0
+  while i < data.length
+    data[i] = factor * (data[i] - 128) + 128
+    data[i + 1] = factor * (data[i + 1] - 128) + 128
+    data[i + 2] = factor * (data[i + 2] - 128) + 128
+    i += 4
+  imageData
 
 inputImage =
   dropImage: (source) ->
