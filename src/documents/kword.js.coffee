@@ -693,11 +693,12 @@ greyscale = (canvas) ->
   minAdjust = $('#minAdjust').val()
   maxAdjust = $('#maxAdjust').val()
   contrast = $('#contrast').val()
+  brightness = $('#brightness').val()
   greyArray = []
   cvs = canvas.getContext('2d')
   imgData = cvs.getImageData(0,0,canvas.width,canvas.height)
   # apply contrast adjustment
-  imgData = contrastImage(imgData,contrast)
+  imgData = contrastImage(imgData,contrast,brightness)
   imgData = imgData.data
 
   for p in [0...imgData.length] by 4
@@ -730,17 +731,18 @@ greyscale = (canvas) ->
 
 theImage = ''
 
-contrastImage = (imageData, contrast) ->
+contrastImage = (imageData, contrast, brightness) ->
   data = imageData.data
   contrast = Math.floor(contrast)
+  brightness = Math.floor(brightness)
   factor = 259 * (contrast + 255) / (255 * (259 - contrast))
   i = 0
   while i < data.length
-    data[i] = factor * (data[i] - 128) + 128
-    data[i + 1] = factor * (data[i + 1] - 128) + 128
-    data[i + 2] = factor * (data[i + 2] - 128) + 128
+    data[i] = factor * (data[i] - 128 + brightness) + 128
+    data[i + 1] = factor * (data[i + 1] - 128 + brightness) + 128
+    data[i + 2] = factor * (data[i + 2] - 128 + brightness) + 128
     i += 4
-  imageData
+  return imageData
 
 inputImage =
   dropImage: (source) ->

@@ -578,7 +578,7 @@
   };
 
   greyscale = function(canvas) {
-    var b, contrast, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, maxAdjust, minAdjust, normalize, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
+    var b, brightness, contrast, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, maxAdjust, minAdjust, normalize, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
     greyscaleMethod = $('#bw').val();
     customR = $('#customR').val();
     customG = $('#customG').val();
@@ -587,10 +587,11 @@
     minAdjust = $('#minAdjust').val();
     maxAdjust = $('#maxAdjust').val();
     contrast = $('#contrast').val();
+    brightness = $('#brightness').val();
     greyArray = [];
     cvs = canvas.getContext('2d');
     imgData = cvs.getImageData(0, 0, canvas.width, canvas.height);
-    imgData = contrastImage(imgData, contrast);
+    imgData = contrastImage(imgData, contrast, brightness);
     imgData = imgData.data;
     for (p = m = 0, ref = imgData.length; m < ref; p = m += 4) {
       l = 0;
@@ -619,16 +620,17 @@
 
   theImage = '';
 
-  contrastImage = function(imageData, contrast) {
+  contrastImage = function(imageData, contrast, brightness) {
     var data, factor, i;
     data = imageData.data;
     contrast = Math.floor(contrast);
+    brightness = Math.floor(brightness);
     factor = 259 * (contrast + 255) / (255 * (259 - contrast));
     i = 0;
     while (i < data.length) {
-      data[i] = factor * (data[i] - 128) + 128;
-      data[i + 1] = factor * (data[i + 1] - 128) + 128;
-      data[i + 2] = factor * (data[i + 2] - 128) + 128;
+      data[i] = factor * (data[i] - 128 + brightness) + 128;
+      data[i + 1] = factor * (data[i + 1] - 128 + brightness) + 128;
+      data[i + 2] = factor * (data[i + 2] - 128 + brightness) + 128;
       i += 4;
     }
     return imageData;
