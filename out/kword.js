@@ -369,13 +369,14 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, closest, combo, comboRow, considerSpill, cvs, dither, ditherAmount, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotBottom, errTotBottomRight, errTotRight, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, closest, combo, comboRow, considerSpill, cvs, dither, ditherAmount, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotBottom, errTotBottomRight, errTotRight, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shape, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
     cvs = source.getContext('2d');
     dither = document.getElementById('dithering').checked;
     considerSpill = document.getElementById('considerSpill').checked;
+    shape = document.getElementById('shape').checked;
     gr = greyscale(source);
     ref = [source.height, source.width], h = ref[0], w = ref[1];
     for (i = m = 0, ref1 = h; m < ref1; i = m += 2) {
@@ -425,21 +426,33 @@
           errBL = errBL1 = bBL - combo.BLbrightness;
           errBR = errBR1 = bBR - combo.BRbrightness;
           errTot = errTot1 = (errTL + errTR + errBL + errBR) / 4;
+          if (shape) {
+            errTot = errTot1 = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          }
           errTL = bTLb * spillBrightness - spillBottom.TLbrightness;
           errTR = bTRb * spillBrightness - spillBottom.TRbrightness;
           errBL = bBLb * spillBrightness - spillBottom.BLbrightness;
           errBR = bBRb * spillBrightness - spillBottom.BRbrightness;
           errTotBottom = (errTL + errTR + errBL + errBR) / 4;
+          if (shape) {
+            errTot = errTot1 = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          }
           errTL = bTLr * spillBrightness - spillRight.TLbrightness;
           errTR = bTRr * spillBrightness - spillRight.TRbrightness;
           errBL = bBLr * spillBrightness - spillRight.BLbrightness;
           errBR = bBRr * spillBrightness - spillRight.BRbrightness;
           errTotRight = (errTL + errTR + errBL + errBR) / 4;
+          if (shape) {
+            errTotRight = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          }
           errTL = bTLbr * spillBrightness - spillBottomRight.TLbrightness;
           errTR = bTRbr * spillBrightness - spillBottomRight.TRbrightness;
           errBL = bBLbr * spillBrightness - spillBottomRight.BLbrightness;
           errBR = bBRbr * spillBrightness - spillBottomRight.BRbrightness;
           errTotBottomRight = (errTL + errTR + errBL + errBR) / 4;
+          if (shape) {
+            errTotBottomRight = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          }
           if (considerSpill) {
             errTot = Math.abs(errTot) + Math.abs(errTotBottom) * spillRatioBottom + Math.abs(errTotRight) * spillRatioRight + Math.abs(errTotBottomRight) * spillRatioBottomRight;
           }
@@ -578,12 +591,11 @@
   };
 
   greyscale = function(canvas) {
-    var b, brightness, contrast, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, maxAdjust, minAdjust, normalize, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
+    var b, brightness, contrast, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, maxAdjust, minAdjust, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
     greyscaleMethod = $('#bw').val();
     customR = $('#customR').val();
     customG = $('#customG').val();
     customB = $('#customB').val();
-    normalize = document.getElementById('normalize').checked;
     minAdjust = $('#minAdjust').val();
     maxAdjust = $('#maxAdjust').val();
     contrast = $('#contrast').val();
