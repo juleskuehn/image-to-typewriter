@@ -530,7 +530,7 @@ imgToText = ->
         errBR = bBRb*spillBrightness-spillBottom.BRbrightness
         errTotBottom = (errTL+errTR+errBL+errBR)/4
         if shape
-          errTot = errTot1 = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
+          errTotBottom = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
         errTL = bTLr*spillBrightness-spillRight.TLbrightness
         errTR = bTRr*spillBrightness-spillRight.TRbrightness
