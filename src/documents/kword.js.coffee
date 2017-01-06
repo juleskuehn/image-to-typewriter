@@ -446,7 +446,7 @@ imgToText = ->
   cvs = source.getContext('2d')
   dither = document.getElementById('dithering').checked
   considerSpill = document.getElementById('considerSpill').checked
-  shape = document.getElementById('shape').checked
+  shapeAmount = $('#shapeAmount').val()
   gr = greyscale(source)
   [h,w] = [source.height,source.width]
   # looping through input image array in 2x2 pixel increments
@@ -520,8 +520,7 @@ imgToText = ->
         errBL = errBL1 = bBL-combo.BLbrightness
         errBR = errBR1 = bBR-combo.BRbrightness
         errTot = errTot1 = (errTL+errTR+errBL+errBR)/4
-        if shape
-          errTot = errTot1 = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
+        errTotShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
         # compare spill areas
         errTL = bTLb*spillBrightness-spillBottom.TLbrightness
@@ -529,29 +528,29 @@ imgToText = ->
         errBL = bBLb*spillBrightness-spillBottom.BLbrightness
         errBR = bBRb*spillBrightness-spillBottom.BRbrightness
         errTotBottom = (errTL+errTR+errBL+errBR)/4
-        if shape
-          errTotBottom = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
+        errTotBottomShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
         errTL = bTLr*spillBrightness-spillRight.TLbrightness
         errTR = bTRr*spillBrightness-spillRight.TRbrightness
         errBL = bBLr*spillBrightness-spillRight.BLbrightness
         errBR = bBRr*spillBrightness-spillRight.BRbrightness
         errTotRight = (errTL+errTR+errBL+errBR)/4
-        if shape
-          errTotRight = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
+        errTotRightShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
         errTL = bTLbr*spillBrightness-spillBottomRight.TLbrightness
         errTR = bTRbr*spillBrightness-spillBottomRight.TRbrightness
         errBL = bBLbr*spillBrightness-spillBottomRight.BLbrightness
         errBR = bBRbr*spillBrightness-spillBottomRight.BRbrightness
         errTotBottomRight = (errTL+errTR+errBL+errBR)/4
-        if shape
-          errTotBottomRight = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
+        errTotBottomRightShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
 
         if considerSpill
           # combine spill with primary pixel weight
           errTot = Math.abs(errTot) + Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight
+          errTotShape = Math.abs(errTotShape) + Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight
+
+        errTot = errTot*(1-shapeAmount)+errTotShape*shapeAmount
 
         if bestCombo is null or Math.abs(errTot) < Math.abs(bestErr)
           bestErr = errTot

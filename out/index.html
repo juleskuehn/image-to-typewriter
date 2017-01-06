@@ -96,21 +96,20 @@
             <input type="checkbox" id="ditherFine" checked>
             <label>Dither Fine</label>
           </div>
-          <div>
+          <div class="hidden">
             <input type="checkbox" id="considerSpill" checked>
             <label>Consider Spill?</label>
           </div>
-          <div class="hidden"> 
+          <div>
             <input type="range" id="spillRatioRight" min="0" max="1" value="0.5" step="0.01">
-            <label>Spill Ratio Right</label>
+            <label>Spill Ratio R</label>
           </div>
-          <div class="hidden"> 
+          <div>
             <input type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.05">
-            <label>Spill Ratio Bottom</label>
+            <label>Spill Ratio B</label>
           </div>
-          <div class="hidden"> 
-            <input type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05">
-            <label>Spill Ratio Bottom Right</label>
+          <div type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05" class="hidden">
+            <label>Spill Ratio BR</label>
           </div>
           <div> 
             <input type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.005">
@@ -133,8 +132,8 @@
             <label>Brightness</label>
           </div>
           <div>
-            <input type="checkbox" id="shape" checked>
-            <label>Prioritize Shape</label>
+            <input type="range" id="shapeAmount" min="0" max="1" value="0" step="0.05">
+            <label>Shape Amount</label>
           </div>
           <div>
             <input type="range" id="contrast" min="-128" max="128" value="0" step="1">
