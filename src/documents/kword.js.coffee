@@ -444,7 +444,7 @@ imgToText = ->
   bestCombos = []
   source = document.getElementById("inputImage")
   cvs = source.getContext('2d')
-  dither = document.getElementById('dithering').checked
+  dithering = document.getElementById('dithering').checked
   considerSpill = document.getElementById('considerSpill').checked
   shapeAmount = $('#shapeAmount').val()
   gr = greyscale(source)
@@ -455,7 +455,7 @@ imgToText = ->
     comboRow = []
     for j in [0...w] by 2
       # weigh subpixels of input image
-      ###
+      
       # weigh subpixels of input image - spill to the right
       bTLr = gr[i*w + j+3] # brightness value of input image subpixel
       bTRr = gr[i*w + j+4] # brightness value of input image subpixel
@@ -473,7 +473,7 @@ imgToText = ->
       bTRbr = gr[(i+2)*w + j+4] # brightness value of input image subpixel
       bBLbr = gr[(i+3)*w + j+3] # brightness value of input image subpixel
       bBRbr = gr[(i+3)*w + j+4] # brightness value of input image subpixel
-      ###
+      
 
       # establish constraints on character selection
       TL=TR=BL=0
@@ -488,7 +488,8 @@ imgToText = ->
       # find closest ascii brightness value
       # closest is the index in charset.selected of the best char choice
       closest = 0
-      bestErr = 0
+      bestErr = 0 # absolute value of error for quadrant and spill
+      bestErrVal = 0 # actual error (for dithering) of overlap quadrant only
       bestCombo = null
       bestGr = gr
 
@@ -505,9 +506,6 @@ imgToText = ->
       for k in [0...charset.combos[TL][TR][BL].length]
         
         combo = charset.combos[TL][TR][BL][k]
-
-        # dithered image specific to this character
-        grLocal = gr
 
         # get spill images
         spillBottom = charset.combos[0][k][0][0]
@@ -528,11 +526,11 @@ imgToText = ->
         
         bBR = gr[(i+1)*w + j+1] # brightness value of input image subpixel
         errBR = errBR1 = bBR-combo.BRbrightness
-        
+
         errTot = errTot1 = (errTL+errTR+errBL+errBR)/4
         errTotShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
-        ###
+        
         # compare spill areas
         errTL = bTLb*spillBrightness-spillBottom.TLbrightness
         errTR = bTRb*spillBrightness-spillBottom.TRbrightness
@@ -560,7 +558,7 @@ imgToText = ->
           # combine spill with primary pixel weight
           errTot = Math.abs(errTot) + Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight
           errTotShape = Math.abs(errTotShape) + Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight
-        ###
+        
 
         errTot = Math.abs(errTot)
         errTotShape = Math.abs(errTotShape)
@@ -571,49 +569,15 @@ imgToText = ->
           bestErr = errTot
           closest = k
           bestCombo = combo
+          bestErrVal = errTot1
 
-      ###
+      
       # floyd-steinberg dithering
       # macro dithering - whole quadrants (not subpixels)
       
-      if dither
-
-        ditherAmount = document.getElementById('ditherAmount').value
-
-        if document.getElementById('ditherFine').checked
-          errTL = errTL1
-          errTR = errTR1
-          errBL = errBL1
-          errBR = errBR1
-        else
-          # average the error to distribute across subpixels
-          errTL=errTR=errBL=errBR=errTot1
-
-        # distribute error to the right
-        if j+1 < w
-          gr[i*w + j+2] += (errTL * 7/16)*ditherAmount
-          gr[i*w + j+3] += (errTR * 7/16)*ditherAmount
-          gr[(i+1)*w + j+2] += (errBL * 7/16)*ditherAmount
-          gr[(i+1)*w + j+3] += (errBR * 7/16)*ditherAmount
-        # distribute error to the bottom left
-        if i+1 < h and j-1 > 0
-          gr[(i+2)*w + j-2] += (errTL * 3/16)*ditherAmount
-          gr[(i+2)*w + j-1] += (errTR * 3/16)*ditherAmount
-          gr[(i+3)*w + j-2] += (errBL * 3/16)*ditherAmount
-          gr[(i+3)*w + j-1] += (errBR * 3/16)*ditherAmount
-        # distribute error to the bottom
-        if i+1 < h
-          gr[(i+2)*w + j] += (errTL * 5/16)*ditherAmount
-          gr[(i+2)*w + j+1] += (errTR * 5/16)*ditherAmount
-          gr[(i+3)*w + j] += (errBL * 5/16)*ditherAmount
-          gr[(i+3)*w + j+1] += (errBR * 5/16)*ditherAmount
-        # distribute error to the bottom right
-        if i+1 < h and j+1 < w
-          gr[(i+2)*w + j+2] += (errTL * 1/16)*ditherAmount
-          gr[(i+2)*w + j+3] += (errTR * 1/16)*ditherAmount
-          gr[(i+3)*w + j+2] += (errBL * 1/16)*ditherAmount
-          gr[(i+3)*w + j+3] += (errBR * 1/16)*ditherAmount
-      ###
+      if dithering
+        gr = dither(gr,bestErrVal,i,j,w,h)
+        
         
       row.push closest
       comboRow.push bestCombo
@@ -622,6 +586,33 @@ imgToText = ->
 
   drawCharImage()
   updateContainer()
+
+
+dither = (gr,error,i,j,w,h) ->
+  if j+1 < w
+    gr[i*w + j+2] += (error * 7/16)
+    gr[i*w + j+3] += (error * 7/16)
+    gr[(i+1)*w + j+2] += (error * 7/16)
+    gr[(i+1)*w + j+3] += (error * 7/16)
+  # distribute error to the bottom left
+  if i+1 < h and j-1 > 0
+    gr[(i+2)*w + j-2] += (error * 3/16)
+    gr[(i+2)*w + j-1] += (error * 3/16)
+    gr[(i+3)*w + j-2] += (error * 3/16)
+    gr[(i+3)*w + j-1] += (error * 3/16)
+  # distribute error to the bottom
+  if i+1 < h
+    gr[(i+2)*w + j] += (error * 5/16)
+    gr[(i+2)*w + j+1] += (error * 5/16)
+    gr[(i+3)*w + j] += (error * 5/16)
+    gr[(i+3)*w + j+1] += (error * 5/16)
+  # distribute error to the bottom right
+  if i+1 < h and j+1 < w
+    gr[(i+2)*w + j+2] += (error * 1/16)
+    gr[(i+2)*w + j+3] += (error * 1/16)
+    gr[(i+3)*w + j+2] += (error * 1/16)
+    gr[(i+3)*w + j+3] += (error * 1/16)
+  return gr
 
 drawCharImage = ->
   

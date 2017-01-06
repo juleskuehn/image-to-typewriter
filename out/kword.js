@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, chopCharset, combosArray, contrastImage, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage, updateContainer;
+  var bestCombos, charset, chopCharset, combosArray, contrastImage, dither, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage, updateContainer;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -369,12 +369,12 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBR, bTL, bTR, bestCombo, bestErr, bestGr, closest, combo, comboRow, considerSpill, cvs, dither, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotShape, gr, grLocal, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, bestGr, closest, combo, comboRow, considerSpill, cvs, dithering, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
     cvs = source.getContext('2d');
-    dither = document.getElementById('dithering').checked;
+    dithering = document.getElementById('dithering').checked;
     considerSpill = document.getElementById('considerSpill').checked;
     shapeAmount = $('#shapeAmount').val();
     gr = greyscale(source);
@@ -383,26 +383,18 @@
       row = [];
       comboRow = [];
       for (j = n = 0, ref2 = w; n < ref2; j = n += 2) {
-
-        /*
-         * weigh subpixels of input image - spill to the right
-        bTLr = gr[i*w + j+3] # brightness value of input image subpixel
-        bTRr = gr[i*w + j+4] # brightness value of input image subpixel
-        bBLr = gr[(i+1)*w + j+3] # brightness value of input image subpixel
-        bBRr = gr[(i+1)*w + j+4] # brightness value of input image subpixel
-        
-         * weigh subpixels of input image - spill to the bottom
-        bTLb = gr[(i+2)*w + j] # brightness value of input image subpixel
-        bTRb = gr[(i+2)*w + j+1] # brightness value of input image subpixel
-        bBLb = gr[(i+3)*w + j] # brightness value of input image subpixel
-        bBRb = gr[(i+3)*w + j+1] # brightness value of input image subpixel
-        
-         * weigh subpixels of input image - spill to the bottom right
-        bTLbr = gr[(i+2)*w + j+3] # brightness value of input image subpixel
-        bTRbr = gr[(i+2)*w + j+4] # brightness value of input image subpixel
-        bBLbr = gr[(i+3)*w + j+3] # brightness value of input image subpixel
-        bBRbr = gr[(i+3)*w + j+4] # brightness value of input image subpixel
-         */
+        bTLr = gr[i * w + j + 3];
+        bTRr = gr[i * w + j + 4];
+        bBLr = gr[(i + 1) * w + j + 3];
+        bBRr = gr[(i + 1) * w + j + 4];
+        bTLb = gr[(i + 2) * w + j];
+        bTRb = gr[(i + 2) * w + j + 1];
+        bBLb = gr[(i + 3) * w + j];
+        bBRb = gr[(i + 3) * w + j + 1];
+        bTLbr = gr[(i + 2) * w + j + 3];
+        bTRbr = gr[(i + 2) * w + j + 4];
+        bBLbr = gr[(i + 3) * w + j + 3];
+        bBRbr = gr[(i + 3) * w + j + 4];
         TL = TR = BL = 0;
         if (i > 0 && j > 0) {
           TL = combosArray[i / 2 - 1][j / 2 - 1];
@@ -415,6 +407,7 @@
         }
         closest = 0;
         bestErr = 0;
+        bestErrVal = 0;
         bestCombo = null;
         bestGr = gr;
         spillRatioRight = $('#spillRatioRight').val() * $('#spillRatio').val();
@@ -423,7 +416,6 @@
         spillBrightness = 1 - $('#spillBrightness').val();
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
-          grLocal = gr;
           spillBottom = charset.combos[0][k][0][0];
           spillRight = charset.combos[0][0][k][0];
           spillBottomRight = charset.combos[k][0][0][0];
@@ -437,36 +429,28 @@
           errBR = errBR1 = bBR - combo.BRbrightness;
           errTot = errTot1 = (errTL + errTR + errBL + errBR) / 4;
           errTotShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
-
-          /*
-           * compare spill areas
-          errTL = bTLb*spillBrightness-spillBottom.TLbrightness
-          errTR = bTRb*spillBrightness-spillBottom.TRbrightness
-          errBL = bBLb*spillBrightness-spillBottom.BLbrightness
-          errBR = bBRb*spillBrightness-spillBottom.BRbrightness
-          errTotBottom = (errTL+errTR+errBL+errBR)/4
-          errTotBottomShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
-          
-          errTL = bTLr*spillBrightness-spillRight.TLbrightness
-          errTR = bTRr*spillBrightness-spillRight.TRbrightness
-          errBL = bBLr*spillBrightness-spillRight.BLbrightness
-          errBR = bBRr*spillBrightness-spillRight.BRbrightness
-          errTotRight = (errTL+errTR+errBL+errBR)/4
-          errTotRightShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
-          
-          errTL = bTLbr*spillBrightness-spillBottomRight.TLbrightness
-          errTR = bTRbr*spillBrightness-spillBottomRight.TRbrightness
-          errBL = bBLbr*spillBrightness-spillBottomRight.BLbrightness
-          errBR = bBRbr*spillBrightness-spillBottomRight.BRbrightness
-          errTotBottomRight = (errTL+errTR+errBL+errBR)/4
-          errTotBottomRightShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
-          
-          
-          if considerSpill
-             * combine spill with primary pixel weight
-            errTot = Math.abs(errTot) + Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight
-            errTotShape = Math.abs(errTotShape) + Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight
-           */
+          errTL = bTLb * spillBrightness - spillBottom.TLbrightness;
+          errTR = bTRb * spillBrightness - spillBottom.TRbrightness;
+          errBL = bBLb * spillBrightness - spillBottom.BLbrightness;
+          errBR = bBRb * spillBrightness - spillBottom.BRbrightness;
+          errTotBottom = (errTL + errTR + errBL + errBR) / 4;
+          errTotBottomShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          errTL = bTLr * spillBrightness - spillRight.TLbrightness;
+          errTR = bTRr * spillBrightness - spillRight.TRbrightness;
+          errBL = bBLr * spillBrightness - spillRight.BLbrightness;
+          errBR = bBRr * spillBrightness - spillRight.BRbrightness;
+          errTotRight = (errTL + errTR + errBL + errBR) / 4;
+          errTotRightShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          errTL = bTLbr * spillBrightness - spillBottomRight.TLbrightness;
+          errTR = bTRbr * spillBrightness - spillBottomRight.TRbrightness;
+          errBL = bBLbr * spillBrightness - spillBottomRight.BLbrightness;
+          errBR = bBRbr * spillBrightness - spillBottomRight.BRbrightness;
+          errTotBottomRight = (errTL + errTR + errBL + errBR) / 4;
+          errTotBottomRightShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          if (considerSpill) {
+            errTot = Math.abs(errTot) + Math.abs(errTotBottom) * spillRatioBottom + Math.abs(errTotRight) * spillRatioRight + Math.abs(errTotBottomRight) * spillRatioBottomRight;
+            errTotShape = Math.abs(errTotShape) + Math.abs(errTotBottomShape) * spillRatioBottom + Math.abs(errTotRightShape) * spillRatioRight + Math.abs(errTotBottomRightShape) * spillRatioBottomRight;
+          }
           errTot = Math.abs(errTot);
           errTotShape = Math.abs(errTotShape);
           errTot = errTot * (1 - shapeAmount) + errTotShape * shapeAmount;
@@ -474,51 +458,12 @@
             bestErr = errTot;
             closest = k;
             bestCombo = combo;
+            bestErrVal = errTot1;
           }
         }
-
-        /*
-         * floyd-steinberg dithering
-         * macro dithering - whole quadrants (not subpixels)
-        
-        if dither
-        
-          ditherAmount = document.getElementById('ditherAmount').value
-        
-          if document.getElementById('ditherFine').checked
-            errTL = errTL1
-            errTR = errTR1
-            errBL = errBL1
-            errBR = errBR1
-          else
-             * average the error to distribute across subpixels
-            errTL=errTR=errBL=errBR=errTot1
-        
-           * distribute error to the right
-          if j+1 < w
-            gr[i*w + j+2] += (errTL * 7/16)*ditherAmount
-            gr[i*w + j+3] += (errTR * 7/16)*ditherAmount
-            gr[(i+1)*w + j+2] += (errBL * 7/16)*ditherAmount
-            gr[(i+1)*w + j+3] += (errBR * 7/16)*ditherAmount
-           * distribute error to the bottom left
-          if i+1 < h and j-1 > 0
-            gr[(i+2)*w + j-2] += (errTL * 3/16)*ditherAmount
-            gr[(i+2)*w + j-1] += (errTR * 3/16)*ditherAmount
-            gr[(i+3)*w + j-2] += (errBL * 3/16)*ditherAmount
-            gr[(i+3)*w + j-1] += (errBR * 3/16)*ditherAmount
-           * distribute error to the bottom
-          if i+1 < h
-            gr[(i+2)*w + j] += (errTL * 5/16)*ditherAmount
-            gr[(i+2)*w + j+1] += (errTR * 5/16)*ditherAmount
-            gr[(i+3)*w + j] += (errBL * 5/16)*ditherAmount
-            gr[(i+3)*w + j+1] += (errBR * 5/16)*ditherAmount
-           * distribute error to the bottom right
-          if i+1 < h and j+1 < w
-            gr[(i+2)*w + j+2] += (errTL * 1/16)*ditherAmount
-            gr[(i+2)*w + j+3] += (errTR * 1/16)*ditherAmount
-            gr[(i+3)*w + j+2] += (errBL * 1/16)*ditherAmount
-            gr[(i+3)*w + j+3] += (errBR * 1/16)*ditherAmount
-         */
+        if (dithering) {
+          gr = dither(gr, bestErrVal, i, j, w, h);
+        }
         row.push(closest);
         comboRow.push(bestCombo);
       }
@@ -527,6 +472,34 @@
     }
     drawCharImage();
     return updateContainer();
+  };
+
+  dither = function(gr, error, i, j, w, h) {
+    if (j + 1 < w) {
+      gr[i * w + j + 2] += error * 7 / 16;
+      gr[i * w + j + 3] += error * 7 / 16;
+      gr[(i + 1) * w + j + 2] += error * 7 / 16;
+      gr[(i + 1) * w + j + 3] += error * 7 / 16;
+    }
+    if (i + 1 < h && j - 1 > 0) {
+      gr[(i + 2) * w + j - 2] += error * 3 / 16;
+      gr[(i + 2) * w + j - 1] += error * 3 / 16;
+      gr[(i + 3) * w + j - 2] += error * 3 / 16;
+      gr[(i + 3) * w + j - 1] += error * 3 / 16;
+    }
+    if (i + 1 < h) {
+      gr[(i + 2) * w + j] += error * 5 / 16;
+      gr[(i + 2) * w + j + 1] += error * 5 / 16;
+      gr[(i + 3) * w + j] += error * 5 / 16;
+      gr[(i + 3) * w + j + 1] += error * 5 / 16;
+    }
+    if (i + 1 < h && j + 1 < w) {
+      gr[(i + 2) * w + j + 2] += error * 1 / 16;
+      gr[(i + 2) * w + j + 3] += error * 1 / 16;
+      gr[(i + 3) * w + j + 2] += error * 1 / 16;
+      gr[(i + 3) * w + j + 3] += error * 1 / 16;
+    }
+    return gr;
   };
 
   drawCharImage = function() {
