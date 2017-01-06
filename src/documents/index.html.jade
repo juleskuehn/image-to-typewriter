@@ -29,13 +29,13 @@ html
            input(type="text" value="7" id="rows")
            label Rows
           div
-           input(type="text" value="0.57" id="offsetX")
+           input(type="text" value="0.6" id="offsetX")
            label Grid Offset X
           div
-           input(type="text" value="0.23" id="offsetY")
+           input(type="text" value="0.26" id="offsetY")
            label Grid Offset Y
           div
-           input(type="text" value="0" id="colStart")
+           input(type="text" value="1" id="colStart")
            label Crop Start Col
           div
            input(type="text" value="77" id="colEnd")
@@ -58,16 +58,8 @@ html
            h3 Generator Options
            div
             input(type="range" id="row_length" min="1" max="100" value="40" step="1")
-            label Row Length
-           div
-            select(id="bw")
-             option(value="ccir") CCIR 601
-             option(value="cie") CIE Luma
-             option(value="flat") Equal
-             option(value="red") Red
-             option(value="green") Green
-             option(value="blue") Blue
-            label B/W Conversion
+            label
+             b Row Length
            div
             input(type="range" id="customR" min="0" max="3" value="1" step="0.10")
             label Red
@@ -77,6 +69,15 @@ html
            div
             input(type="range" id="customB" min="0" max="3" value="1" step="0.10")
             label Blue
+           div
+            select(id="bw")
+             option(value="ccir") CCIR 601
+             option(value="cie") CIE Luma
+             option(value="flat") Equal
+             option(value="red") Red
+             option(value="green") Green
+             option(value="blue") Blue
+            label B/W Conversion
            div(class="hidden")
             input(type="checkbox" id="dithering")
             label Dither
@@ -87,16 +88,18 @@ html
             input(type="checkbox" id="considerSpill" checked)
             label Consider Spill?
            div
-            input(type="range" id="spillRatioRight" min="0" max="1" value="0.5" step="0.01")
+            input(type="range" id="spillRatioRight" min="0" max="1" value="1" step="0.1")
             label Spill Ratio R
            div
-            input(type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.05")
+            input(type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.1")
             label Spill Ratio B
-           div(class="hidden")(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05")
+           div
+            input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.2" step="0.1")
             label Spill Ratio BR
            div 
-            input(type="range" id="spillRatio" min="0" max="0.5" value="0.1" step="0.005")
-            label Spill Ratio
+            input(type="range" id="spillRatio" min="0" max="1" value="0.5" step="0.05")
+            label
+             b Spill Ratio
            div
             input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.05")
             label Spill Brightness
@@ -105,13 +108,15 @@ html
             label Dither Strength
            div
             input(type="range" id="maxAdjust" min="0" max="1" value="1" step="0.05")
-            label Max Weight
+            label
+             b Max Weight
            div
             input(type="range" id="brightness" min="-128" max="128" value="0" step="1")
             label Brightness
            div
-            input(type="range" id="shapeAmount" min="0" max="1" value="0" step="0.05")
-            label Shape Amount
+            input(type="range" id="shapeAmount" min="0" max="1" value="0.5" step="0.05")
+            label
+             b Shape Amount
            div
             input(type="range" id="contrast" min="-128" max="128" value="0" step="1")
             label Contrast
