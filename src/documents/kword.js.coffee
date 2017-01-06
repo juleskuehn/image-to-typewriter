@@ -522,6 +522,7 @@ imgToText = ->
         errTot = errTot1 = (errTL+errTR+errBL+errBR)/4
         errTotShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
+        ###
         # compare spill areas
         errTL = bTLb*spillBrightness-spillBottom.TLbrightness
         errTR = bTRb*spillBrightness-spillBottom.TRbrightness
@@ -549,6 +550,10 @@ imgToText = ->
           # combine spill with primary pixel weight
           errTot = Math.abs(errTot) + Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight
           errTotShape = Math.abs(errTotShape) + Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight
+        ###
+
+        errTot = Math.abs(errTot)
+        errTotShape = Math.abs(errTotShape)
 
         errTot = errTot*(1-shapeAmount)+errTotShape*shapeAmount
 
@@ -557,6 +562,7 @@ imgToText = ->
           closest = k
           bestCombo = combo
 
+      ###
       # floyd-steinberg dithering
       # macro dithering - whole quadrants (not subpixels)
       
@@ -597,7 +603,7 @@ imgToText = ->
           gr[(i+2)*w + j+3] += (errTR * 1/16)*ditherAmount
           gr[(i+3)*w + j+2] += (errBL * 1/16)*ditherAmount
           gr[(i+3)*w + j+3] += (errBR * 1/16)*ditherAmount
-        
+      ###
         
       row.push closest
       comboRow.push bestCombo
