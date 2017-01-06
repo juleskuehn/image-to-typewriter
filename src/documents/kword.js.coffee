@@ -444,9 +444,9 @@ imgToText = ->
   bestCombos = []
   source = document.getElementById("inputImage")
   cvs = source.getContext('2d')
-  dithering = document.getElementById('dithering').checked
   considerSpill = document.getElementById('considerSpill').checked
   shapeAmount = $('#shapeAmount').val()
+  ditherAmount = $('#ditherAmount').val()
   gr = greyscale(source)
   [h,w] = [source.height,source.width]
   # looping through input image array in 2x2 pixel increments
@@ -455,24 +455,6 @@ imgToText = ->
     comboRow = []
     for j in [0...w] by 2
       # weigh subpixels of input image
-      
-      # weigh subpixels of input image - spill to the right
-      bTLr = gr[i*w + j+3] # brightness value of input image subpixel
-      bTRr = gr[i*w + j+4] # brightness value of input image subpixel
-      bBLr = gr[(i+1)*w + j+3] # brightness value of input image subpixel
-      bBRr = gr[(i+1)*w + j+4] # brightness value of input image subpixel
-
-      # weigh subpixels of input image - spill to the bottom
-      bTLb = gr[(i+2)*w + j] # brightness value of input image subpixel
-      bTRb = gr[(i+2)*w + j+1] # brightness value of input image subpixel
-      bBLb = gr[(i+3)*w + j] # brightness value of input image subpixel
-      bBRb = gr[(i+3)*w + j+1] # brightness value of input image subpixel
-
-      # weigh subpixels of input image - spill to the bottom right
-      bTLbr = gr[(i+2)*w + j+3] # brightness value of input image subpixel
-      bTRbr = gr[(i+2)*w + j+4] # brightness value of input image subpixel
-      bBLbr = gr[(i+3)*w + j+3] # brightness value of input image subpixel
-      bBRbr = gr[(i+3)*w + j+4] # brightness value of input image subpixel
       
 
       # establish constraints on character selection
@@ -491,7 +473,6 @@ imgToText = ->
       bestErr = 0 # absolute value of error for quadrant and spill
       bestErrVal = 0 # actual error (for dithering) of overlap quadrant only
       bestCombo = null
-      bestGr = gr
 
       # how much should the spill be considered?
       spillRatioRight = $('#spillRatioRight').val() * $('#spillRatio').val()
@@ -530,8 +511,31 @@ imgToText = ->
         errTot = errTot1 = (errTL+errTR+errBL+errBR)/4
         errTotShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
+        # dither a working copy of the image to evaluate spill based on dither
+        grLocal = dither(gr,errTot,i,j,w,h,ditherAmount)
+
         
         # compare spill areas
+
+        # weigh subpixels of input image - spill to the right
+        bTLr = grLocal[i*w + j+3] # brightness value of input image subpixel
+        bTRr = grLocal[i*w + j+4] # brightness value of input image subpixel
+        bBLr = grLocal[(i+1)*w + j+3] # brightness value of input image subpixel
+        bBRr = grLocal[(i+1)*w + j+4] # brightness value of input image subpixel
+
+        # weigh subpixels of input image - spill to the bottom
+        bTLb = grLocal[(i+2)*w + j] # brightness value of input image subpixel
+        bTRb = grLocal[(i+2)*w + j+1] # brightness value of input image subpixel
+        bBLb = grLocal[(i+3)*w + j] # brightness value of input image subpixel
+        bBRb = grLocal[(i+3)*w + j+1] # brightness value of input image subpixel
+
+        # weigh subpixels of input image - spill to the bottom right
+        bTLbr = grLocal[(i+2)*w + j+3] # brightness value of input image subpixel
+        bTRbr = grLocal[(i+2)*w + j+4] # brightness value of input image subpixel
+        bBLbr = grLocal[(i+3)*w + j+3] # brightness value of input image subpixel
+        bBRbr = grLocal[(i+3)*w + j+4] # brightness value of input image subpixel
+        
+
         errTL = bTLb*spillBrightness-spillBottom.TLbrightness
         errTR = bTRb*spillBrightness-spillBottom.TRbrightness
         errBL = bBLb*spillBrightness-spillBottom.BLbrightness
@@ -575,8 +579,7 @@ imgToText = ->
       # floyd-steinberg dithering
       # macro dithering - whole quadrants (not subpixels)
       
-      if dithering
-        gr = dither(gr,bestErrVal,i,j,w,h)
+      gr = dither(gr,bestErrVal,i,j,w,h,ditherAmount)
         
         
       row.push closest
@@ -588,30 +591,30 @@ imgToText = ->
   updateContainer()
 
 
-dither = (gr,error,i,j,w,h) ->
+dither = (gr,error,i,j,w,h,ditherAmount) ->
   if j+1 < w
-    gr[i*w + j+2] += (error * 7/16)
-    gr[i*w + j+3] += (error * 7/16)
-    gr[(i+1)*w + j+2] += (error * 7/16)
-    gr[(i+1)*w + j+3] += (error * 7/16)
+    gr[i*w + j+2] += (error * 7/16) * ditherAmount
+    gr[i*w + j+3] += (error * 7/16) * ditherAmount
+    gr[(i+1)*w + j+2] += (error * 7/16) * ditherAmount
+    gr[(i+1)*w + j+3] += (error * 7/16) * ditherAmount
   # distribute error to the bottom left
   if i+1 < h and j-1 > 0
-    gr[(i+2)*w + j-2] += (error * 3/16)
-    gr[(i+2)*w + j-1] += (error * 3/16)
-    gr[(i+3)*w + j-2] += (error * 3/16)
-    gr[(i+3)*w + j-1] += (error * 3/16)
+    gr[(i+2)*w + j-2] += (error * 3/16) * ditherAmount
+    gr[(i+2)*w + j-1] += (error * 3/16) * ditherAmount
+    gr[(i+3)*w + j-2] += (error * 3/16) * ditherAmount
+    gr[(i+3)*w + j-1] += (error * 3/16) * ditherAmount
   # distribute error to the bottom
   if i+1 < h
-    gr[(i+2)*w + j] += (error * 5/16)
-    gr[(i+2)*w + j+1] += (error * 5/16)
-    gr[(i+3)*w + j] += (error * 5/16)
-    gr[(i+3)*w + j+1] += (error * 5/16)
+    gr[(i+2)*w + j] += (error * 5/16) * ditherAmount
+    gr[(i+2)*w + j+1] += (error * 5/16) * ditherAmount
+    gr[(i+3)*w + j] += (error * 5/16) * ditherAmount
+    gr[(i+3)*w + j+1] += (error * 5/16) * ditherAmount
   # distribute error to the bottom right
   if i+1 < h and j+1 < w
-    gr[(i+2)*w + j+2] += (error * 1/16)
-    gr[(i+2)*w + j+3] += (error * 1/16)
-    gr[(i+3)*w + j+2] += (error * 1/16)
-    gr[(i+3)*w + j+3] += (error * 1/16)
+    gr[(i+2)*w + j+2] += (error * 1/16) * ditherAmount
+    gr[(i+2)*w + j+3] += (error * 1/16) * ditherAmount
+    gr[(i+3)*w + j+2] += (error * 1/16) * ditherAmount
+    gr[(i+3)*w + j+3] += (error * 1/16) * ditherAmount
   return gr
 
 drawCharImage = ->

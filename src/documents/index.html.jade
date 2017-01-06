@@ -79,8 +79,9 @@ html
              option(value="blue") Blue
             label B/W Conversion
            div
-            input(type="checkbox" id="dithering")
-            label Dither
+            input(type="range" id="ditherAmount" min="0" max="1" value="1" step="0.1")
+            label
+             b Dither Amount
            div(class="hidden")
             input(type="checkbox" id="ditherFine" checked)
             label Dither Fine
@@ -101,11 +102,8 @@ html
             label
              b Spill Ratio
            div
-            input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.05")
+            input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.1")
             label Spill Brightness
-           div(class="hidden")
-            input(type="range" id="ditherAmount" min="-1" max="1" value=".1" step="0.05")
-            label Dither Strength
            div
             input(type="range" id="maxAdjust" min="0" max="1" value="1" step="0.05")
             label
@@ -114,7 +112,7 @@ html
             input(type="range" id="brightness" min="-128" max="128" value="0" step="1")
             label Brightness
            div
-            input(type="range" id="shapeAmount" min="0" max="1" value="0.5" step="0.05")
+            input(type="range" id="shapeAmount" min="0" max="1" value="1" step="0.1")
             label
              b Shape Amount
            div

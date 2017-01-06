@@ -369,32 +369,20 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, bestGr, closest, combo, comboRow, considerSpill, cvs, dithering, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, grLocal, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
     cvs = source.getContext('2d');
-    dithering = document.getElementById('dithering').checked;
     considerSpill = document.getElementById('considerSpill').checked;
     shapeAmount = $('#shapeAmount').val();
+    ditherAmount = $('#ditherAmount').val();
     gr = greyscale(source);
     ref = [source.height, source.width], h = ref[0], w = ref[1];
     for (i = m = 0, ref1 = h; m < ref1; i = m += 2) {
       row = [];
       comboRow = [];
       for (j = n = 0, ref2 = w; n < ref2; j = n += 2) {
-        bTLr = gr[i * w + j + 3];
-        bTRr = gr[i * w + j + 4];
-        bBLr = gr[(i + 1) * w + j + 3];
-        bBRr = gr[(i + 1) * w + j + 4];
-        bTLb = gr[(i + 2) * w + j];
-        bTRb = gr[(i + 2) * w + j + 1];
-        bBLb = gr[(i + 3) * w + j];
-        bBRb = gr[(i + 3) * w + j + 1];
-        bTLbr = gr[(i + 2) * w + j + 3];
-        bTRbr = gr[(i + 2) * w + j + 4];
-        bBLbr = gr[(i + 3) * w + j + 3];
-        bBRbr = gr[(i + 3) * w + j + 4];
         TL = TR = BL = 0;
         if (i > 0 && j > 0) {
           TL = combosArray[i / 2 - 1][j / 2 - 1];
@@ -409,7 +397,6 @@
         bestErr = 0;
         bestErrVal = 0;
         bestCombo = null;
-        bestGr = gr;
         spillRatioRight = $('#spillRatioRight').val() * $('#spillRatio').val();
         spillRatioBottomRight = $('#spillRatioBottomRight').val() * $('#spillRatio').val();
         spillRatioBottom = $('#spillRatioBottom').val() * $('#spillRatio').val();
@@ -429,6 +416,19 @@
           errBR = errBR1 = bBR - combo.BRbrightness;
           errTot = errTot1 = (errTL + errTR + errBL + errBR) / 4;
           errTotShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          grLocal = dither(gr, errTot, i, j, w, h, ditherAmount);
+          bTLr = grLocal[i * w + j + 3];
+          bTRr = grLocal[i * w + j + 4];
+          bBLr = grLocal[(i + 1) * w + j + 3];
+          bBRr = grLocal[(i + 1) * w + j + 4];
+          bTLb = grLocal[(i + 2) * w + j];
+          bTRb = grLocal[(i + 2) * w + j + 1];
+          bBLb = grLocal[(i + 3) * w + j];
+          bBRb = grLocal[(i + 3) * w + j + 1];
+          bTLbr = grLocal[(i + 2) * w + j + 3];
+          bTRbr = grLocal[(i + 2) * w + j + 4];
+          bBLbr = grLocal[(i + 3) * w + j + 3];
+          bBRbr = grLocal[(i + 3) * w + j + 4];
           errTL = bTLb * spillBrightness - spillBottom.TLbrightness;
           errTR = bTRb * spillBrightness - spillBottom.TRbrightness;
           errBL = bBLb * spillBrightness - spillBottom.BLbrightness;
@@ -461,9 +461,7 @@
             bestErrVal = errTot1;
           }
         }
-        if (dithering) {
-          gr = dither(gr, bestErrVal, i, j, w, h);
-        }
+        gr = dither(gr, bestErrVal, i, j, w, h, ditherAmount);
         row.push(closest);
         comboRow.push(bestCombo);
       }
@@ -474,30 +472,30 @@
     return updateContainer();
   };
 
-  dither = function(gr, error, i, j, w, h) {
+  dither = function(gr, error, i, j, w, h, ditherAmount) {
     if (j + 1 < w) {
-      gr[i * w + j + 2] += error * 7 / 16;
-      gr[i * w + j + 3] += error * 7 / 16;
-      gr[(i + 1) * w + j + 2] += error * 7 / 16;
-      gr[(i + 1) * w + j + 3] += error * 7 / 16;
+      gr[i * w + j + 2] += (error * 7 / 16) * ditherAmount;
+      gr[i * w + j + 3] += (error * 7 / 16) * ditherAmount;
+      gr[(i + 1) * w + j + 2] += (error * 7 / 16) * ditherAmount;
+      gr[(i + 1) * w + j + 3] += (error * 7 / 16) * ditherAmount;
     }
     if (i + 1 < h && j - 1 > 0) {
-      gr[(i + 2) * w + j - 2] += error * 3 / 16;
-      gr[(i + 2) * w + j - 1] += error * 3 / 16;
-      gr[(i + 3) * w + j - 2] += error * 3 / 16;
-      gr[(i + 3) * w + j - 1] += error * 3 / 16;
+      gr[(i + 2) * w + j - 2] += (error * 3 / 16) * ditherAmount;
+      gr[(i + 2) * w + j - 1] += (error * 3 / 16) * ditherAmount;
+      gr[(i + 3) * w + j - 2] += (error * 3 / 16) * ditherAmount;
+      gr[(i + 3) * w + j - 1] += (error * 3 / 16) * ditherAmount;
     }
     if (i + 1 < h) {
-      gr[(i + 2) * w + j] += error * 5 / 16;
-      gr[(i + 2) * w + j + 1] += error * 5 / 16;
-      gr[(i + 3) * w + j] += error * 5 / 16;
-      gr[(i + 3) * w + j + 1] += error * 5 / 16;
+      gr[(i + 2) * w + j] += (error * 5 / 16) * ditherAmount;
+      gr[(i + 2) * w + j + 1] += (error * 5 / 16) * ditherAmount;
+      gr[(i + 3) * w + j] += (error * 5 / 16) * ditherAmount;
+      gr[(i + 3) * w + j + 1] += (error * 5 / 16) * ditherAmount;
     }
     if (i + 1 < h && j + 1 < w) {
-      gr[(i + 2) * w + j + 2] += error * 1 / 16;
-      gr[(i + 2) * w + j + 3] += error * 1 / 16;
-      gr[(i + 3) * w + j + 2] += error * 1 / 16;
-      gr[(i + 3) * w + j + 3] += error * 1 / 16;
+      gr[(i + 2) * w + j + 2] += (error * 1 / 16) * ditherAmount;
+      gr[(i + 2) * w + j + 3] += (error * 1 / 16) * ditherAmount;
+      gr[(i + 3) * w + j + 2] += (error * 1 / 16) * ditherAmount;
+      gr[(i + 3) * w + j + 3] += (error * 1 / 16) * ditherAmount;
     }
     return gr;
   };
