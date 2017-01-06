@@ -455,11 +455,7 @@ imgToText = ->
     comboRow = []
     for j in [0...w] by 2
       # weigh subpixels of input image
-      bTL = gr[i*w + j] # brightness value of input image subpixel
-      bTR = gr[i*w + j+1] # brightness value of input image subpixel
-      bBL = gr[(i+1)*w + j] # brightness value of input image subpixel
-      bBR = gr[(i+1)*w + j+1] # brightness value of input image subpixel
-
+      ###
       # weigh subpixels of input image - spill to the right
       bTLr = gr[i*w + j+3] # brightness value of input image subpixel
       bTRr = gr[i*w + j+4] # brightness value of input image subpixel
@@ -477,7 +473,8 @@ imgToText = ->
       bTRbr = gr[(i+2)*w + j+4] # brightness value of input image subpixel
       bBLbr = gr[(i+3)*w + j+3] # brightness value of input image subpixel
       bBRbr = gr[(i+3)*w + j+4] # brightness value of input image subpixel
-      
+      ###
+
       # establish constraints on character selection
       TL=TR=BL=0
       if i>0 and j>0
@@ -493,6 +490,7 @@ imgToText = ->
       closest = 0
       bestErr = 0
       bestCombo = null
+      bestGr = gr
 
       # how much should the spill be considered?
       spillRatioRight = $('#spillRatioRight').val() * $('#spillRatio').val()
@@ -508,6 +506,9 @@ imgToText = ->
         
         combo = charset.combos[TL][TR][BL][k]
 
+        # dithered image specific to this character
+        grLocal = gr
+
         # get spill images
         spillBottom = charset.combos[0][k][0][0]
         spillRight = charset.combos[0][0][k][0]
@@ -515,10 +516,19 @@ imgToText = ->
 
         # check each subpixel against input image
         # save subpixel errors separately to avoid including spill in dithering
+
+        bTL = gr[i*w + j] # brightness value of input image subpixel
         errTL = errTL1 = bTL-combo.TLbrightness
+        
+        bTR = gr[i*w + j+1] # brightness value of input image subpixel
         errTR = errTR1 = bTR-combo.TRbrightness
+              
+        bBL = gr[(i+1)*w + j] # brightness value of input image subpixel
         errBL = errBL1 = bBL-combo.BLbrightness
+        
+        bBR = gr[(i+1)*w + j+1] # brightness value of input image subpixel
         errBR = errBR1 = bBR-combo.BRbrightness
+        
         errTot = errTot1 = (errTL+errTR+errBL+errBR)/4
         errTotShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 

@@ -369,7 +369,7 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, closest, combo, comboRow, considerSpill, cvs, dither, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
+    var BL, TL, TR, bBL, bBR, bTL, bTR, bestCombo, bestErr, bestGr, closest, combo, comboRow, considerSpill, cvs, dither, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotShape, gr, grLocal, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
@@ -383,22 +383,26 @@
       row = [];
       comboRow = [];
       for (j = n = 0, ref2 = w; n < ref2; j = n += 2) {
-        bTL = gr[i * w + j];
-        bTR = gr[i * w + j + 1];
-        bBL = gr[(i + 1) * w + j];
-        bBR = gr[(i + 1) * w + j + 1];
-        bTLr = gr[i * w + j + 3];
-        bTRr = gr[i * w + j + 4];
-        bBLr = gr[(i + 1) * w + j + 3];
-        bBRr = gr[(i + 1) * w + j + 4];
-        bTLb = gr[(i + 2) * w + j];
-        bTRb = gr[(i + 2) * w + j + 1];
-        bBLb = gr[(i + 3) * w + j];
-        bBRb = gr[(i + 3) * w + j + 1];
-        bTLbr = gr[(i + 2) * w + j + 3];
-        bTRbr = gr[(i + 2) * w + j + 4];
-        bBLbr = gr[(i + 3) * w + j + 3];
-        bBRbr = gr[(i + 3) * w + j + 4];
+
+        /*
+         * weigh subpixels of input image - spill to the right
+        bTLr = gr[i*w + j+3] # brightness value of input image subpixel
+        bTRr = gr[i*w + j+4] # brightness value of input image subpixel
+        bBLr = gr[(i+1)*w + j+3] # brightness value of input image subpixel
+        bBRr = gr[(i+1)*w + j+4] # brightness value of input image subpixel
+        
+         * weigh subpixels of input image - spill to the bottom
+        bTLb = gr[(i+2)*w + j] # brightness value of input image subpixel
+        bTRb = gr[(i+2)*w + j+1] # brightness value of input image subpixel
+        bBLb = gr[(i+3)*w + j] # brightness value of input image subpixel
+        bBRb = gr[(i+3)*w + j+1] # brightness value of input image subpixel
+        
+         * weigh subpixels of input image - spill to the bottom right
+        bTLbr = gr[(i+2)*w + j+3] # brightness value of input image subpixel
+        bTRbr = gr[(i+2)*w + j+4] # brightness value of input image subpixel
+        bBLbr = gr[(i+3)*w + j+3] # brightness value of input image subpixel
+        bBRbr = gr[(i+3)*w + j+4] # brightness value of input image subpixel
+         */
         TL = TR = BL = 0;
         if (i > 0 && j > 0) {
           TL = combosArray[i / 2 - 1][j / 2 - 1];
@@ -412,18 +416,24 @@
         closest = 0;
         bestErr = 0;
         bestCombo = null;
+        bestGr = gr;
         spillRatioRight = $('#spillRatioRight').val() * $('#spillRatio').val();
         spillRatioBottomRight = $('#spillRatioBottomRight').val() * $('#spillRatio').val();
         spillRatioBottom = $('#spillRatioBottom').val() * $('#spillRatio').val();
         spillBrightness = 1 - $('#spillBrightness').val();
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
+          grLocal = gr;
           spillBottom = charset.combos[0][k][0][0];
           spillRight = charset.combos[0][0][k][0];
           spillBottomRight = charset.combos[k][0][0][0];
+          bTL = gr[i * w + j];
           errTL = errTL1 = bTL - combo.TLbrightness;
+          bTR = gr[i * w + j + 1];
           errTR = errTR1 = bTR - combo.TRbrightness;
+          bBL = gr[(i + 1) * w + j];
           errBL = errBL1 = bBL - combo.BLbrightness;
+          bBR = gr[(i + 1) * w + j + 1];
           errBR = errBR1 = bBR - combo.BRbrightness;
           errTot = errTot1 = (errTL + errTR + errBL + errBR) / 4;
           errTotShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
