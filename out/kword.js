@@ -369,7 +369,7 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, ditherFine, ditherSpill, ditherSpillFine, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, ditherFine, ditherSpill, ditherSpillFine, errBL, errBL1, errBLb, errBLbr, errBLr, errBR, errBR1, errBRb, errBRbr, errBRr, errTL, errTL1, errTLb, errTLbr, errTLr, errTR, errTR1, errTRb, errTRbr, errTRr, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
@@ -419,8 +419,7 @@
           errBR = errBR1 = bBR - combo.BRbrightness;
           errTot = errTot1 = (errTL + errTR + errBL + errBR) / 4;
           errTotShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
-          bTLr = gr[i * w + j + 3] + errTot * 7 / 16 * ditherSpill;
-          bTRr = gr[i * w + j + 4] + errTot * 7 / 16 * ditherSpill;
+          bTLr = gr[i * w + j + 3] + errTot * 7 / 16 * ditherSpill + (bTRr = gr[i * w + j + 4] + errTot * 7 / 16 * ditherSpill);
           bBLr = gr[(i + 1) * w + j + 3] + errTot * 7 / 16 * ditherSpill;
           bBRr = gr[(i + 1) * w + j + 4] + errTot * 7 / 16 * ditherSpill;
           bTLb = gr[(i + 2) * w + j] + errTot * 5 / 16 * ditherSpill;
@@ -431,24 +430,24 @@
           bTRbr = gr[(i + 2) * w + j + 4] + errTot * 1 / 16 * ditherSpill;
           bBLbr = gr[(i + 3) * w + j + 3] + errTot * 1 / 16 * ditherSpill;
           bBRbr = gr[(i + 3) * w + j + 4] + errTot * 1 / 16 * ditherSpill;
-          errTL = bTLb * spillBrightness - spillBottom.TLbrightness;
-          errTR = bTRb * spillBrightness - spillBottom.TRbrightness + errTL * 7 / 16 * ditherSpillFine;
-          errBL = bBLb * spillBrightness - spillBottom.BLbrightness + (errTL * 5 / 16 + errTR * 3 / 16) * ditherSpillFine;
-          errBR = bBRb * spillBrightness - spillBottom.BRbrightness + (errTL * 1 / 16 + errBL * 7 / 16 + errTR * 5 / 16) * ditherSpillFine;
-          errTotBottom = (errTL + errTR + errBL + errBR) / 4;
-          errTotBottomShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
-          errTL = bTLr * spillBrightness - spillRight.TLbrightness;
-          errTR = bTRr * spillBrightness - spillRight.TRbrightness + errTL * 7 / 16 * ditherSpillFine;
-          errBL = bBLr * spillBrightness - spillRight.BLbrightness + (errTL * 5 / 16 + errTR * 3 / 16) * ditherSpillFine;
-          errBR = bBRr * spillBrightness - spillRight.BRbrightness + (errTL * 1 / 16 + errBL * 7 / 16 + errTR * 5 / 16) * ditherSpillFine;
-          errTotRight = (errTL + errTR + errBL + errBR) / 4;
-          errTotRightShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
-          errTL = bTLbr * spillBrightness - spillBottomRight.TLbrightness;
-          errTR = bTRbr * spillBrightness - spillBottomRight.TRbrightness + errTL * 7 / 16 * ditherSpillFine;
-          errBL = bBLbr * spillBrightness - spillBottomRight.BLbrightness + (errTL * 5 / 16 + errTR * 3 / 16) * ditherSpillFine;
-          errBR = bBRbr * spillBrightness - spillBottomRight.BRbrightness + (errTL * 1 / 16 + errBL * 7 / 16 + errTR * 5 / 16) * ditherSpillFine;
+          errTLr = (bTLr + errTR1 * 7 / 16 * ditherSpillFine) * spillBrightness - spillRight.TLbrightness;
+          errTRr = (bTRr + errTLr * 7 / 16 * ditherSpillFine) * spillBrightness - spillRight.TRbrightness;
+          errBLr = (bBLr + (errTLr * 5 / 16 + errTRr * 3 / 16 + errTR1 * 1 / 16 + errBR1 * 7 / 16) * ditherSpillFine) * spillBrightness - spillRight.BLbrightness;
+          errBRr = (bBRr + (errTLr * 1 / 16 + errBLr * 7 / 16 + errTRr * 5 / 16) * ditherSpillFine) * spillBrightness - spillRight.BRbrightness;
+          errTLb = (bTLb + (errBL1 * 5 / 16 + errBR1 * 3 / 16) * ditherSpillFine) * spillBrightness - spillBottom.TLbrightness;
+          errTRb = (bTRb + (errTLb * 7 / 16 + errBL1 * 1 / 16 + errBR1 * 5 / 16 + errBLr * 3 / 16) * ditherSpillFine) * spillBrightness - spillBottom.TRbrightness;
+          errTLbr = (bTLbr + (errBR1 * 1 / 16 + errBLr * 5 / 16 + errTRb * 7 / 16) * ditherSpillFine) * spillBrightness - spillBottomRight.TLbrightness;
+          errTRbr = (bTRbr + (errBLr * 1 / 16 + errBRr * 5 / 16 + errTLbr * 7 / 16) * ditherSpillFine) * spillBrightness - spillBottomRight.TRbrightness;
+          errBLb = (bBLb + (errTLb * 5 / 16 + errTRb * 3 / 16) * ditherSpillFine) * spillBrightness - spillBottom.BLbrightness;
+          errBRb = (bBRb + (errTLb * 1 / 16 + errBLb * 7 / 16 + errTRb * 5 / 16 + errTLbr * 3 / 16) * ditherSpillFine) * spillBrightness - spillBottom.BRbrightness;
+          errBLbr = (bBLbr + (errTRb * 1 / 16 + errTLbr * 5 / 16 + errTRbr * 3 / 16 + errBRb * 7 / 16) * ditherSpillFine) * spillBrightness - spillBottomRight.BLbrightness;
+          errBRbr = (bBRbr + (errTLbr * 1 / 16 + errTRbr * 5 / 16 + errBLbr * 7 / 16) * ditherSpillFine) * spillBrightness - spillBottomRight.BRbrightness;
+          errTotRight = (errTLr + errTRr + errBLr + errBRr) / 4;
+          errTotRightShape = (Math.abs(errTLr) + Math.abs(errTRr) + Math.abs(errBLr) + Math.abs(errBRr)) / 4;
+          errTotBottom = (errTLb + errTRb + errBLb + errBRb) / 4;
+          errTotBottomShape = (Math.abs(errTLb) + Math.abs(errTRb) + Math.abs(errBLb) + Math.abs(errBRb)) / 4;
           errTotBottomRight = (errTL + errTR + errBL + errBR) / 4;
-          errTotBottomRightShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
+          errTotBottomRightShape = (Math.abs(errTLbr) + Math.abs(errTRbr) + Math.abs(errBLbr) + Math.abs(errBRbr)) / 4;
           if (considerSpill) {
             errTot = Math.abs(errTot) + Math.abs(errTotBottom) * spillRatioBottom + Math.abs(errTotRight) * spillRatioRight + Math.abs(errTotBottomRight) * spillRatioBottomRight;
             errTotShape = Math.abs(errTotShape) + Math.abs(errTotBottomShape) * spillRatioBottom + Math.abs(errTotRightShape) * spillRatioRight + Math.abs(errTotBottomRightShape) * spillRatioBottomRight;
