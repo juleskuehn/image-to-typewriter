@@ -369,7 +369,7 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, grLocal, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, errBL, errBL1, errBR, errBR1, errTL, errTL1, errTR, errTR1, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
@@ -416,19 +416,18 @@
           errBR = errBR1 = bBR - combo.BRbrightness;
           errTot = errTot1 = (errTL + errTR + errBL + errBR) / 4;
           errTotShape = (Math.abs(errTL) + Math.abs(errTR) + Math.abs(errBL) + Math.abs(errBR)) / 4;
-          grLocal = dither(gr, errTot, i, j, w, h, ditherAmount);
-          bTLr = grLocal[i * w + j + 3];
-          bTRr = grLocal[i * w + j + 4];
-          bBLr = grLocal[(i + 1) * w + j + 3];
-          bBRr = grLocal[(i + 1) * w + j + 4];
-          bTLb = grLocal[(i + 2) * w + j];
-          bTRb = grLocal[(i + 2) * w + j + 1];
-          bBLb = grLocal[(i + 3) * w + j];
-          bBRb = grLocal[(i + 3) * w + j + 1];
-          bTLbr = grLocal[(i + 2) * w + j + 3];
-          bTRbr = grLocal[(i + 2) * w + j + 4];
-          bBLbr = grLocal[(i + 3) * w + j + 3];
-          bBRbr = grLocal[(i + 3) * w + j + 4];
+          bTLr = gr[i * w + j + 3] + errTot * 7 / 16;
+          bTRr = gr[i * w + j + 4] + errTot * 7 / 16;
+          bBLr = gr[(i + 1) * w + j + 3] + errTot * 7 / 16;
+          bBRr = gr[(i + 1) * w + j + 4] + errTot * 7 / 16;
+          bTLb = gr[(i + 2) * w + j] + errTot * 5 / 16;
+          bTRb = gr[(i + 2) * w + j + 1] + errTot * 5 / 16;
+          bBLb = gr[(i + 3) * w + j] + errTot * 5 / 16;
+          bBRb = gr[(i + 3) * w + j + 1] + errTot * 5 / 16;
+          bTLbr = gr[(i + 2) * w + j + 3] + errTot * 1 / 16;
+          bTRbr = gr[(i + 2) * w + j + 4] + errTot * 1 / 16;
+          bBLbr = gr[(i + 3) * w + j + 3] + errTot * 1 / 16;
+          bBRbr = gr[(i + 3) * w + j + 4] + errTot * 1 / 16;
           errTL = bTLb * spillBrightness - spillBottom.TLbrightness;
           errTR = bTRb * spillBrightness - spillBottom.TRbrightness;
           errBL = bBLb * spillBrightness - spillBottom.BLbrightness;

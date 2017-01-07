@@ -485,7 +485,7 @@ imgToText = ->
 
       # loop through appropriate subsection of combos and weigh each subpixel against the input image
       for k in [0...charset.combos[TL][TR][BL].length]
-        
+
         combo = charset.combos[TL][TR][BL][k]
 
         # get spill images
@@ -511,29 +511,26 @@ imgToText = ->
         errTot = errTot1 = (errTL+errTR+errBL+errBR)/4
         errTotShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
-        # dither a working copy of the image to evaluate spill based on dither
-        grLocal = dither(gr,errTot,i,j,w,h,ditherAmount)
-
         
         # compare spill areas
 
         # weigh subpixels of input image - spill to the right
-        bTLr = grLocal[i*w + j+3] # brightness value of input image subpixel
-        bTRr = grLocal[i*w + j+4] # brightness value of input image subpixel
-        bBLr = grLocal[(i+1)*w + j+3] # brightness value of input image subpixel
-        bBRr = grLocal[(i+1)*w + j+4] # brightness value of input image subpixel
+        bTLr = gr[i*w + j+3] + errTot*7/16# brightness value of input image subpixel
+        bTRr = gr[i*w + j+4] + errTot*7/16# brightness value of input image subpixel
+        bBLr = gr[(i+1)*w + j+3] + errTot*7/16# brightness value of input image subpixel
+        bBRr = gr[(i+1)*w + j+4] + errTot*7/16# brightness value of input image subpixel
 
         # weigh subpixels of input image - spill to the bottom
-        bTLb = grLocal[(i+2)*w + j] # brightness value of input image subpixel
-        bTRb = grLocal[(i+2)*w + j+1] # brightness value of input image subpixel
-        bBLb = grLocal[(i+3)*w + j] # brightness value of input image subpixel
-        bBRb = grLocal[(i+3)*w + j+1] # brightness value of input image subpixel
+        bTLb = gr[(i+2)*w + j] + errTot*5/16# brightness value of input image subpixel
+        bTRb = gr[(i+2)*w + j+1] + errTot*5/16# brightness value of input image subpixel
+        bBLb = gr[(i+3)*w + j] + errTot*5/16# brightness value of input image subpixel
+        bBRb = gr[(i+3)*w + j+1] + errTot*5/16# brightness value of input image subpixel
 
         # weigh subpixels of input image - spill to the bottom right
-        bTLbr = grLocal[(i+2)*w + j+3] # brightness value of input image subpixel
-        bTRbr = grLocal[(i+2)*w + j+4] # brightness value of input image subpixel
-        bBLbr = grLocal[(i+3)*w + j+3] # brightness value of input image subpixel
-        bBRbr = grLocal[(i+3)*w + j+4] # brightness value of input image subpixel
+        bTLbr = gr[(i+2)*w + j+3] + errTot*1/16 # brightness value of input image subpixel
+        bTRbr = gr[(i+2)*w + j+4] + errTot*1/16 # brightness value of input image subpixel
+        bBLbr = gr[(i+3)*w + j+3] + errTot*1/16 # brightness value of input image subpixel
+        bBRbr = gr[(i+3)*w + j+4] + errTot*1/16 # brightness value of input image subpixel
         
 
         errTL = bTLb*spillBrightness-spillBottom.TLbrightness
