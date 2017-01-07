@@ -176,3 +176,11 @@ div.hidden {
   padding-left: 30px;
   padding-right: 5px;
 }
+#view_show_layers div.layer {
+  float: left;
+}
+#view_show_layers div.layer canvas {
+  position: absolute !important;
+  left: 0;
+  top: 0;
+}

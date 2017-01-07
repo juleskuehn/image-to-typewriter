@@ -196,10 +196,18 @@ html
         canvas(id="outputImage" class="resize" width="0" height="0")
 
       div(id="view_show_layers")
-        canvas(id="layer1" class="resize")
-        canvas(id="layer2" class="resize")
-        canvas(id="layer3" class="resize")
-        canvas(id="layer4" class="resize")
+        div(class="layer")
+          canvas(id="layer1" class="resize")
+          canvas(id="layer1_overlay" class="resize overlay")
+        div(class="layer")
+          canvas(id="layer2" class="resize")
+          canvas(id="layer2_overlay" class="resize overlay")
+        div(class="layer")
+          canvas(id="layer3" class="resize")
+          canvas(id="layer3_overlay" class="resize overlay")
+        div(class="layer")
+          canvas(id="layer4" class="resize")
+          canvas(id="layer4_overlay" class="resize overlay")
 
     div(id="instructions")
 

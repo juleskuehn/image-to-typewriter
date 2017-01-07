@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, chopCharset, combosArray, contrastImage, dither, drawCharImage, drawLayers, greyscale, imgToText, inputImage, target, theImage, updateContainer;
+  var bestCombos, charset, chopCharset, combosArray, contrastImage, dither, drawCharImage, drawLayers, drawTypingTools, greyscale, imgToText, inputImage, target, theImage, typing, updateContainer;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -524,66 +524,6 @@
     return results;
   };
 
-  drawLayers = function() {
-    var charLayer1, charLayer2, charLayer3, charLayer4, ctx1, ctx2, ctx3, ctx4, i, j, layer1, layer2, layer3, layer4, m, outCanvas, outCanvas1, outCanvas2, outCanvas3, outCanvas4, ref, results;
-    console.log(combosArray);
-    layer1 = document.getElementById('layer1');
-    layer2 = document.getElementById('layer2');
-    layer3 = document.getElementById('layer3');
-    layer4 = document.getElementById('layer4');
-    outCanvas = outCanvas1 = layer1;
-    outCanvas1.width = charset.qWidth * combosArray[0].length;
-    outCanvas1.height = charset.qHeight * combosArray.length;
-    ctx1 = outCanvas1.getContext("2d");
-    ctx1.clearRect(0, 0, outCanvas.width, outCanvas.height);
-    outCanvas2 = layer2;
-    outCanvas2.width = charset.qWidth * combosArray[0].length;
-    outCanvas2.height = charset.qHeight * combosArray.length;
-    ctx2 = outCanvas2.getContext("2d");
-    ctx2.clearRect(0, 0, outCanvas.width, outCanvas.height);
-    outCanvas3 = layer3;
-    outCanvas3.width = charset.qWidth * combosArray[0].length;
-    outCanvas3.height = charset.qHeight * combosArray.length;
-    ctx3 = outCanvas3.getContext("2d");
-    ctx3.clearRect(0, 0, outCanvas.width, outCanvas.height);
-    outCanvas4 = layer4;
-    outCanvas4.width = charset.qWidth * combosArray[0].length;
-    outCanvas4.height = charset.qHeight * combosArray.length;
-    ctx4 = outCanvas4.getContext("2d");
-    ctx4.clearRect(0, 0, outCanvas.width, outCanvas.height);
-    results = [];
-    for (i = m = 0, ref = combosArray.length - 1; m < ref; i = m += 2) {
-      results.push((function() {
-        var n, ref1, results1;
-        results1 = [];
-        for (j = n = 0, ref1 = combosArray[0].length - 1; n < ref1; j = n += 2) {
-          charLayer1 = charset.selected[combosArray[i][j]];
-          charLayer2 = charset.selected[combosArray[i][j + 1]];
-          charLayer3 = charset.selected[combosArray[i + 1][j]];
-          charLayer4 = charset.selected[combosArray[i + 1][j + 1]];
-          ctx1.putImageData(charLayer1.TL, j * charset.qWidth, i * charset.qHeight);
-          ctx1.putImageData(charLayer1.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
-          ctx1.putImageData(charLayer1.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
-          ctx1.putImageData(charLayer1.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
-          ctx2.putImageData(charLayer2.TL, j * charset.qWidth, i * charset.qHeight);
-          ctx2.putImageData(charLayer2.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
-          ctx2.putImageData(charLayer2.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
-          ctx2.putImageData(charLayer2.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
-          ctx3.putImageData(charLayer3.TL, j * charset.qWidth, i * charset.qHeight);
-          ctx3.putImageData(charLayer3.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
-          ctx3.putImageData(charLayer3.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
-          ctx3.putImageData(charLayer3.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
-          ctx4.putImageData(charLayer4.TL, j * charset.qWidth, i * charset.qHeight);
-          ctx4.putImageData(charLayer4.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
-          ctx4.putImageData(charLayer4.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
-          results1.push(ctx4.putImageData(charLayer4.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight));
-        }
-        return results1;
-      })());
-    }
-    return results;
-  };
-
   greyscale = function(canvas) {
     var b, brightness, contrast, customB, customG, customR, cvs, g, greyArray, greyscaleMethod, imgData, l, m, maxAdjust, minAdjust, p, r, ref, ref1, ref2, ref3, ref4, ref5, ref6;
     greyscaleMethod = $('#bw').val();
@@ -855,6 +795,127 @@
         "zoom": Math.min(scaleY, scaleX) + "%"
       });
     });
+  };
+
+  typing = {
+    selectedLayer: "layer1",
+    layer1: 0,
+    layer2: 0,
+    layer3: 0,
+    layer4: 0
+  };
+
+  $("#view_show_layers canvas").click(function() {
+    typing.selectedLayer = $(this).attr("id").split("_")[0];
+    return drawTypingTools(typing.selectedLayer);
+  });
+
+  drawTypingTools = function(layer) {
+    var ctx, drawGrid, len, lightboxSelection, m, otherLayer, overlay, ref;
+    ref = [1, 2, 3, 4];
+    for (m = 0, len = ref.length; m < len; m++) {
+      otherLayer = ref[m];
+      overlay = document.getElementById("layer" + otherLayer + "_overlay");
+      overlay.width = charset.qWidth * combosArray[0].length;
+      overlay.height = charset.qHeight * combosArray.length;
+      ctx = overlay.getContext("2d");
+      ctx.clearRect(0, 0, overlay.width, overlay.height);
+    }
+    overlay = document.getElementById(layer + "_overlay");
+    overlay.width = charset.qWidth * combosArray[0].length;
+    overlay.height = charset.qHeight * combosArray.length;
+    ctx = overlay.getContext("2d");
+    updateContainer();
+    lightboxSelection = function() {
+      var rowStart;
+      ctx.clearRect(0, 0, overlay.width, overlay.height);
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, overlay.width, overlay.height);
+      rowStart = typing[layer] * charset.qHeight * 2;
+      return ctx.clearRect(0, rowStart, overlay.width, charset.qHeight * 2);
+    };
+    lightboxSelection();
+    return drawGrid = function() {
+      var col, n, numCols, numRows, o, ref1, ref2, results, row;
+      numRows = charset.settings.end[1] - charset.settings.start[1];
+      numCols = charset.settings.end[0] - charset.settings.start[0];
+      for (row = n = 0, ref1 = numRows + 1; 0 <= ref1 ? n <= ref1 : n >= ref1; row = 0 <= ref1 ? ++n : --n) {
+        ctx.beginPath();
+        ctx.moveTo(start[0], start[1] + row * charHeight);
+        ctx.lineTo(end[0] + offsetX, start[1] + row * charHeight);
+        ctx.strokeStyle = "rgba(255,0,0,0.5)";
+        ctx.stroke();
+      }
+      results = [];
+      for (col = o = 0, ref2 = numCols + 1; 0 <= ref2 ? o <= ref2 : o >= ref2; col = 0 <= ref2 ? ++o : --o) {
+        ctx.beginPath();
+        ctx.moveTo(start[0] + col * charWidth, start[1]);
+        ctx.lineTo(start[0] + col * charWidth, end[1] + offsetY);
+        ctx.strokeStyle = "rgba(255,0,0,0.5)";
+        results.push(ctx.stroke());
+      }
+      return results;
+    };
+  };
+
+  drawLayers = function() {
+    var charLayer1, charLayer2, charLayer3, charLayer4, ctx1, ctx2, ctx3, ctx4, i, j, layer1, layer2, layer3, layer4, m, outCanvas, outCanvas1, outCanvas2, outCanvas3, outCanvas4, ref, results;
+    console.log(combosArray);
+    layer1 = document.getElementById('layer1');
+    layer2 = document.getElementById('layer2');
+    layer3 = document.getElementById('layer3');
+    layer4 = document.getElementById('layer4');
+    outCanvas = outCanvas1 = layer1;
+    outCanvas1.width = charset.qWidth * combosArray[0].length;
+    outCanvas1.height = charset.qHeight * combosArray.length;
+    ctx1 = outCanvas1.getContext("2d");
+    ctx1.clearRect(0, 0, outCanvas.width, outCanvas.height);
+    outCanvas2 = layer2;
+    outCanvas2.width = charset.qWidth * combosArray[0].length;
+    outCanvas2.height = charset.qHeight * combosArray.length;
+    ctx2 = outCanvas2.getContext("2d");
+    ctx2.clearRect(0, 0, outCanvas.width, outCanvas.height);
+    outCanvas3 = layer3;
+    outCanvas3.width = charset.qWidth * combosArray[0].length;
+    outCanvas3.height = charset.qHeight * combosArray.length;
+    ctx3 = outCanvas3.getContext("2d");
+    ctx3.clearRect(0, 0, outCanvas.width, outCanvas.height);
+    outCanvas4 = layer4;
+    outCanvas4.width = charset.qWidth * combosArray[0].length;
+    outCanvas4.height = charset.qHeight * combosArray.length;
+    ctx4 = outCanvas4.getContext("2d");
+    ctx4.clearRect(0, 0, outCanvas.width, outCanvas.height);
+    results = [];
+    for (i = m = 0, ref = combosArray.length - 1; m < ref; i = m += 2) {
+      results.push((function() {
+        var n, ref1, results1;
+        results1 = [];
+        for (j = n = 0, ref1 = combosArray[0].length - 1; n < ref1; j = n += 2) {
+          charLayer1 = charset.selected[combosArray[i][j]];
+          charLayer2 = charset.selected[combosArray[i][j + 1]];
+          charLayer3 = charset.selected[combosArray[i + 1][j]];
+          charLayer4 = charset.selected[combosArray[i + 1][j + 1]];
+          ctx1.putImageData(charLayer1.TL, j * charset.qWidth, i * charset.qHeight);
+          ctx1.putImageData(charLayer1.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
+          ctx1.putImageData(charLayer1.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx1.putImageData(charLayer1.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx2.putImageData(charLayer2.TL, j * charset.qWidth, i * charset.qHeight);
+          ctx2.putImageData(charLayer2.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
+          ctx2.putImageData(charLayer2.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx2.putImageData(charLayer2.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx3.putImageData(charLayer3.TL, j * charset.qWidth, i * charset.qHeight);
+          ctx3.putImageData(charLayer3.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
+          ctx3.putImageData(charLayer3.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx3.putImageData(charLayer3.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight);
+          ctx4.putImageData(charLayer4.TL, j * charset.qWidth, i * charset.qHeight);
+          ctx4.putImageData(charLayer4.TR, j * charset.qWidth + charset.qWidth, i * charset.qHeight);
+          ctx4.putImageData(charLayer4.BL, j * charset.qWidth, i * charset.qHeight + charset.qHeight);
+          results1.push(ctx4.putImageData(charLayer4.BR, j * charset.qWidth + charset.qWidth, i * charset.qHeight + charset.qHeight));
+        }
+        return results1;
+      })());
+    }
+    return results;
   };
 
 }).call(this);

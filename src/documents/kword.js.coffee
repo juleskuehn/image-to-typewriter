@@ -589,7 +589,7 @@ imgToText = ->
   drawCharImage()
   updateContainer()
 
-
+# coarse dithering
 dither = (gr,error,i,j,w,h,ditherAmount) ->
   if j+1 < w
     gr[i*w + j+2] += (error * 7/16) * ditherAmount
@@ -633,73 +633,6 @@ drawCharImage = ->
       # print combo image
       ctx.putImageData(combo.image,j*charset.qWidth,i*charset.qHeight)
 
-
-drawLayers = ->
-
-  console.log combosArray
-
-  layer1 = document.getElementById('layer1')
-  layer2 = document.getElementById('layer2')
-  layer3 = document.getElementById('layer3')
-  layer4 = document.getElementById('layer4')
-
-  outCanvas = outCanvas1 = layer1
-  # each character is the size of 4 quadrants
-  outCanvas1.width = charset.qWidth * combosArray[0].length
-  outCanvas1.height = charset.qHeight * combosArray.length
-  ctx1 = outCanvas1.getContext("2d")
-  ctx1.clearRect(0, 0, outCanvas.width, outCanvas.height)
-
-  outCanvas2 = layer2
-  # each character is the size of 4 quadrants
-  outCanvas2.width = charset.qWidth * combosArray[0].length
-  outCanvas2.height = charset.qHeight * combosArray.length
-  ctx2 = outCanvas2.getContext("2d")
-  ctx2.clearRect(0, 0, outCanvas.width, outCanvas.height)
-
-  outCanvas3 = layer3
-  # each character is the size of 4 quadrants
-  outCanvas3.width = charset.qWidth * combosArray[0].length
-  outCanvas3.height = charset.qHeight * combosArray.length
-  ctx3 = outCanvas3.getContext("2d")
-  ctx3.clearRect(0, 0, outCanvas.width, outCanvas.height)
-
-  outCanvas4 = layer4
-  # each character is the size of 4 quadrants
-  outCanvas4.width = charset.qWidth * combosArray[0].length
-  outCanvas4.height = charset.qHeight * combosArray.length
-  ctx4 = outCanvas4.getContext("2d")
-  ctx4.clearRect(0, 0, outCanvas.width, outCanvas.height)
-
-  for i in [0...combosArray.length-1] by 2
-    for j in [0...combosArray[0].length-1] by 2
-
-      charLayer1 = charset.selected[ combosArray[i][j] ]
-      charLayer2 = charset.selected[ combosArray[i][j+1] ]
-      charLayer3 = charset.selected[ combosArray[i+1][j] ]
-      charLayer4 = charset.selected[ combosArray[i+1][j+1] ]
-
-
-      ctx1.putImageData(charLayer1.TL,j*charset.qWidth,i*charset.qHeight)
-      ctx1.putImageData(charLayer1.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
-      ctx1.putImageData(charLayer1.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
-      ctx1.putImageData(charLayer1.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
-      
-      ctx2.putImageData(charLayer2.TL,j*charset.qWidth,i*charset.qHeight)
-      ctx2.putImageData(charLayer2.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
-      ctx2.putImageData(charLayer2.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
-      ctx2.putImageData(charLayer2.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
-      
-      ctx3.putImageData(charLayer3.TL,j*charset.qWidth,i*charset.qHeight)
-      ctx3.putImageData(charLayer3.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
-      ctx3.putImageData(charLayer3.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
-      ctx3.putImageData(charLayer3.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
-      
-      ctx4.putImageData(charLayer4.TL,j*charset.qWidth,i*charset.qHeight)
-      ctx4.putImageData(charLayer4.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
-      ctx4.putImageData(charLayer4.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
-      ctx4.putImageData(charLayer4.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
-      
 
 
 greyscale = (canvas) ->
@@ -961,3 +894,140 @@ updateContainer = ->
     $(this).css("zoom":Math.min(scaleY,scaleX)+"%")
     
   )
+
+# typing tools
+
+typing =
+ # to which layer should keyboard events be applied?
+ selectedLayer: "layer1"
+ # keep track of selected row for each layer
+ layer1: 0
+ layer2: 0
+ layer3: 0
+ layer4: 0
+
+$("#view_show_layers canvas").click ->
+
+ typing.selectedLayer = $(this).attr("id").split("_")[0]
+ drawTypingTools(typing.selectedLayer)
+
+
+
+drawTypingTools = (layer) ->
+
+  # clear unselected layers of typing tools
+  for otherLayer in [1,2,3,4]
+    overlay = document.getElementById("layer"+otherLayer+"_overlay")
+    overlay.width = charset.qWidth * combosArray[0].length
+    overlay.height = charset.qHeight * combosArray.length
+    ctx = overlay.getContext("2d")
+    ctx.clearRect(0, 0, overlay.width, overlay.height)
+
+  # draw typing tools for selected layer
+  overlay = document.getElementById(layer+"_overlay")
+  overlay.width = charset.qWidth * combosArray[0].length
+  overlay.height = charset.qHeight * combosArray.length
+  ctx = overlay.getContext("2d")
+
+  updateContainer()
+
+  lightboxSelection = ->
+    # draw dark translucent overlay
+    ctx.clearRect(0, 0, overlay.width, overlay.height)
+    ctx.fillStyle = "rgba(0,0,0,0.5)"
+    ctx.fillRect(0, 0, overlay.width, overlay.height)
+    # highlight selected row
+    rowStart = typing[layer] * charset.qHeight * 2
+    ctx.clearRect(0, rowStart, overlay.width, charset.qHeight*2)
+
+  lightboxSelection()
+
+  # TODO fix this
+  drawGrid = ->
+    numRows = (charset.settings.end[1] - charset.settings.start[1])
+    numCols = (charset.settings.end[0] - charset.settings.start[0])
+    for row in [0..numRows+1]
+      # horizontal lines
+      ctx.beginPath();
+      ctx.moveTo(start[0],start[1]+row*charHeight);
+      ctx.lineTo(end[0]+offsetX,start[1]+row*charHeight);
+      ctx.strokeStyle = "rgba(255,0,0,0.5)"
+      ctx.stroke();
+    for col in [0..numCols+1]
+      # vertical lines
+      ctx.beginPath();
+      ctx.moveTo(start[0]+col*charWidth,start[1]);
+      ctx.lineTo(start[0]+col*charWidth,end[1]+offsetY);
+      ctx.strokeStyle = "rgba(255,0,0,0.5)"
+      ctx.stroke();
+
+  # drawGrid()
+
+
+
+
+drawLayers = ->
+
+  console.log combosArray
+
+  layer1 = document.getElementById('layer1')
+  layer2 = document.getElementById('layer2')
+  layer3 = document.getElementById('layer3')
+  layer4 = document.getElementById('layer4')
+
+  outCanvas = outCanvas1 = layer1
+  # each character is the size of 4 quadrants
+  outCanvas1.width = charset.qWidth * combosArray[0].length
+  outCanvas1.height = charset.qHeight * combosArray.length
+  ctx1 = outCanvas1.getContext("2d")
+  ctx1.clearRect(0, 0, outCanvas.width, outCanvas.height)
+
+  outCanvas2 = layer2
+  # each character is the size of 4 quadrants
+  outCanvas2.width = charset.qWidth * combosArray[0].length
+  outCanvas2.height = charset.qHeight * combosArray.length
+  ctx2 = outCanvas2.getContext("2d")
+  ctx2.clearRect(0, 0, outCanvas.width, outCanvas.height)
+
+  outCanvas3 = layer3
+  # each character is the size of 4 quadrants
+  outCanvas3.width = charset.qWidth * combosArray[0].length
+  outCanvas3.height = charset.qHeight * combosArray.length
+  ctx3 = outCanvas3.getContext("2d")
+  ctx3.clearRect(0, 0, outCanvas.width, outCanvas.height)
+
+  outCanvas4 = layer4
+  # each character is the size of 4 quadrants
+  outCanvas4.width = charset.qWidth * combosArray[0].length
+  outCanvas4.height = charset.qHeight * combosArray.length
+  ctx4 = outCanvas4.getContext("2d")
+  ctx4.clearRect(0, 0, outCanvas.width, outCanvas.height)
+
+  for i in [0...combosArray.length-1] by 2
+    for j in [0...combosArray[0].length-1] by 2
+
+      charLayer1 = charset.selected[ combosArray[i][j] ]
+      charLayer2 = charset.selected[ combosArray[i][j+1] ]
+      charLayer3 = charset.selected[ combosArray[i+1][j] ]
+      charLayer4 = charset.selected[ combosArray[i+1][j+1] ]
+
+
+      ctx1.putImageData(charLayer1.TL,j*charset.qWidth,i*charset.qHeight)
+      ctx1.putImageData(charLayer1.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
+      ctx1.putImageData(charLayer1.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
+      ctx1.putImageData(charLayer1.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
+      
+      ctx2.putImageData(charLayer2.TL,j*charset.qWidth,i*charset.qHeight)
+      ctx2.putImageData(charLayer2.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
+      ctx2.putImageData(charLayer2.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
+      ctx2.putImageData(charLayer2.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
+      
+      ctx3.putImageData(charLayer3.TL,j*charset.qWidth,i*charset.qHeight)
+      ctx3.putImageData(charLayer3.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
+      ctx3.putImageData(charLayer3.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
+      ctx3.putImageData(charLayer3.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)
+      
+      ctx4.putImageData(charLayer4.TL,j*charset.qWidth,i*charset.qHeight)
+      ctx4.putImageData(charLayer4.TR,j*charset.qWidth+charset.qWidth,i*charset.qHeight)
+      ctx4.putImageData(charLayer4.BL,j*charset.qWidth,i*charset.qHeight+charset.qHeight)
+      ctx4.putImageData(charLayer4.BR,j*charset.qWidth+charset.qWidth,i*charset.qHeight+charset.qHeight)

@@ -188,10 +188,22 @@
         <canvas id="outputImage" width="0" height="0" class="resize"></canvas>
       </div>
       <div id="view_show_layers">
-        <canvas id="layer1" class="resize"></canvas>
-        <canvas id="layer2" class="resize"></canvas>
-        <canvas id="layer3" class="resize"></canvas>
-        <canvas id="layer4" class="resize"></canvas>
+        <div class="layer">
+          <canvas id="layer1" class="resize"></canvas>
+          <canvas id="layer1_overlay" class="resize overlay"></canvas>
+        </div>
+        <div class="layer">
+          <canvas id="layer2" class="resize"></canvas>
+          <canvas id="layer2_overlay" class="resize overlay"></canvas>
+        </div>
+        <div class="layer">
+          <canvas id="layer3" class="resize"></canvas>
+          <canvas id="layer3_overlay" class="resize overlay"></canvas>
+        </div>
+        <div class="layer">
+          <canvas id="layer4" class="resize"></canvas>
+          <canvas id="layer4_overlay" class="resize overlay"></canvas>
+        </div>
       </div>
     </div>
     <div id="instructions"><a id="closeInstructions" href="#">[X]</a>
