@@ -55,6 +55,19 @@ h1 {
 #image_options select {
   width: 85px;
 }
+#image_options select {
+  margin: 5px;
+}
+#image_options div.collapsed div {
+  display: none;
+}
+#image_options div.collapse h3 {
+  cursor: pointer;
+}
+#image_options div.collapse h3 a {
+  float: right;
+  font-weight: normal;
+}
 #topBar {
   z-index: 2;
   background: #fff;

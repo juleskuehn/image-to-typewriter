@@ -591,7 +591,7 @@
     customG = $('#customG').val();
     customB = $('#customB').val();
     minAdjust = $('#minAdjust').val();
-    maxAdjust = $('#maxAdjust').val();
+    maxAdjust = 1 - $('#maxAdjust').val();
     contrast = $('#contrast').val();
     brightness = $('#brightness').val();
     greyArray = [];
@@ -814,6 +814,16 @@
     } else {
       return $('#instructions').addClass('hidden');
     }
+  });
+
+  $('div.collapse h3').each(function() {
+    return $(this).click(function() {
+      if ($(this).parent().hasClass("collapsed")) {
+        return $(this).parent().removeClass("collapsed");
+      } else {
+        return $(this).parent().addClass("collapsed");
+      }
+    });
   });
 
   $(document).ready(function() {

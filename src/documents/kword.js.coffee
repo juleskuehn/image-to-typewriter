@@ -708,7 +708,7 @@ greyscale = (canvas) ->
   customG = $('#customG').val()
   customB = $('#customB').val()
   minAdjust = $('#minAdjust').val()
-  maxAdjust = $('#maxAdjust').val()
+  maxAdjust = 1-$('#maxAdjust').val()
   contrast = $('#contrast').val()
   brightness = $('#brightness').val()
   greyArray = []
@@ -930,6 +930,13 @@ $('#closeInstructions').click ->
     $('#instructions').removeClass('hidden')
   else
     $('#instructions').addClass('hidden')
+
+$('div.collapse h3').each ->
+    $(this).click ->
+      if $(this).parent().hasClass("collapsed")
+        $(this).parent().removeClass("collapsed")
+      else
+        $(this).parent().addClass("collapsed")
 
 
 # resize viewport
