@@ -79,12 +79,18 @@ html
              option(value="blue") Blue
             label B/W Conversion
            div
-            input(type="range" id="ditherAmount" min="0" max="1" value="1" step="0.1")
+            input(type="range" id="ditherAmount" min="0" max="1" value="0.3" step="0.1")
             label
              b Dither Amount
-           div(class="hidden")
-            input(type="checkbox" id="ditherFine" checked)
+           div
+            input(type="range" id="ditherFine" min="0" max="1" value="1" step="0.1")
             label Dither Fine
+           div
+            input(type="range" id="ditherSpill" min="0" max="1" value="0" step="0.1")
+            label Dither Spill
+           div
+            input(type="range" id="ditherSpillFine" min="0" max="1" value="0" step="0.1")
+            label D. Spill Fine
            div(class="hidden")
             input(type="checkbox" id="considerSpill" checked)
             label Consider Spill?
@@ -98,7 +104,7 @@ html
             input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.1")
             label Spill Ratio BR
            div 
-            input(type="range" id="spillRatio" min="0" max="1" value="1" step="0.1")
+            input(type="range" id="spillRatio" min="0" max="1" value="0.5" step="0.1")
             label
              b Spill Ratio
            div
@@ -109,14 +115,14 @@ html
             label
              b Max Weight
            div
-            input(type="range" id="brightness" min="-128" max="128" value="0" step="1")
+            input(type="range" id="brightness" min="-128" max="128" value="0" step="4")
             label Brightness
            div
             input(type="range" id="shapeAmount" min="0" max="1" value="1" step="0.1")
             label
              b Shape Amount
            div
-            input(type="range" id="contrast" min="-128" max="128" value="0" step="1")
+            input(type="range" id="contrast" min="-128" max="128" value="0" step="4")
             label Contrast
 
       div(id="downloads")

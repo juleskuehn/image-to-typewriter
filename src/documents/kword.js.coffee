@@ -447,6 +447,9 @@ imgToText = ->
   considerSpill = document.getElementById('considerSpill').checked
   shapeAmount = $('#shapeAmount').val()
   ditherAmount = $('#ditherAmount').val()
+  ditherSpill = $('#ditherSpill').val()
+  ditherFine = $('#ditherFine').val()
+  ditherSpillFine = $('#ditherSpillFine').val()
   gr = greyscale(source)
   [h,w] = [source.height,source.width]
   # looping through input image array in 2x2 pixel increments
@@ -499,13 +502,13 @@ imgToText = ->
         bTL = gr[i*w + j] # brightness value of input image subpixel
         errTL = errTL1 = bTL-combo.TLbrightness
         
-        bTR = gr[i*w + j+1] # brightness value of input image subpixel
+        bTR = gr[i*w + j+1] + errTL*7/16*ditherFine # brightness value of input image subpixel
         errTR = errTR1 = bTR-combo.TRbrightness
               
-        bBL = gr[(i+1)*w + j] # brightness value of input image subpixel
+        bBL = gr[(i+1)*w + j] + (errTL*5/16+errTR*3/16)*ditherFine # brightness value of input image subpixel
         errBL = errBL1 = bBL-combo.BLbrightness
         
-        bBR = gr[(i+1)*w + j+1] # brightness value of input image subpixel
+        bBR = gr[(i+1)*w + j+1] + (errTL*1/16+errBL*7/16+errTR*5/16)*ditherFine # brightness value of input image subpixel
         errBR = errBR1 = bBR-combo.BRbrightness
 
         errTot = errTot1 = (errTL+errTR+errBL+errBR)/4
@@ -515,42 +518,42 @@ imgToText = ->
         # compare spill areas
 
         # weigh subpixels of input image - spill to the right
-        bTLr = gr[i*w + j+3] + errTot*7/16# brightness value of input image subpixel
-        bTRr = gr[i*w + j+4] + errTot*7/16# brightness value of input image subpixel
-        bBLr = gr[(i+1)*w + j+3] + errTot*7/16# brightness value of input image subpixel
-        bBRr = gr[(i+1)*w + j+4] + errTot*7/16# brightness value of input image subpixel
+        bTLr = gr[i*w + j+3] + errTot*7/16*ditherSpill # brightness value of input image subpixel
+        bTRr = gr[i*w + j+4] + errTot*7/16*ditherSpill # brightness value of input image subpixel
+        bBLr = gr[(i+1)*w + j+3] + errTot*7/16*ditherSpill # brightness value of input image subpixel
+        bBRr = gr[(i+1)*w + j+4] + errTot*7/16*ditherSpill # brightness value of input image subpixel
 
         # weigh subpixels of input image - spill to the bottom
-        bTLb = gr[(i+2)*w + j] + errTot*5/16# brightness value of input image subpixel
-        bTRb = gr[(i+2)*w + j+1] + errTot*5/16# brightness value of input image subpixel
-        bBLb = gr[(i+3)*w + j] + errTot*5/16# brightness value of input image subpixel
-        bBRb = gr[(i+3)*w + j+1] + errTot*5/16# brightness value of input image subpixel
+        bTLb = gr[(i+2)*w + j] + errTot*5/16*ditherSpill # brightness value of input image subpixel
+        bTRb = gr[(i+2)*w + j+1] + errTot*5/16*ditherSpill # brightness value of input image subpixel
+        bBLb = gr[(i+3)*w + j] + errTot*5/16*ditherSpill # brightness value of input image subpixel
+        bBRb = gr[(i+3)*w + j+1] + errTot*5/16*ditherSpill # brightness value of input image subpixel
 
         # weigh subpixels of input image - spill to the bottom right
-        bTLbr = gr[(i+2)*w + j+3] + errTot*1/16 # brightness value of input image subpixel
-        bTRbr = gr[(i+2)*w + j+4] + errTot*1/16 # brightness value of input image subpixel
-        bBLbr = gr[(i+3)*w + j+3] + errTot*1/16 # brightness value of input image subpixel
-        bBRbr = gr[(i+3)*w + j+4] + errTot*1/16 # brightness value of input image subpixel
+        bTLbr = gr[(i+2)*w + j+3] + errTot*1/16*ditherSpill  # brightness value of input image subpixel
+        bTRbr = gr[(i+2)*w + j+4] + errTot*1/16*ditherSpill  # brightness value of input image subpixel
+        bBLbr = gr[(i+3)*w + j+3] + errTot*1/16*ditherSpill  # brightness value of input image subpixel
+        bBRbr = gr[(i+3)*w + j+4] + errTot*1/16*ditherSpill  # brightness value of input image subpixel
         
 
         errTL = bTLb*spillBrightness-spillBottom.TLbrightness
-        errTR = bTRb*spillBrightness-spillBottom.TRbrightness
-        errBL = bBLb*spillBrightness-spillBottom.BLbrightness
-        errBR = bBRb*spillBrightness-spillBottom.BRbrightness
+        errTR = bTRb*spillBrightness-spillBottom.TRbrightness + errTL*7/16*ditherSpillFine
+        errBL = bBLb*spillBrightness-spillBottom.BLbrightness + (errTL*5/16+errTR*3/16)*ditherSpillFine
+        errBR = bBRb*spillBrightness-spillBottom.BRbrightness + (errTL*1/16+errBL*7/16+errTR*5/16)*ditherSpillFine
         errTotBottom = (errTL+errTR+errBL+errBR)/4
         errTotBottomShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
         errTL = bTLr*spillBrightness-spillRight.TLbrightness
-        errTR = bTRr*spillBrightness-spillRight.TRbrightness
-        errBL = bBLr*spillBrightness-spillRight.BLbrightness
-        errBR = bBRr*spillBrightness-spillRight.BRbrightness
+        errTR = bTRr*spillBrightness-spillRight.TRbrightness + errTL*7/16*ditherSpillFine
+        errBL = bBLr*spillBrightness-spillRight.BLbrightness + (errTL*5/16+errTR*3/16)*ditherSpillFine
+        errBR = bBRr*spillBrightness-spillRight.BRbrightness + (errTL*1/16+errBL*7/16+errTR*5/16)*ditherSpillFine
         errTotRight = (errTL+errTR+errBL+errBR)/4
         errTotRightShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
         errTL = bTLbr*spillBrightness-spillBottomRight.TLbrightness
-        errTR = bTRbr*spillBrightness-spillBottomRight.TRbrightness
-        errBL = bBLbr*spillBrightness-spillBottomRight.BLbrightness
-        errBR = bBRbr*spillBrightness-spillBottomRight.BRbrightness
+        errTR = bTRbr*spillBrightness-spillBottomRight.TRbrightness + errTL*7/16*ditherSpillFine
+        errBL = bBLbr*spillBrightness-spillBottomRight.BLbrightness + (errTL*5/16+errTR*3/16)*ditherSpillFine
+        errBR = bBRbr*spillBrightness-spillBottomRight.BRbrightness + (errTL*1/16+errBL*7/16+errTR*5/16)*ditherSpillFine
         errTotBottomRight = (errTL+errTR+errBL+errBR)/4
         errTotBottomRightShape = (Math.abs(errTL)+Math.abs(errTR)+Math.abs(errBL)+Math.abs(errBR))/4
 
