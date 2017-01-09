@@ -835,7 +835,9 @@
     layer4: {
       row: 0,
       col: 0
-    }
+    },
+    color0: "rgba(255,0,255,0.1)",
+    color1: "rgba(0,255,255,0.1)"
   };
 
   $("#view_show_layers canvas").click(function() {
@@ -844,7 +846,7 @@
   });
 
   drawTypingTools = function(layer) {
-    var ctx, drawNumbers, len, lightboxSelection, m, otherLayer, overlay, ref;
+    var ctx, drawNumbers, len, lightboxChar, lightboxRow, m, otherLayer, overlay, ref;
     ref = [1, 2, 3, 4];
     for (m = 0, len = ref.length; m < len; m++) {
       otherLayer = ref[m];
@@ -859,23 +861,39 @@
     overlay.height = charset.qHeight * combosArray.length;
     ctx = overlay.getContext("2d");
     updateContainer();
-    lightboxSelection = function() {
-      var colStart, rowStart;
+    lightboxRow = function() {
+      var rowStart;
       ctx.clearRect(0, 0, overlay.width, overlay.height);
       ctx.fillStyle = "rgba(0,0,0,0.5)";
       ctx.fillRect(0, 0, overlay.width, overlay.height);
       rowStart = typing[layer].row * charset.qHeight * 2;
-      ctx.fillStyle = "rgba(255,255,0,0.25)";
-      ctx.fillRect(0, rowStart, overlay.width, charset.qHeight * 2);
-      colStart = typing[layer].col * charset.qWidth * 2;
-      return ctx.clearRect(colStart, rowStart, charset.qWidth * 2, charset.qHeight * 2);
+      ctx.clearRect(0, rowStart, overlay.width, charset.qHeight * 2);
+      ctx.fillStyle = "rgba(255,255,0,0.1)";
+      return ctx.fillRect(0, rowStart, overlay.width, charset.qHeight * 2);
     };
-    lightboxSelection();
+    lightboxRow();
     drawNumbers = function() {
-      var char, i, j, lastChar, minStreak, n, ref1, results, streak;
-      minStreak = 3;
+      var char, color, drawStreak, i, j, lastChar, minStreak, n, ref1, results, streak;
+      drawStreak = function(start, streakLength, color) {
+        var colStart, rowStart, width;
+        rowStart = typing[layer].row * charset.qHeight * 2;
+        colStart = start * charset.qWidth * 2;
+        width = streakLength * charset.qWidth * 2;
+        ctx.clearRect(colStart, rowStart, width, charset.qHeight * 2);
+        ctx.fillStyle = color;
+        ctx.fillRect(colStart, rowStart, width, charset.qHeight * 2);
+        if (streakLength > 2) {
+          ctx.font = "Bold " + charset.qHeight * 1.5 + "px Monospace";
+          ctx.fillStyle = "rgba(255,255,255,1)";
+          ctx.fillText(streakLength, colStart + charset.qWidth * 2 + 2, rowStart + charset.qHeight * 1.5 + 2);
+          ctx.fillStyle = "rgba(0,0,0,1)";
+          return ctx.fillText(streakLength, colStart + charset.qWidth * 2, rowStart + charset.qHeight * 1.5);
+        }
+      };
+      minStreak = 0;
       lastChar = null;
       streak = 1;
+      color = 1;
       results = [];
       for (j = n = 0, ref1 = combosArray[0].length - 1; n < ref1; j = n += 2) {
         i = typing[typing.selectedLayer].row * 2;
@@ -895,7 +913,8 @@
           streak++;
         } else {
           if (streak > minStreak) {
-            console.log("streak of " + streak + " characters ending at column " + j / 2 + 1);
+            console.log("streak of " + streak + " characters ending at position " + j / 2);
+            drawStreak(j / 2 - streak, streak, typing["color" + color++ % 2]);
           }
           streak = 1;
         }
@@ -903,7 +922,17 @@
       }
       return results;
     };
-    return drawNumbers();
+    drawNumbers();
+    lightboxChar = function() {
+      var colStart, rowStart;
+      rowStart = typing[layer].row * charset.qHeight * 2;
+      colStart = typing[layer].col * charset.qWidth * 2;
+      ctx.clearRect(colStart, rowStart + charset.qHeight * 2, charset.qWidth * 2, charset.qHeight / 2);
+      ctx.fillStyle = "rgba(0,255,0,1)";
+      ctx.fillRect(colStart, rowStart + charset.qHeight * 2, charset.qWidth * 2, charset.qHeight / 2);
+      return ctx.stroke();
+    };
+    return lightboxChar();
   };
 
   drawLayers = function() {

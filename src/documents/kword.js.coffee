@@ -928,6 +928,8 @@ typing =
  layer2: {row:0,col:0}
  layer3: {row:0,col:0}
  layer4: {row:0,col:0}
+ color0: "rgba(255,0,255,0.1)"
+ color1: "rgba(0,255,255,0.1)"
 
 $("#view_show_layers canvas").click ->
 
@@ -956,31 +958,44 @@ drawTypingTools = (layer) ->
 	updateContainer()
 
 	# highlight selected row, column
-	lightboxSelection = ->
+	lightboxRow = ->
 		# draw dark translucent overlay
 		ctx.clearRect(0, 0, overlay.width, overlay.height)
 		ctx.fillStyle = "rgba(0,0,0,0.5)"
 		ctx.fillRect(0, 0, overlay.width, overlay.height)
 		# highlight selected row
 		rowStart = typing[layer].row * charset.qHeight * 2
-		ctx.fillStyle = "rgba(255,255,0,0.25)"
+		ctx.clearRect(0, rowStart, overlay.width, charset.qHeight*2)
+		ctx.fillStyle = "rgba(255,255,0,0.1)"
 		ctx.fillRect(0, rowStart, overlay.width, charset.qHeight*2)
-		# highlight selected char
-		colStart = typing[layer].col * charset.qWidth * 2
-		ctx.clearRect(colStart, rowStart, charset.qWidth*2, charset.qHeight*2)
 
 
-	lightboxSelection()
+	lightboxRow()
 
 	# draw a box around and number multiples on highlighted row
 	drawNumbers = ->
 
+		drawStreak = (start,streakLength,color) ->
+			rowStart = typing[layer].row * charset.qHeight * 2
+			colStart = start * charset.qWidth * 2
+			width = streakLength*charset.qWidth*2
+			ctx.clearRect(colStart, rowStart, width, charset.qHeight*2)
+			ctx.fillStyle = color
+			ctx.fillRect(colStart, rowStart, width, charset.qHeight*2)
+			if streakLength>2
+				ctx.font = "Bold "+charset.qHeight*1.5+"px Monospace"
+				ctx.fillStyle = "rgba(255,255,255,1)"
+				ctx.fillText(streakLength,colStart+charset.qWidth*2+2,rowStart+charset.qHeight*1.5+2)
+				ctx.fillStyle = "rgba(0,0,0,1)"
+				ctx.fillText(streakLength,colStart+charset.qWidth*2,rowStart+charset.qHeight*1.5)
+
 		# how many characters do we count as a "streak"?
-		minStreak = 3
+		minStreak = 0
 
 		# loop through characters in this row and find streaks
 		lastChar = null
 		streak = 1
+		color = 1
 		for j in [0...combosArray[0].length-1] by 2
 			i = typing[typing.selectedLayer].row*2
 			if typing.selectedLayer is "layer1"
@@ -996,13 +1011,23 @@ drawTypingTools = (layer) ->
 				streak++
 			else
 				if streak	> minStreak
-					console.log "streak of "+streak+" characters ending at column "+j/2+1
+					console.log "streak of "+streak+" characters ending at position "+j/2
+					drawStreak(j/2-streak,streak,typing["color"+color++%2])
 				streak = 1
 			lastChar = char
 
 	drawNumbers()
 
+	lightboxChar = ->
+		# highlight selected char
+		rowStart = typing[layer].row * charset.qHeight * 2
+		colStart = typing[layer].col * charset.qWidth * 2
+		ctx.clearRect(colStart, rowStart+charset.qHeight*2, charset.qWidth*2, charset.qHeight/2)
+		ctx.fillStyle = "rgba(0,255,0,1)"
+		ctx.fillRect(colStart, rowStart+charset.qHeight*2, charset.qWidth*2, charset.qHeight/2)
+		ctx.stroke()
 
+	lightboxChar()
 
 
 drawLayers = ->
