@@ -983,20 +983,18 @@ drawTypingTools = (layer) ->
 			ctx.fillStyle = color
 			ctx.fillRect(colStart, rowStart, width, charset.qHeight*2)
 			if streakLength>2
+				ctx.fillStyle = "rgba(255,255,255,0.5)"
+				ctx.fillRect(colStart, rowStart, charset.qWidth*4, charset.qHeight*2)
 				ctx.font = "Bold "+charset.qHeight*1.5+"px Monospace"
-				ctx.fillStyle = "rgba(255,255,255,1)"
-				ctx.fillText(streakLength,colStart+charset.qWidth*2+2,rowStart+charset.qHeight*1.5+2)
 				ctx.fillStyle = "rgba(0,0,0,1)"
-				ctx.fillText(streakLength,colStart+charset.qWidth*2,rowStart+charset.qHeight*1.5)
-
-		# how many characters do we count as a "streak"?
-		minStreak = 0
+				ctx.fillText(streakLength,colStart,rowStart+charset.qHeight*1.5)
 
 		# loop through characters in this row and find streaks
 		lastChar = null
 		streak = 1
 		color = 1
 		for j in [0...combosArray[0].length-1] by 2
+
 			i = typing[typing.selectedLayer].row*2
 			if typing.selectedLayer is "layer1"
 				char = charset.selected[ combosArray[i][j] ]
@@ -1007,14 +1005,18 @@ drawTypingTools = (layer) ->
 			if typing.selectedLayer is "layer4"
 				char = charset.selected[ combosArray[i+1][j+1] ]
 
+			rowStart = typing[typing.selectedLayer].row * charset.qHeight * 2
+			colStart = j/2 * charset.qWidth * 2
+			ctx.rect(colStart, rowStart, charset.qWidth*2, charset.qHeight*2)
+			ctx.stroke()
+
 			if char is lastChar
 				streak++
 			else
-				if streak	> minStreak
-					console.log "streak of "+streak+" characters ending at position "+j/2
-					drawStreak(j/2-streak,streak,typing["color"+color++%2])
+				drawStreak(j/2-streak,streak,typing["color"+color++%2])
 				streak = 1
 			lastChar = char
+
 
 	drawNumbers()
 
