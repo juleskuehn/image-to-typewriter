@@ -807,6 +807,7 @@ $(document).ready ->
 
 
 tabState = ""
+zoomState = ""
 
 # user interface buttons
 
@@ -864,6 +865,13 @@ $('#zoom').click ->
 		$('body').removeClass('noZoom')
 	else
 		$('body').addClass('noZoom')
+	zoomState = ""
+	updateContainer()
+
+$('#zoomWide').click ->
+	if $('body').hasClass('noZoom')
+		$('body').removeClass('noZoom')
+	zoomState = "wide"
 	updateContainer()
 
 $('#closeInstructions').click ->
@@ -958,7 +966,10 @@ updateContainer = ->
 			scaleX = ( $('#viewport').width() / $(this).width() ) * 100
 		if $(this).height() > $('#viewport').height()
 			scaleY = ( $('#viewport').height() / $(this).height() ) * 100
-		$(this).css("zoom":Math.min(scaleY,scaleX)+"%")
+		if zoomState is "wide"
+			$(this).css("zoom":scaleX+"%")
+		else
+			$(this).css("zoom":Math.min(scaleY,scaleX)+"%")
 		
 	)
 

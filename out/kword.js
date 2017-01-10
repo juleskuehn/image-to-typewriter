@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, chopCharset, combosArray, contrastImage, dither, drawCharImage, drawLayers, drawTypingTools, greyscale, imgToText, inputImage, tabState, target, theImage, typing, updateContainer;
+  var bestCombos, charset, chopCharset, combosArray, contrastImage, dither, drawCharImage, drawLayers, drawTypingTools, greyscale, imgToText, inputImage, tabState, target, theImage, typing, updateContainer, zoomState;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -689,6 +689,8 @@
 
   tabState = "";
 
+  zoomState = "";
+
   $('#tabs button').click(function() {
     var id;
     $('#tabs button.selected').removeClass('selected');
@@ -752,6 +754,15 @@
     } else {
       $('body').addClass('noZoom');
     }
+    zoomState = "";
+    return updateContainer();
+  });
+
+  $('#zoomWide').click(function() {
+    if ($('body').hasClass('noZoom')) {
+      $('body').removeClass('noZoom');
+    }
+    zoomState = "wide";
     return updateContainer();
   });
 
@@ -873,9 +884,15 @@
       if ($(this).height() > $('#viewport').height()) {
         scaleY = ($('#viewport').height() / $(this).height()) * 100;
       }
-      return $(this).css({
-        "zoom": Math.min(scaleY, scaleX) + "%"
-      });
+      if (zoomState === "wide") {
+        return $(this).css({
+          "zoom": scaleX + "%"
+        });
+      } else {
+        return $(this).css({
+          "zoom": Math.min(scaleY, scaleX) + "%"
+        });
+      }
     });
   };
 
