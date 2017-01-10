@@ -904,6 +904,8 @@ $(document).keydown (e) ->
 			if typing.streaks[i] >= typing[typing.selectedLayer].col+1
 				typing[typing.selectedLayer].col = typing.streaks[i-1]
 				break
+			if i is typing.streaks.length-1
+				typing[typing.selectedLayer].col = typing.streaks[i]
 
 	if tabState is "layers"
 		numRows = combosArray.length/2
@@ -1060,6 +1062,12 @@ drawTypingTools = (layer) ->
 				# save streak index
 				typing.streaks.push(j/2-streak)
 				streak = 1
+			if j >= combosArray[0].length-2
+				drawStreak(j/2-streak+1,streak,typing["color"+color++%2])
+				# save streak index
+				typing.streaks.push(j/2-streak+1)
+				streak = 1
+
 			lastChar = char
 
 

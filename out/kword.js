@@ -802,6 +802,9 @@
         if (typing.streaks[i] >= typing[typing.selectedLayer].col + 1) {
           typing[typing.selectedLayer].col = typing.streaks[i - 1];
           break;
+        }
+        if (i === typing.streaks.length - 1) {
+          results.push(typing[typing.selectedLayer].col = typing.streaks[i]);
         } else {
           results.push(void 0);
         }
@@ -977,6 +980,11 @@
         } else {
           drawStreak(j / 2 - streak, streak, typing["color" + color++ % 2]);
           typing.streaks.push(j / 2 - streak);
+          streak = 1;
+        }
+        if (j >= combosArray[0].length - 2) {
+          drawStreak(j / 2 - streak + 1, streak, typing["color" + color++ % 2]);
+          typing.streaks.push(j / 2 - streak + 1);
           streak = 1;
         }
         results.push(lastChar = char);
