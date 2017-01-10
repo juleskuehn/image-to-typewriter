@@ -1,5 +1,5 @@
 (function() {
-  var bestCombos, charset, chopCharset, combosArray, contrastImage, dither, drawCharImage, drawLayers, drawTypingTools, greyscale, imgToText, inputImage, target, theImage, typing, updateContainer;
+  var bestCombos, charset, chopCharset, combosArray, contrastImage, dither, drawCharImage, drawLayers, drawTypingTools, greyscale, imgToText, inputImage, tabState, target, theImage, typing, updateContainer;
 
   charset = {
     previewCanvas: document.getElementById('charsetPreview'),
@@ -628,11 +628,13 @@
   };
 
   $('#chopCharset').click(function() {
-    return chopCharset();
+    chopCharset();
+    return $('#show_char_select').click();
   });
 
   $('#genCombos').click(function() {
-    return charset.genCombos();
+    charset.genCombos();
+    return $('#show_image_text').click();
   });
 
   target = document.getElementById('charset-target');
@@ -685,6 +687,8 @@
     }, false);
   });
 
+  tabState = "";
+
   $('#tabs button').click(function() {
     var id;
     $('#tabs button.selected').removeClass('selected');
@@ -695,6 +699,7 @@
     $('#charset_options').addClass('show');
     $('#downloads').removeClass('show');
     $('#image_options').removeClass('show');
+    tabState = "";
     return updateContainer();
   });
 
@@ -708,6 +713,7 @@
     $('#charset_options').removeClass('show');
     $('#downloads').removeClass('show');
     $('#image_options').addClass('show');
+    tabState = "imgToText";
     return updateContainer();
   });
 
@@ -722,7 +728,8 @@
     $('#image_options').removeClass('show');
     $('#downloads').addClass('show');
     drawLayers();
-    return updateContainer();
+    updateContainer();
+    return tabState = "layers";
   });
 
   $('input').change(function() {
@@ -774,24 +781,75 @@
   });
 
   $(document).keydown(function(e) {
-    switch (e.which) {
-      case 37:
-        typing[typing.selectedLayer].col--;
-        break;
-      case 38:
-        typing[typing.selectedLayer].row--;
-        break;
-      case 39:
-        typing[typing.selectedLayer].col++;
-        break;
-      case 40:
-        typing[typing.selectedLayer].row++;
-        break;
-      default:
-        return;
+    var nextStreak, numCols, numRows, prevStreak;
+    nextStreak = function() {
+      var i, m, ref, results;
+      results = [];
+      for (i = m = 0, ref = typing.streaks.length; 0 <= ref ? m <= ref : m >= ref; i = 0 <= ref ? ++m : --m) {
+        if (typing.streaks[i] > typing[typing.selectedLayer].col - 1) {
+          typing[typing.selectedLayer].col = typing.streaks[i];
+          break;
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    };
+    prevStreak = function() {
+      var i, m, ref, results;
+      results = [];
+      for (i = m = 0, ref = typing.streaks.length; 0 <= ref ? m <= ref : m >= ref; i = 0 <= ref ? ++m : --m) {
+        if (typing.streaks[i] >= typing[typing.selectedLayer].col + 1) {
+          typing[typing.selectedLayer].col = typing.streaks[i - 1];
+          break;
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    };
+    if (tabState === "layers") {
+      numRows = combosArray.length / 2;
+      numCols = combosArray[0].length / 2;
+      switch (e.which) {
+        case 36:
+          typing[typing.selectedLayer].col = 0;
+          if (e.ctrlKey) {
+            typing[typing.selectedLayer].row = 0;
+          }
+          break;
+        case 35:
+          typing[typing.selectedLayer].col = numCols - 1;
+          if (e.ctrlKey) {
+            typing[typing.selectedLayer].row = numRow - 1;
+          }
+          break;
+        case 37:
+          typing[typing.selectedLayer].col--;
+          if (e.ctrlKey) {
+            prevStreak();
+          }
+          break;
+        case 38:
+          typing[typing.selectedLayer].row--;
+          typing[typing.selectedLayer].col = 0;
+          break;
+        case 39:
+          typing[typing.selectedLayer].col++;
+          if (e.ctrlKey) {
+            nextStreak();
+          }
+          break;
+        case 40:
+          typing[typing.selectedLayer].row++;
+          typing[typing.selectedLayer].col = 0;
+          break;
+        default:
+          return;
+      }
+      e.preventDefault();
+      drawTypingTools(typing.selectedLayer);
     }
-    e.preventDefault();
-    drawTypingTools(typing.selectedLayer);
   });
 
   updateContainer = function() {
@@ -837,7 +895,8 @@
       col: 0
     },
     color0: "rgba(255,0,255,0.1)",
-    color1: "rgba(0,255,255,0.1)"
+    color1: "rgba(0,255,255,0.1)",
+    streaks: []
   };
 
   $("#view_show_layers canvas").click(function() {
@@ -847,6 +906,7 @@
 
   drawTypingTools = function(layer) {
     var ctx, drawNumbers, len, lightboxChar, lightboxRow, m, otherLayer, overlay, ref;
+    typing.streaks = [];
     ref = [1, 2, 3, 4];
     for (m = 0, len = ref.length; m < len; m++) {
       otherLayer = ref[m];
@@ -916,6 +976,7 @@
           streak++;
         } else {
           drawStreak(j / 2 - streak, streak, typing["color" + color++ % 2]);
+          typing.streaks.push(j / 2 - streak);
           streak = 1;
         }
         results.push(lastChar = char);

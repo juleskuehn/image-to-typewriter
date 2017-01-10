@@ -739,10 +739,12 @@ chopCharset = ->
 
 $('#chopCharset').click ->
 	chopCharset()
+	$('#show_char_select').click()
 
 
 $('#genCombos').click ->
 	charset.genCombos()
+	$('#show_image_text').click()
 
 target = document.getElementById('charset-target')
 target.addEventListener 'dragover', ((e) ->
@@ -804,6 +806,8 @@ $(document).ready ->
 	, false)
 
 
+tabState = ""
+
 # user interface buttons
 
 $('#tabs button').click ->
@@ -815,6 +819,7 @@ $('#tabs button').click ->
 	$('#charset_options').addClass('show')
 	$('#downloads').removeClass('show')
 	$('#image_options').removeClass('show')
+	tabState = ""
 	updateContainer()
 
 $('#show_image_text').click ->
@@ -826,6 +831,7 @@ $('#show_image_text').click ->
 	$('#charset_options').removeClass('show')
 	$('#downloads').removeClass('show')
 	$('#image_options').addClass('show')
+	tabState = "imgToText"
 	updateContainer()
 
 $('#show_layers').click ->
@@ -839,6 +845,8 @@ $('#show_layers').click ->
 	$('#downloads').addClass('show')
 	drawLayers()
 	updateContainer()
+	tabState = "layers"
+
 	
 	
 $('input').change ->
@@ -882,27 +890,61 @@ $(document).ready ->
 
 $(document).keydown (e) ->
 
-	# TODO add constraints to prevent leaving the canvas
-	switch e.which
-		when 37
-			# left
-			typing[typing.selectedLayer].col--
-		when 38
-			# up
-			typing[typing.selectedLayer].row--
-		when 39
-			# right
-			typing[typing.selectedLayer].col++
-		when 40
-			# down
-			typing[typing.selectedLayer].row++
-		else
-			return
-		# exit this handler for other keys
-	e.preventDefault()
-	drawTypingTools(typing.selectedLayer)
-	# prevent the default action (scroll / move caret)
-	return
+	# moves selection cursor to the start of next streak
+	nextStreak = ->
+		for i in [0..typing.streaks.length]
+			if typing.streaks[i] > typing[typing.selectedLayer].col-1
+				typing[typing.selectedLayer].col = typing.streaks[i]
+				break
+
+	# moves selection cursor to the start of next streak
+	# TODO fix this
+	prevStreak = ->
+		for i in [0..typing.streaks.length]
+			if typing.streaks[i] >= typing[typing.selectedLayer].col+1
+				typing[typing.selectedLayer].col = typing.streaks[i-1]
+				break
+
+	if tabState is "layers"
+		numRows = combosArray.length/2
+		numCols = combosArray[0].length/2
+		# TODO add constraints to prevent leaving the canvas
+		switch e.which
+			when 36
+				# home
+				typing[typing.selectedLayer].col = 0
+				if e.ctrlKey
+					typing[typing.selectedLayer].row = 0
+			when 35
+				# end
+				typing[typing.selectedLayer].col = numCols-1
+				if e.ctrlKey
+					typing[typing.selectedLayer].row = numRow-1
+			when 37
+				# left
+				typing[typing.selectedLayer].col--
+				if e.ctrlKey
+					prevStreak()
+			when 38
+				# up
+				typing[typing.selectedLayer].row--
+				typing[typing.selectedLayer].col = 0
+			when 39
+				# right
+				typing[typing.selectedLayer].col++
+				if e.ctrlKey
+					nextStreak()
+			when 40
+				# down
+				typing[typing.selectedLayer].row++
+				typing[typing.selectedLayer].col = 0
+			else
+				return
+			# exit this handler for other keys
+		e.preventDefault()
+		drawTypingTools(typing.selectedLayer)
+		# prevent the default action (scroll / move caret)
+		return
 
 updateContainer = ->
 	h = $(window).height()
@@ -930,6 +972,7 @@ typing =
  layer4: {row:0,col:0}
  color0: "rgba(255,0,255,0.1)"
  color1: "rgba(0,255,255,0.1)"
+ streaks: []
 
 $("#view_show_layers canvas").click ->
 
@@ -940,7 +983,7 @@ $("#view_show_layers canvas").click ->
 
 
 drawTypingTools = (layer) ->
-
+	typing.streaks = []
 	# clear unselected layers of typing tools
 	for otherLayer in [1,2,3,4]
 		overlay = document.getElementById("layer"+otherLayer+"_overlay")
@@ -1014,6 +1057,8 @@ drawTypingTools = (layer) ->
 				streak++
 			else
 				drawStreak(j/2-streak,streak,typing["color"+color++%2])
+				# save streak index
+				typing.streaks.push(j/2-streak)
 				streak = 1
 			lastChar = char
 
