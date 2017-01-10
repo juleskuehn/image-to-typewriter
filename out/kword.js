@@ -839,23 +839,31 @@
           }
           break;
         case 37:
-          typing[typing.selectedLayer].col--;
+          if (typing[typing.selectedLayer].col > 0) {
+            typing[typing.selectedLayer].col--;
+          }
           if (e.ctrlKey) {
             prevStreak();
           }
           break;
         case 38:
-          typing[typing.selectedLayer].row--;
+          if (typing[typing.selectedLayer].row > 0) {
+            typing[typing.selectedLayer].row--;
+          }
           typing[typing.selectedLayer].col = 0;
           break;
         case 39:
-          typing[typing.selectedLayer].col++;
+          if (typing[typing.selectedLayer].col < numCols - 1) {
+            typing[typing.selectedLayer].col++;
+          }
           if (e.ctrlKey) {
             nextStreak();
           }
           break;
         case 40:
-          typing[typing.selectedLayer].row++;
+          if (typing[typing.selectedLayer].row < numRows - 1) {
+            typing[typing.selectedLayer].row++;
+          }
           typing[typing.selectedLayer].col = 0;
           break;
         default:
