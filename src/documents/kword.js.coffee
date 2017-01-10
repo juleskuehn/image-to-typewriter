@@ -1042,12 +1042,12 @@ drawTypingTools = (layer) ->
 			ctx.clearRect(colStart, rowStart, width, charset.qHeight*2)
 			ctx.fillStyle = color
 			ctx.fillRect(colStart, rowStart, width, charset.qHeight*2)
-			if streakLength>2
+			if streakLength>3
 				ctx.fillStyle = "rgba(255,255,255,0.5)"
 				ctx.fillRect(colStart, rowStart, charset.qWidth*4, charset.qHeight*2)
 				ctx.font = "Bold "+charset.qHeight*1.5+"px Monospace"
-				ctx.fillStyle = "rgba(0,0,0,1)"
-				ctx.fillText(streakLength,colStart,rowStart+charset.qHeight*1.5)
+				ctx.fillStyle = "rgba(255,0,0,1)"
+				ctx.fillText(streakLength,colStart+charset.qWidth*0.5,rowStart+charset.qHeight*1.5)
 
 		# loop through characters in this row and find streaks
 		lastChar = null
