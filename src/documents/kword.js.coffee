@@ -500,9 +500,10 @@ imgToText = ->
 			bestCombo = null
 
 			# how much should the spill be considered?
-			spillRatioRight = $('#spillRatioRight').val() * $('#spillRatio').val()
-			spillRatioBottomRight = $('#spillRatioBottomRight').val() * $('#spillRatio').val()
-			spillRatioBottom = $('#spillRatioBottom').val() * $('#spillRatio').val()
+			spillRatioRight = $('#spillRatioRight').val() 
+			spillRatioBottomRight = $('#spillRatioBottomRight').val()
+			spillRatioBottom = $('#spillRatioBottom').val()
+			spillRatio = $('#spillRatio').val()
 
 
 			# how much brighter should the spill be?
@@ -582,8 +583,8 @@ imgToText = ->
 
 				if considerSpill
 					# combine spill with primary pixel weight
-					errTot = Math.abs(errTot) + Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight
-					errTotShape = Math.abs(errTotShape) + Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight
+					errTot = (1-spillRatio)*Math.abs(errTot) + spillRatio*(Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight)
+					errTotShape = (1-spillRatio)*Math.abs(errTotShape) + spillRatio*(Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight)
 				
 
 				errTot = Math.abs(errTot)

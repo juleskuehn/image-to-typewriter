@@ -63,23 +63,23 @@ html
               a -
 
              div
-              input(type="range" id="row_length" min="1" max="100" value="40" step="1")
+              input(type="range" id="row_length" min="1" max="100" value="60" step="1")
               label Output Size
 
              div
-              input(type="range" id="shapeAmount" min="0" max="1" value="1" step="0.1")
+              input(type="range" id="shapeAmount" min="0" max="1" value="1" step="0.05")
               label Coarse-Fine
 
              div
-              input(type="range" id="ditherAmount" min="0" max="0.5" value="0.5" step="0.1")
+              input(type="range" id="ditherAmount" min="0" max="0.5" value="0.5" step="0.05")
               label Dither Coarse
 
              div
-              input(type="range" id="ditherFine" min="0" max="1" value="1" step="0.1")
+              input(type="range" id="ditherFine" min="0" max="1" value="1" step="0.05")
               label Dither Fine
 
              div
-              input(type="range" id="maxAdjust" min="0" max="1" value="0" step="0.03")
+              input(type="range" id="maxAdjust" min="0" max="0.33" value="0" step="0.01")
               label Black point
 
              div
@@ -125,10 +125,10 @@ html
               a +
              
              div
-              input(type="range" id="ditherSpill" min="0" max="1" value="1" step="0.1")
+              input(type="range" id="ditherSpill" min="0" max="1" value="1" step="0.05")
               label Dither Spill
              div
-              input(type="range" id="ditherSpillFine" min="0" max="1" value="1" step="0.1")
+              input(type="range" id="ditherSpillFine" min="0" max="1" value="1" step="0.05")
               label D. Spill Fine
 
              div(class="hidden")
@@ -136,23 +136,23 @@ html
               label Consider Spill?
 
              div
-              input(type="range" id="spillRatioRight" min="0" max="1" value="1" step="0.1")
+              input(type="range" id="spillRatioRight" min="0" max="1" value="1" step="0.05")
               label Spill Ratio R
 
              div
-              input(type="range" id="spillRatioBottom" min="0" max="1" value="1" step="0.1")
+              input(type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.05")
               label Spill Ratio B
 
              div
-              input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.1")
+              input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.5" step="0.05")
               label Spill Ratio BR
 
              div 
-              input(type="range" id="spillRatio" min="0" max="1" value="0.5" step="0.1")
+              input(type="range" id="spillRatio" min="0" max="1" value="0.25" step="0.05")
               label Spill Ratio
 
              div
-              input(type="range" id="spillBrightness" min="0" max="1" value="0.5" step="0.1")
+              input(type="range" id="spillBrightness" min="0" max="0.5" value="0.25" step="0.05")
               label Spill Brightness
 
 
