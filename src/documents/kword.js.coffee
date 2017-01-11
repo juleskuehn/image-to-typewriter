@@ -182,22 +182,27 @@ charset =
 
 	drawCharSelect: ->
 		$('#viewSelect').empty()
+		numSelected = 0
 		for i in [0...charset.chars.length]
 
 			char = charset.chars[i]
 
-			# redundant spaces removed from preview
-			# min, median and max characters selected
-			spaceWeight
+			spaceWeight = 0
+
+			# always select lightest character (space)
 			if i is 0
 				spaceWeight = char.brightness
 				char.selected = true
+				numSelected++
+
+			# ignore characters of close value to the space
 			else if Math.abs(char.brightness-spaceWeight) < 10
 				continue
+
+			# always select darkest character
 			if i is charset.chars.length-1
 				char.selected = true
-			if i is Math.round(charset.chars.length*0.5)
-				char.selected = true
+				numSelected++
 
 			# create canvas
 			newCanvasHtml = '<canvas id="char'+i+'" width="'+charset.qWidth*2+'" height="'+charset.qHeight*2+'"></canvas>'
@@ -226,19 +231,36 @@ charset =
 
 			makeClickHandler = (char,ctx) ->
 				$('#char'+i).click ( (e) ->
+					if char.selected
+						numSelected--
+					else numSelected++
+
 					char.selected = !char.selected
 					# redraw greyed out if unselected
 					ctx.clearRect(0, 0, charset.qWidth*2, charset.qHeight*2)
 
 					drawChar(char,ctx)
 
+					# TODO add a display of how many chars selected and how long it will take
+					showSelectionDetails()
 				)
 
 			makeClickHandler(char,ctx)
 
-		updateContainer()  
+		showSelectionDetails = ->
 
+			h = "<span>" + numSelected + "</span> selected.<br>"
+			h += Math.pow(4,numSelected) + " combos.<br>"
+			estimate = Math.pow(4,numSelected)*25/1048576
+			if estimate<30
+				estimate="<30"
+			h += "~"+ estimate + " seconds."
 
+			$('#selectionDetails').html(h)
+
+		updateContainer()
+
+		showSelectionDetails()
 
 
 
@@ -484,7 +506,8 @@ imgToText = ->
 
 
 			# how much brighter should the spill be?
-			spillBrightness = 1 - $('#spillBrightness').val()
+			spillBrightnessBottom = spillBrightnessRight = spillBrightness = 1 - $('#spillBrightness').val()
+			spillBrightnessBottomRight = spillBrightness/2
 
 			# loop through appropriate subsection of combos and weigh each subpixel against the input image
 			for k in [0...charset.combos[TL][TR][BL].length]
@@ -492,8 +515,8 @@ imgToText = ->
 				combo = charset.combos[TL][TR][BL][k]
 
 				# get spill images
-				spillBottom = charset.combos[0][k][0][0]
-				spillRight = charset.combos[0][0][k][0]
+				spillBottom = charset.combos[BL][k][0][0]
+				spillRight = charset.combos[TR][0][k][0]
 				spillBottomRight = charset.combos[k][0][0][0]
 
 				# check each subpixel against input image
@@ -537,18 +560,18 @@ imgToText = ->
 				
 				# proceed through spill from top to bottom, left to right
 
-				errTLr = (bTLr + errTR1*7/16*ditherSpillFine)*spillBrightness-spillRight.TLbrightness
-				errTRr = (bTRr + errTLr*7/16*ditherSpillFine)*spillBrightness-spillRight.TRbrightness
-				errBLr = (bBLr + (errTLr*5/16+errTRr*3/16+errTR1*1/16+errBR1*7/16)*ditherSpillFine)*spillBrightness-spillRight.BLbrightness
-				errBRr = (bBRr + (errTLr*1/16+errBLr*7/16+errTRr*5/16)*ditherSpillFine)*spillBrightness-spillRight.BRbrightness
-				errTLb = (bTLb + (errBL1*5/16+errBR1*3/16)*ditherSpillFine)*spillBrightness-spillBottom.TLbrightness
-				errTRb = (bTRb + (errTLb*7/16+errBL1*1/16+errBR1*5/16+errBLr*3/16)*ditherSpillFine)*spillBrightness-spillBottom.TRbrightness
-				errTLbr = (bTLbr + (errBR1*1/16+errBLr*5/16+errTRb*7/16)*ditherSpillFine)*spillBrightness-spillBottomRight.TLbrightness
-				errTRbr = (bTRbr + (errBLr*1/16+errBRr*5/16+errTLbr*7/16)*ditherSpillFine)*spillBrightness-spillBottomRight.TRbrightness
-				errBLb = (bBLb + (errTLb*5/16+errTRb*3/16)*ditherSpillFine)*spillBrightness-spillBottom.BLbrightness
-				errBRb = (bBRb + (errTLb*1/16+errBLb*7/16+errTRb*5/16+errTLbr*3/16)*ditherSpillFine)*spillBrightness-spillBottom.BRbrightness
-				errBLbr = (bBLbr + (errTRb*1/16+errTLbr*5/16+errTRbr*3/16+errBRb*7/16)*ditherSpillFine)*spillBrightness-spillBottomRight.BLbrightness
-				errBRbr = (bBRbr + (errTLbr*1/16+errTRbr*5/16+errBLbr*7/16)*ditherSpillFine)*spillBrightness-spillBottomRight.BRbrightness
+				errTLr = (bTLr + errTR1*7/16*ditherSpillFine)*spillBrightnessRight-spillRight.TLbrightness
+				errTRr = (bTRr + errTLr*7/16*ditherSpillFine)*spillBrightnessRight-spillRight.TRbrightness
+				errBLr = (bBLr + (errTLr*5/16+errTRr*3/16+errTR1*1/16+errBR1*7/16)*ditherSpillFine)*spillBrightnessRight-spillRight.BLbrightness
+				errBRr = (bBRr + (errTLr*1/16+errBLr*7/16+errTRr*5/16)*ditherSpillFine)*spillBrightnessRight-spillRight.BRbrightness
+				errTLb = (bTLb + (errBL1*5/16+errBR1*3/16)*ditherSpillFine)*spillBrightnessBottom-spillBottom.TLbrightness
+				errTRb = (bTRb + (errTLb*7/16+errBL1*1/16+errBR1*5/16+errBLr*3/16)*ditherSpillFine)*spillBrightnessBottom-spillBottom.TRbrightness
+				errTLbr = (bTLbr + (errBR1*1/16+errBLr*5/16+errTRb*7/16)*ditherSpillFine)*spillBrightnessBottomRight-spillBottomRight.TLbrightness
+				errTRbr = (bTRbr + (errBLr*1/16+errBRr*5/16+errTLbr*7/16)*ditherSpillFine)*spillBrightnessBottomRight-spillBottomRight.TRbrightness
+				errBLb = (bBLb + (errTLb*5/16+errTRb*3/16)*ditherSpillFine)*spillBrightnessBottom-spillBottom.BLbrightness
+				errBRb = (bBRb + (errTLb*1/16+errBLb*7/16+errTRb*5/16+errTLbr*3/16)*ditherSpillFine)*spillBrightnessBottom-spillBottom.BRbrightness
+				errBLbr = (bBLbr + (errTRb*1/16+errTLbr*5/16+errTRbr*3/16+errBRb*7/16)*ditherSpillFine)*spillBrightnessBottomRight-spillBottomRight.BLbrightness
+				errBRbr = (bBRbr + (errTLbr*1/16+errTRbr*5/16+errBLbr*7/16)*ditherSpillFine)*spillBrightnessBottomRight-spillBottomRight.BRbrightness
 
 				errTotRight = (errTLr+errTRr+errBLr+errBRr)/4
 				errTotRightShape = (Math.abs(errTLr)+Math.abs(errTRr)+Math.abs(errBLr)+Math.abs(errBRr))/4

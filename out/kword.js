@@ -144,22 +144,22 @@
       return results;
     },
     drawCharSelect: function() {
-      var char, ctx, cvs, drawChar, i, m, makeClickHandler, newCanvasHtml, ref, spaceWeight;
+      var char, ctx, cvs, drawChar, i, m, makeClickHandler, newCanvasHtml, numSelected, ref, showSelectionDetails, spaceWeight;
       $('#viewSelect').empty();
+      numSelected = 0;
       for (i = m = 0, ref = charset.chars.length; 0 <= ref ? m < ref : m > ref; i = 0 <= ref ? ++m : --m) {
         char = charset.chars[i];
-        spaceWeight;
+        spaceWeight = 0;
         if (i === 0) {
           spaceWeight = char.brightness;
           char.selected = true;
+          numSelected++;
         } else if (Math.abs(char.brightness - spaceWeight) < 10) {
           continue;
         }
         if (i === charset.chars.length - 1) {
           char.selected = true;
-        }
-        if (i === Math.round(charset.chars.length * 0.5)) {
-          char.selected = true;
+          numSelected++;
         }
         newCanvasHtml = '<canvas id="char' + i + '" width="' + charset.qWidth * 2 + '" height="' + charset.qHeight * 2 + '"></canvas>';
         $('#viewSelect').append(newCanvasHtml);
@@ -178,14 +178,32 @@
         drawChar(char, ctx);
         makeClickHandler = function(char, ctx) {
           return $('#char' + i).click((function(e) {
+            if (char.selected) {
+              numSelected--;
+            } else {
+              numSelected++;
+            }
             char.selected = !char.selected;
             ctx.clearRect(0, 0, charset.qWidth * 2, charset.qHeight * 2);
-            return drawChar(char, ctx);
+            drawChar(char, ctx);
+            return showSelectionDetails();
           }));
         };
         makeClickHandler(char, ctx);
       }
-      return updateContainer();
+      showSelectionDetails = function() {
+        var estimate, h;
+        h = "<span>" + numSelected + "</span> selected.<br>";
+        h += Math.pow(4, numSelected) + " combos.<br>";
+        estimate = Math.pow(4, numSelected) * 25 / 1048576;
+        if (estimate < 30) {
+          estimate = "<30";
+        }
+        h += "~" + estimate + " seconds.";
+        return $('#selectionDetails').html(h);
+      };
+      updateContainer();
+      return showSelectionDetails();
     },
     genCombos: function() {
       var a, aa, ab, b, bright, c, combo, combos, d, drawCombos, len, m, maxBright, minBright, n, o, q, ref, ref1, ref10, ref11, ref12, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, s, selected, t, u, v, x, y, z;
@@ -369,7 +387,7 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, ditherFine, ditherSpill, ditherSpillFine, errBL, errBL1, errBLb, errBLbr, errBLr, errBR, errBR1, errBRb, errBRbr, errBRr, errTL, errTL1, errTLb, errTLbr, errTLr, errTR, errTR1, errTRb, errTRbr, errTRr, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, ditherFine, ditherSpill, ditherSpillFine, errBL, errBL1, errBLb, errBLbr, errBLr, errBR, errBR1, errBRb, errBRbr, errBRr, errTL, errTL1, errTLb, errTLbr, errTLr, errTR, errTR1, errTRb, errTRbr, errTRr, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillBrightnessBottom, spillBrightnessBottomRight, spillBrightnessRight, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
@@ -403,11 +421,12 @@
         spillRatioRight = $('#spillRatioRight').val() * $('#spillRatio').val();
         spillRatioBottomRight = $('#spillRatioBottomRight').val() * $('#spillRatio').val();
         spillRatioBottom = $('#spillRatioBottom').val() * $('#spillRatio').val();
-        spillBrightness = 1 - $('#spillBrightness').val();
+        spillBrightnessBottom = spillBrightnessRight = spillBrightness = 1 - $('#spillBrightness').val();
+        spillBrightnessBottomRight = spillBrightness / 2;
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
-          spillBottom = charset.combos[0][k][0][0];
-          spillRight = charset.combos[0][0][k][0];
+          spillBottom = charset.combos[BL][k][0][0];
+          spillRight = charset.combos[TR][0][k][0];
           spillBottomRight = charset.combos[k][0][0][0];
           bTL = gr[i * w + j];
           errTL = errTL1 = bTL - combo.TLbrightness;
@@ -430,18 +449,18 @@
           bTRbr = gr[(i + 2) * w + j + 4] + errTot * 1 / 16 * ditherSpill;
           bBLbr = gr[(i + 3) * w + j + 3] + errTot * 1 / 16 * ditherSpill;
           bBRbr = gr[(i + 3) * w + j + 4] + errTot * 1 / 16 * ditherSpill;
-          errTLr = (bTLr + errTR1 * 7 / 16 * ditherSpillFine) * spillBrightness - spillRight.TLbrightness;
-          errTRr = (bTRr + errTLr * 7 / 16 * ditherSpillFine) * spillBrightness - spillRight.TRbrightness;
-          errBLr = (bBLr + (errTLr * 5 / 16 + errTRr * 3 / 16 + errTR1 * 1 / 16 + errBR1 * 7 / 16) * ditherSpillFine) * spillBrightness - spillRight.BLbrightness;
-          errBRr = (bBRr + (errTLr * 1 / 16 + errBLr * 7 / 16 + errTRr * 5 / 16) * ditherSpillFine) * spillBrightness - spillRight.BRbrightness;
-          errTLb = (bTLb + (errBL1 * 5 / 16 + errBR1 * 3 / 16) * ditherSpillFine) * spillBrightness - spillBottom.TLbrightness;
-          errTRb = (bTRb + (errTLb * 7 / 16 + errBL1 * 1 / 16 + errBR1 * 5 / 16 + errBLr * 3 / 16) * ditherSpillFine) * spillBrightness - spillBottom.TRbrightness;
-          errTLbr = (bTLbr + (errBR1 * 1 / 16 + errBLr * 5 / 16 + errTRb * 7 / 16) * ditherSpillFine) * spillBrightness - spillBottomRight.TLbrightness;
-          errTRbr = (bTRbr + (errBLr * 1 / 16 + errBRr * 5 / 16 + errTLbr * 7 / 16) * ditherSpillFine) * spillBrightness - spillBottomRight.TRbrightness;
-          errBLb = (bBLb + (errTLb * 5 / 16 + errTRb * 3 / 16) * ditherSpillFine) * spillBrightness - spillBottom.BLbrightness;
-          errBRb = (bBRb + (errTLb * 1 / 16 + errBLb * 7 / 16 + errTRb * 5 / 16 + errTLbr * 3 / 16) * ditherSpillFine) * spillBrightness - spillBottom.BRbrightness;
-          errBLbr = (bBLbr + (errTRb * 1 / 16 + errTLbr * 5 / 16 + errTRbr * 3 / 16 + errBRb * 7 / 16) * ditherSpillFine) * spillBrightness - spillBottomRight.BLbrightness;
-          errBRbr = (bBRbr + (errTLbr * 1 / 16 + errTRbr * 5 / 16 + errBLbr * 7 / 16) * ditherSpillFine) * spillBrightness - spillBottomRight.BRbrightness;
+          errTLr = (bTLr + errTR1 * 7 / 16 * ditherSpillFine) * spillBrightnessRight - spillRight.TLbrightness;
+          errTRr = (bTRr + errTLr * 7 / 16 * ditherSpillFine) * spillBrightnessRight - spillRight.TRbrightness;
+          errBLr = (bBLr + (errTLr * 5 / 16 + errTRr * 3 / 16 + errTR1 * 1 / 16 + errBR1 * 7 / 16) * ditherSpillFine) * spillBrightnessRight - spillRight.BLbrightness;
+          errBRr = (bBRr + (errTLr * 1 / 16 + errBLr * 7 / 16 + errTRr * 5 / 16) * ditherSpillFine) * spillBrightnessRight - spillRight.BRbrightness;
+          errTLb = (bTLb + (errBL1 * 5 / 16 + errBR1 * 3 / 16) * ditherSpillFine) * spillBrightnessBottom - spillBottom.TLbrightness;
+          errTRb = (bTRb + (errTLb * 7 / 16 + errBL1 * 1 / 16 + errBR1 * 5 / 16 + errBLr * 3 / 16) * ditherSpillFine) * spillBrightnessBottom - spillBottom.TRbrightness;
+          errTLbr = (bTLbr + (errBR1 * 1 / 16 + errBLr * 5 / 16 + errTRb * 7 / 16) * ditherSpillFine) * spillBrightnessBottomRight - spillBottomRight.TLbrightness;
+          errTRbr = (bTRbr + (errBLr * 1 / 16 + errBRr * 5 / 16 + errTLbr * 7 / 16) * ditherSpillFine) * spillBrightnessBottomRight - spillBottomRight.TRbrightness;
+          errBLb = (bBLb + (errTLb * 5 / 16 + errTRb * 3 / 16) * ditherSpillFine) * spillBrightnessBottom - spillBottom.BLbrightness;
+          errBRb = (bBRb + (errTLb * 1 / 16 + errBLb * 7 / 16 + errTRb * 5 / 16 + errTLbr * 3 / 16) * ditherSpillFine) * spillBrightnessBottom - spillBottom.BRbrightness;
+          errBLbr = (bBLbr + (errTRb * 1 / 16 + errTLbr * 5 / 16 + errTRbr * 3 / 16 + errBRb * 7 / 16) * ditherSpillFine) * spillBrightnessBottomRight - spillBottomRight.BLbrightness;
+          errBRbr = (bBRbr + (errTLbr * 1 / 16 + errTRbr * 5 / 16 + errBLbr * 7 / 16) * ditherSpillFine) * spillBrightnessBottomRight - spillBottomRight.BRbrightness;
           errTotRight = (errTLr + errTRr + errBLr + errBRr) / 4;
           errTotRightShape = (Math.abs(errTLr) + Math.abs(errTRr) + Math.abs(errBLr) + Math.abs(errBRr)) / 4;
           errTotBottom = (errTLb + errTRb + errBLb + errBRb) / 4;
