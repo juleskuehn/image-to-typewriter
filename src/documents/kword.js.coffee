@@ -483,13 +483,15 @@ imgToText = ->
 			
 
 			# establish constraints on character selection
-			TL=TR=BL=0
+			TL=TR=BL=spillRightTL=0
 			if i>0 and j>0
 				TL=combosArray[i/2-1][j/2-1]
 			if i>0
 				TR=combosArray[i/2-1][j/2]
 			if j>0
 				BL=row[row.length-1]
+			if j<w-2 and i>0
+				spillRightTL = combosArray[i/2-1][j/2+1]
 			
 
 			# find closest ascii brightness value
@@ -500,15 +502,23 @@ imgToText = ->
 			bestCombo = null
 
 			# how much should the spill be considered?
-			spillRatioRight = $('#spillRatioRight').val() 
-			spillRatioBottomRight = $('#spillRatioBottomRight').val()
-			spillRatioBottom = $('#spillRatioBottom').val()
 			spillRatio = $('#spillRatio').val()
+			spillRatioRight = $('#spillRatioRight').val() *spillRatio
+			spillRatioBottomRight = $('#spillRatioBottomRight').val() *spillRatio
+			spillRatioBottom = $('#spillRatioBottom').val() *spillRatio
+			
 
 
 			# how much brighter should the spill be?
-			spillBrightnessBottom = spillBrightnessRight = spillBrightness = 1 - $('#spillBrightness').val()
-			spillBrightnessBottomRight = spillBrightness/2
+			# spillBrightnessBottom = spillBrightnessRight = spillBrightness = 1 - $('#spillBrightness').val()
+			# spillBrightnessBottomRight = spillBrightness/2
+
+			# bottom spill worth 2/4 (2 out of 4 chars are present for weighting)
+			spillBrightnessBottom = $('#spillBrightnessB').val()*$('#spillBrightness').val()
+			# right spill worth 3/4 (3 out of 4 chars are present for weighting)
+			spillBrightnessRight = $('#spillBrightnessR').val()*$('#spillBrightness').val()
+			# bottom right spill worth 1/4 (1 out of 4 chars present for weighting)
+			spillBrightnessBottomRight = $('#spillBrightnessBR').val()*$('#spillBrightness').val()
 
 			# loop through appropriate subsection of combos and weigh each subpixel against the input image
 			for k in [0...charset.combos[TL][TR][BL].length]
@@ -517,8 +527,23 @@ imgToText = ->
 
 				# get spill images
 				spillBottom = charset.combos[BL][k][0][0]
-				spillRight = charset.combos[TR][0][k][0]
+				spillRight = charset.combos[TR][spillRightTL][k][0]
 				spillBottomRight = charset.combos[k][0][0][0]
+
+				# how much should we penalize repeating chars?
+				# this value multiplies the error of a quadrant
+				repeatPenalty = 1
+
+				if k is TL
+					repeatPenalty = $('#avoidRepeats').val()		
+				if k is TR
+					repeatPenalty = $('#avoidRepeats').val()
+				if k is BL
+					repeatPenalty = $('#avoidRepeats').val()
+
+				# don't penalize repeating spaces
+				if k is 0
+					repeatPenalty = 1
 
 				# check each subpixel against input image
 				# save subpixel errors separately to avoid including spill in dithering
@@ -583,14 +608,14 @@ imgToText = ->
 
 				if considerSpill
 					# combine spill with primary pixel weight
-					errTot = (1-spillRatio)*Math.abs(errTot) + spillRatio*(Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight)
-					errTotShape = (1-spillRatio)*Math.abs(errTotShape) + spillRatio*(Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight)
+					errTot = 1*Math.abs(errTot) + 1*(Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight)
+					errTotShape = 1*Math.abs(errTotShape) + 1*(Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight)
 				
 
 				errTot = Math.abs(errTot)
 				errTotShape = Math.abs(errTotShape)
 
-				errTot = errTot*(1-shapeAmount)+errTotShape*shapeAmount
+				errTot = (errTot*(1-shapeAmount) + errTotShape*shapeAmount) * repeatPenalty
 
 				if bestCombo is null or Math.abs(errTot) < Math.abs(bestErr)
 					bestErr = errTot

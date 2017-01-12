@@ -387,7 +387,7 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, ditherFine, ditherSpill, ditherSpillFine, errBL, errBL1, errBLb, errBLbr, errBLr, errBR, errBR1, errBRb, errBRbr, errBRr, errTL, errTL1, errTLb, errTLbr, errTLr, errTR, errTR1, errTRb, errTRbr, errTRr, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightness, spillBrightnessBottom, spillBrightnessBottomRight, spillBrightnessRight, spillRatio, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, ditherFine, ditherSpill, ditherSpillFine, errBL, errBL1, errBLb, errBLbr, errBLr, errBR, errBR1, errBRb, errBRbr, errBRr, errTL, errTL1, errTLb, errTLbr, errTLr, errTR, errTR1, errTRb, errTRbr, errTRr, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, repeatPenalty, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightnessBottom, spillBrightnessBottomRight, spillBrightnessRight, spillRatio, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, spillRightTL, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
@@ -404,7 +404,7 @@
       row = [];
       comboRow = [];
       for (j = n = 0, ref2 = w; n < ref2; j = n += 2) {
-        TL = TR = BL = 0;
+        TL = TR = BL = spillRightTL = 0;
         if (i > 0 && j > 0) {
           TL = combosArray[i / 2 - 1][j / 2 - 1];
         }
@@ -414,21 +414,38 @@
         if (j > 0) {
           BL = row[row.length - 1];
         }
+        if (j < w - 2 && i > 0) {
+          spillRightTL = combosArray[i / 2 - 1][j / 2 + 1];
+        }
         closest = 0;
         bestErr = 0;
         bestErrVal = 0;
         bestCombo = null;
-        spillRatioRight = $('#spillRatioRight').val();
-        spillRatioBottomRight = $('#spillRatioBottomRight').val();
-        spillRatioBottom = $('#spillRatioBottom').val();
         spillRatio = $('#spillRatio').val();
-        spillBrightnessBottom = spillBrightnessRight = spillBrightness = 1 - $('#spillBrightness').val();
-        spillBrightnessBottomRight = spillBrightness / 2;
+        spillRatioRight = $('#spillRatioRight').val() * spillRatio;
+        spillRatioBottomRight = $('#spillRatioBottomRight').val() * spillRatio;
+        spillRatioBottom = $('#spillRatioBottom').val() * spillRatio;
+        spillBrightnessBottom = $('#spillBrightnessB').val() * $('#spillBrightness').val();
+        spillBrightnessRight = $('#spillBrightnessR').val() * $('#spillBrightness').val();
+        spillBrightnessBottomRight = $('#spillBrightnessBR').val() * $('#spillBrightness').val();
         for (k = o = 0, ref3 = charset.combos[TL][TR][BL].length; 0 <= ref3 ? o < ref3 : o > ref3; k = 0 <= ref3 ? ++o : --o) {
           combo = charset.combos[TL][TR][BL][k];
           spillBottom = charset.combos[BL][k][0][0];
-          spillRight = charset.combos[TR][0][k][0];
+          spillRight = charset.combos[TR][spillRightTL][k][0];
           spillBottomRight = charset.combos[k][0][0][0];
+          repeatPenalty = 1;
+          if (k === TL) {
+            repeatPenalty = $('#avoidRepeats').val();
+          }
+          if (k === TR) {
+            repeatPenalty = $('#avoidRepeats').val();
+          }
+          if (k === BL) {
+            repeatPenalty = $('#avoidRepeats').val();
+          }
+          if (k === 0) {
+            repeatPenalty = 1;
+          }
           bTL = gr[i * w + j];
           errTL = errTL1 = bTL - combo.TLbrightness;
           bTR = gr[i * w + j + 1] + errTL * 7 / 16 * ditherFine;
@@ -469,12 +486,12 @@
           errTotBottomRight = (errTL + errTR + errBL + errBR) / 4;
           errTotBottomRightShape = (Math.abs(errTLbr) + Math.abs(errTRbr) + Math.abs(errBLbr) + Math.abs(errBRbr)) / 4;
           if (considerSpill) {
-            errTot = (1 - spillRatio) * Math.abs(errTot) + spillRatio * (Math.abs(errTotBottom) * spillRatioBottom + Math.abs(errTotRight) * spillRatioRight + Math.abs(errTotBottomRight) * spillRatioBottomRight);
-            errTotShape = (1 - spillRatio) * Math.abs(errTotShape) + spillRatio * (Math.abs(errTotBottomShape) * spillRatioBottom + Math.abs(errTotRightShape) * spillRatioRight + Math.abs(errTotBottomRightShape) * spillRatioBottomRight);
+            errTot = 1 * Math.abs(errTot) + 1 * (Math.abs(errTotBottom) * spillRatioBottom + Math.abs(errTotRight) * spillRatioRight + Math.abs(errTotBottomRight) * spillRatioBottomRight);
+            errTotShape = 1 * Math.abs(errTotShape) + 1 * (Math.abs(errTotBottomShape) * spillRatioBottom + Math.abs(errTotRightShape) * spillRatioRight + Math.abs(errTotBottomRightShape) * spillRatioBottomRight);
           }
           errTot = Math.abs(errTot);
           errTotShape = Math.abs(errTotShape);
-          errTot = errTot * (1 - shapeAmount) + errTotShape * shapeAmount;
+          errTot = (errTot * (1 - shapeAmount) + errTotShape * shapeAmount) * repeatPenalty;
           if (bestCombo === null || Math.abs(errTot) < Math.abs(bestErr)) {
             bestErr = errTot;
             closest = k;
