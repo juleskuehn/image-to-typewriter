@@ -387,7 +387,7 @@
   bestCombos = [];
 
   imgToText = function() {
-    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, ditherFine, ditherSpill, ditherSpillFine, errBL, errBL1, errBLb, errBLbr, errBLr, errBR, errBR1, errBRb, errBRbr, errBRr, errTL, errTL1, errTLb, errTLbr, errTLr, errTR, errTR1, errTRb, errTRbr, errTRr, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, repeatPenalty, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightnessBottom, spillBrightnessBottomRight, spillBrightnessRight, spillRatio, spillRatioBottom, spillRatioBottomRight, spillRatioRight, spillRight, spillRightTL, w;
+    var BL, TL, TR, bBL, bBLb, bBLbr, bBLr, bBR, bBRb, bBRbr, bBRr, bTL, bTLb, bTLbr, bTLr, bTR, bTRb, bTRbr, bTRr, bestCombo, bestErr, bestErrVal, closest, combo, comboRow, considerSpill, cvs, ditherAmount, ditherFine, ditherSpill, ditherSpillFine, errBL, errBL1, errBLb, errBLbr, errBLr, errBR, errBR1, errBRb, errBRbr, errBRr, errTL, errTL1, errTLb, errTLbr, errTLr, errTR, errTR1, errTRb, errTRbr, errTRr, errTot, errTot1, errTotBottom, errTotBottomRight, errTotBottomRightShape, errTotBottomShape, errTotRight, errTotRightShape, errTotShape, gr, h, i, j, k, m, n, o, ref, ref1, ref2, ref3, repeatPenalty, row, shapeAmount, source, spillBottom, spillBottomRight, spillBrightnessBottom, spillBrightnessBottomRight, spillBrightnessRight, spillRatioBottom, spillRatioBottomRight, spillRatioLeft, spillRatioRight, spillRight, spillRightTL, w;
     combosArray = [];
     bestCombos = [];
     source = document.getElementById("inputImage");
@@ -421,10 +421,10 @@
         bestErr = 0;
         bestErrVal = 0;
         bestCombo = null;
-        spillRatio = $('#spillRatio').val();
-        spillRatioRight = $('#spillRatioRight').val() * spillRatio;
-        spillRatioBottomRight = $('#spillRatioBottomRight').val() * spillRatio;
-        spillRatioBottom = $('#spillRatioBottom').val() * spillRatio;
+        spillRatioRight = $('#spillRatioRight').val();
+        spillRatioBottomRight = $('#spillRatioBottomRight').val();
+        spillRatioBottom = $('#spillRatioBottom').val();
+        spillRatioLeft = $('#spillRatioLeft').val();
         spillBrightnessBottom = $('#spillBrightnessB').val() * $('#spillBrightness').val();
         spillBrightnessRight = $('#spillBrightnessR').val() * $('#spillBrightness').val();
         spillBrightnessBottomRight = $('#spillBrightnessBR').val() * $('#spillBrightness').val();
@@ -486,8 +486,8 @@
           errTotBottomRight = (errTL + errTR + errBL + errBR) / 4;
           errTotBottomRightShape = (Math.abs(errTLbr) + Math.abs(errTRbr) + Math.abs(errBLbr) + Math.abs(errBRbr)) / 4;
           if (considerSpill) {
-            errTot = 1 * Math.abs(errTot) + 1 * (Math.abs(errTotBottom) * spillRatioBottom + Math.abs(errTotRight) * spillRatioRight + Math.abs(errTotBottomRight) * spillRatioBottomRight);
-            errTotShape = 1 * Math.abs(errTotShape) + 1 * (Math.abs(errTotBottomShape) * spillRatioBottom + Math.abs(errTotRightShape) * spillRatioRight + Math.abs(errTotBottomRightShape) * spillRatioBottomRight);
+            errTot = 1 * Math.abs(errTot) * spillRatioLeft + 1 * (Math.abs(errTotBottom) * spillRatioBottom + Math.abs(errTotRight) * spillRatioRight + Math.abs(errTotBottomRight) * spillRatioBottomRight);
+            errTotShape = 1 * Math.abs(errTotShape) * spillRatioLeft + 1 * (Math.abs(errTotBottomShape) * spillRatioBottom + Math.abs(errTotRightShape) * spillRatioRight + Math.abs(errTotBottomRightShape) * spillRatioBottomRight);
           }
           errTot = Math.abs(errTot);
           errTotShape = Math.abs(errTotShape);

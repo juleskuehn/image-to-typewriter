@@ -502,10 +502,10 @@ imgToText = ->
 			bestCombo = null
 
 			# how much should the spill be considered?
-			spillRatio = $('#spillRatio').val()
-			spillRatioRight = $('#spillRatioRight').val() *spillRatio
-			spillRatioBottomRight = $('#spillRatioBottomRight').val() *spillRatio
-			spillRatioBottom = $('#spillRatioBottom').val() *spillRatio
+			spillRatioRight = $('#spillRatioRight').val()
+			spillRatioBottomRight = $('#spillRatioBottomRight').val()
+			spillRatioBottom = $('#spillRatioBottom').val()
+			spillRatioLeft = $('#spillRatioLeft').val()
 			
 
 
@@ -608,8 +608,8 @@ imgToText = ->
 
 				if considerSpill
 					# combine spill with primary pixel weight
-					errTot = 1*Math.abs(errTot) + 1*(Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight)
-					errTotShape = 1*Math.abs(errTotShape) + 1*(Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight)
+					errTot = 1*Math.abs(errTot)*spillRatioLeft + 1*(Math.abs(errTotBottom)*spillRatioBottom + Math.abs(errTotRight)*spillRatioRight + Math.abs(errTotBottomRight)*spillRatioBottomRight)
+					errTotShape = 1*Math.abs(errTotShape)*spillRatioLeft + 1*(Math.abs(errTotBottomShape)*spillRatioBottom + Math.abs(errTotRightShape)*spillRatioRight + Math.abs(errTotBottomRightShape)*spillRatioBottomRight)
 				
 
 				errTot = Math.abs(errTot)

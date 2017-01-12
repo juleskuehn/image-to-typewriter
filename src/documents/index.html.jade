@@ -113,34 +113,36 @@ html
               input(type="checkbox" id="considerSpill" checked)
               label Consider Spill?
 
-             div
-              input(type="range" id="spillRatioRight" min="0" max="1" value="0.75" step="0.05")
-              label Spill Ratio R
-
-             div
-              input(type="range" id="spillRatioBottom" min="0" max="1" value="0.5" step="0.05")
-              label Spill Ratio B
-
-             div
-              input(type="range" id="spillRatioBottomRight" min="0" max="1" value="0.25" step="0.05")
-              label Spill Ratio BR
-
              div 
-              input(type="range" id="spillRatio" min="0" max="1" value="1" step="0.05")
-              label Spill Ratio
+              input(type="range" id="spillRatioLeft" min="0" max="2" value="1" step="0.05")
+              label Ratio TL
+
+             div
+              input(type="range" id="spillRatioRight" min="0" max="2" value="1" step="0.05")
+              label Ratio TR
+
+             div
+              input(type="range" id="spillRatioBottom" min="0" max="2" value="1" step="0.05")
+              label Ratio BL
+
+             div
+              input(type="range" id="spillRatioBottomRight" min="0" max="2" value="1" step="0.05")
+              label Ratio BR
+
+
              div
               input(type="range" id="spillBrightnessR" min="0" max="1" value="0.75" step="0.05")
-              label Spill Bright R
+              label Spill Dark R
              div
               input(type="range" id="spillBrightnessB" min="0" max="1" value="0.5" step="0.05")
-              label Spill Bright B
+              label Spill Dark B
              div
               input(type="range" id="spillBrightnessBR" min="0" max="1" value="0.25" step="0.05")
-              label Spill Bright BR
+              label Spill Dark BR
 
              div
               input(type="range" id="spillBrightness" min="0" max="2" value="1" step="0.1")
-              label Spill Brightness
+              label Spill Dark
 
 
 
